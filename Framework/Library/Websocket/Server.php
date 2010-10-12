@@ -50,7 +50,7 @@ import('Websocket.Node');
 /**
  * Class Hoa_Websocket_Server.
  *
- * 
+ * Websocket server.
  *
  * @author      Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
  * @copyright   Copyright (c) 2007, 2010 Ivan ENDERLIN.
@@ -63,6 +63,19 @@ import('Websocket.Node');
 
 abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
 
+    /**
+     * Create a websocket server.
+     *
+     * @access  public
+     * @param   Hoa_Socket_Interface  $socket     Socket.
+     * @param   int                   $timeout    Timeout.
+     * @param   int                   $flag       Flag, see the parent::*
+     *                                            constants.
+     * @param   string                $context    Context ID (please, see the
+     *                                            Hoa_Stream_Context class).
+     * @return  void
+     * @throw   Hoa_Socket_Connection_Exception
+     */
     public function __construct ( Hoa_Socket_Interface $socket, $timeout = 30,
                                   $flag = -1, $context = null ) {
 
@@ -75,13 +88,21 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
 
                 $buffer = $this->read(2048);
 
-                if(false === $node->getHandshake())
+                if(FAILED === $node->getHandshake())
                     $this->handshake($node, $buffer);
                 else
                     $this->process($node, $this->unwrap($buffer));
             }
     }
 
+    /**
+     * Try the handshake.
+     *
+     * @access  private
+     * @param   Hoa_Websocket_Node  $node      Current connection node.
+     * @param   string              $buffer    HTTP headers.
+     * @return  void
+     */
     final private function handshake ( Hoa_Websocket_Node $node, $buffer ) {
 
         $x = explode("\r\n", $buffer);
@@ -120,13 +141,30 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
             $response . "\r\n"
         );
 
-        $node->setHandshake(true);
+        $node->setHandshake(SUCCEED);
 
         return;
     }
 
+    /**
+     * Process the receive message.
+     *
+     * @access  protected
+     * @param   Hoa_Websocket_Node  $sourceNode    Source node.
+     * @param   string              $message       Message.
+     * @return  void
+     */
     abstract protected function process ( $sourceNode, $message );
 
+    /**
+     * Send a message to a specific node/connection.
+     * It is just a “inline” method, a shortcut.
+     *
+     * @access  protected
+     * @param   Hoa_Websocket_Node  $node       Node.
+     * @param   string              $message    Message.
+     * @return  void
+     */
     protected function send ( Hoa_Websocket_Node $node, $message ) {
 
         $old = $this->getStream();
@@ -140,11 +178,25 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
         return;
     }
 
+    /**
+     * Wrap a string before writing/sending.
+     *
+     * @access  public
+     * @param   string  $string    String to wrap.
+     * @return  string
+     */
     final public function wrap ( $string ) {
 
         return chr(0) . $string . chr(255);
     }
 
+    /**
+     * Unwrap a string before reading/receiving.
+     *
+     * @access  public
+     * @param   string  $string    String to unwrap.
+     * @return  string
+     */
     final public function unwrap ( $string ) {
 
         return substr($string, 1, strlen($string) - 2);

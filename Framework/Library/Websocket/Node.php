@@ -45,7 +45,7 @@ import('Socket.Connection.Node');
 /**
  * Class Hoa_Websocket_Node.
  *
- * Represent a generic node.
+ * Describes a websocket node.
  *
  * @author      Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
  * @copyright   Copyright (c) 2007, 2010 Ivan ENDERLIN.
@@ -58,12 +58,29 @@ import('Socket.Connection.Node');
 
 class Hoa_Websocket_Node extends Hoa_Socket_Connection_Node {
 
+    /**
+     * Whether it is the first message.
+     *
+     * @var Hoa_Websocket_Node bool
+     */
     protected $_first     = true;
 
+    /**
+     * Whether the handshake succeed.
+     *
+     * @var Hoa_Websocket_Node bool
+     */
     protected $_handshake = false;
 
 
 
+    /**
+     * Set whether it is the first message.
+     *
+     * @access  public
+     * @param   bool    $first    First.
+     * @return  bool
+     */
     public function setFirst ( $first ) {
 
         $old          = $this->_first;
@@ -72,6 +89,13 @@ class Hoa_Websocket_Node extends Hoa_Socket_Connection_Node {
         return $old;
     }
 
+    /**
+     * Set handshake success.
+     *
+     * @access  public
+     * @param   bool    $handshake    Handshake.
+     * @return  bool
+     */
     public function setHandshake ( $handshake ) {
 
         $old              = $this->_handshake;
@@ -80,11 +104,23 @@ class Hoa_Websocket_Node extends Hoa_Socket_Connection_Node {
         return $old;
     }
 
+    /**
+     * Whether it is the first message.
+     *
+     * @access  public
+     * @return  bool
+     */
     public function isFirstMessage ( ) {
 
         return $this->_first;
     }
 
+    /**
+     * Whether the handshake succeed.
+     *
+     * @access  public
+     * @return  bool
+     */
     public function getHandshake ( ) {
 
         return $this->_handshake;
