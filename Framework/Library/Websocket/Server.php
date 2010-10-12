@@ -51,6 +51,7 @@ import('Websocket.Node');
  * Class Hoa_Websocket_Server.
  *
  * Websocket server.
+ * Please, read the http://dev.w3.org/html5/websockets/ documentation.
  *
  * @author      Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
  * @copyright   Copyright (c) 2007, 2010 Ivan ENDERLIN.
