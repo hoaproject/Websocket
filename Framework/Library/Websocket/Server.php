@@ -91,8 +91,18 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
 
                 if(FAILED === $node->getHandshake())
                     $this->handshake($node, $buffer);
-                else
-                    $this->compute($node, $this->unwrap($buffer));
+                else {
+
+                    $buffer = $this->unwrap($buffer);
+
+                    if(empty($buffer)) {
+
+                        $this->disconnect();
+                        continue;
+                    }
+
+                    $this->compute($node, $buffer);
+                }
             }
     }
 
