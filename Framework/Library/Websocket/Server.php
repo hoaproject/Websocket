@@ -92,7 +92,7 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
                 if(FAILED === $node->getHandshake())
                     $this->handshake($node, $buffer);
                 else
-                    $this->process($node, $this->unwrap($buffer));
+                    $this->compute($node, $this->unwrap($buffer));
             }
     }
 
@@ -148,14 +148,14 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
     }
 
     /**
-     * Process the receive message.
+     * Compute the receive message.
      *
      * @access  protected
      * @param   Hoa_Websocket_Node  $sourceNode    Source node.
      * @param   string              $message       Message.
      * @return  void
      */
-    abstract protected function process ( $sourceNode, $message );
+    abstract protected function compute ( $sourceNode, $message );
 
     /**
      * Send a message to a specific node/connection.
