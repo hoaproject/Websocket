@@ -119,7 +119,7 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
         $x = explode("\r\n", $buffer);
         $h = array();
 
-        for($i = 1, $m = count($x) - 3; $i <= $m; $i++)
+        for($i = 1, $m = count($x) - 3; $i <= $m; ++$i)
             $h[strtolower(substr($x[$i], 0, strpos($x[$i], ':')))] =
                 trim(substr($x[$i], strpos($x[$i], ':') + 2));
 
