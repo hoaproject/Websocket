@@ -33,11 +33,6 @@
  */
 
 /**
- * Hoa_Core
- */
-require_once 'Core.php';
-
-/**
  * Hoa_Socket_Connection_Node
  */
 import('Socket.Connection.Node');
