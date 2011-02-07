@@ -35,7 +35,7 @@
 /**
  * Class Hoa_Websocket_Exception.
  *
- * Extending the Hoa_Exception class.
+ * Extending the Hoa_Core_Exception class.
  *
  * @author      Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
  * @copyright   Copyright (c) 2007, 2010 Ivan ENDERLIN.
@@ -46,4 +46,4 @@
  * @subpackage  Hoa_Websocket_Exception
  */
 
-class Hoa_Websocket_Exception extends Hoa_Exception { }
+class Hoa_Websocket_Exception extends Hoa_Core_Exception { }
