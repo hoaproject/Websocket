@@ -24,60 +24,58 @@
  * You should have received a copy of the GNU General Public License
  * along with HOA Open Accessibility; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- *
- * @category    Framework
- * @package     Hoa_Websocket
- * @subpackage  Hoa_Websocket_Server
- *
  */
 
-/**
- * Hoa_Socket_Connection_Server
- */
-import('Socket.Connection.Server');
+namespace {
+
+from('Hoa')
 
 /**
- * Hoa_Websocket_Node
+ * \Hoa\Socket\Connection\Server
  */
-import('Websocket.Node');
+-> import('Socket.Connection.Server')
 
 /**
- * Class Hoa_Websocket_Server.
+ * \Hoa\Websocket\Node
+ */
+-> import('Websocket.Node');
+
+}
+
+namespace Hoa\Websocket {
+
+/**
+ * Class \Hoa\Websocket\Server.
  *
  * Websocket server.
  * Please, read the http://dev.w3.org/html5/websockets/ documentation.
  *
- * @author      Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
- * @copyright   Copyright (c) 2007, 2010 Ivan ENDERLIN.
- * @license     http://gnu.org/licenses/gpl.txt GNU GPL
- * @since       PHP 5
- * @version     0.1
- * @package     Hoa_Websocket
- * @subpackage  Hoa_Websocket_Server
+ * @author     Ivan ENDERLIN <ivan.enderlin@hoa-project.net>
+ * @copyright  Copyright (c) 2007, 2010 Ivan ENDERLIN.
+ * @license    http://gnu.org/licenses/gpl.txt GNU GPL
  */
 
-abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
+abstract class Server extends \Hoa\Socket\Connection\Server {
 
     /**
      * Create a websocket server.
      *
      * @access  public
-     * @param   Hoa_Socket_Interface  $socket     Socket.
-     * @param   int                   $timeout    Timeout.
-     * @param   int                   $flag       Flag, see the parent::*
-     *                                            constants.
-     * @param   string                $context    Context ID (please, see the
-     *                                            Hoa_Stream_Context class).
+     * @param   \Hoa\Socket\Socketable  $socket     Socket.
+     * @param   int                     $timeout    Timeout.
+     * @param   int                     $flag       Flag, see the parent::*
+     *                                              constants.
+     * @param   string                  $context    Context ID (please, see the
+     *                                              \Hoa\Stream\Context class).
      * @return  void
-     * @throw   Hoa_Socket_Connection_Exception
+     * @throw   \Hoa\Socket\Connection\Exception
      */
-    public function __construct ( Hoa_Socket_Interface $socket, $timeout = 30,
+    public function __construct ( \Hoa\Socket\Socketable $socket, $timeout = 30,
                                   $flag = -1, $context = null ) {
 
         parent::__construct($socket, $timeout, $flag, $context);
         $this->connectAndWait();
-        $this->setNodeName('Hoa_Websocket_Node');
+        $this->setNodeName('\Hoa\Websocket\Node');
 
         while(true)
             foreach($this->select() as $node) {
@@ -105,11 +103,11 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
      * Try the handshake.
      *
      * @access  private
-     * @param   Hoa_Websocket_Node  $node      Current connection node.
+     * @param   \Hoa\Websocket\Node  $node      Current connection node.
      * @param   string              $buffer    HTTP headers.
      * @return  void
      */
-    final private function handshake ( Hoa_Websocket_Node $node, $buffer ) {
+    final private function handshake ( Node $node, $buffer ) {
 
         $x = explode("\r\n", $buffer);
         $h = array();
@@ -156,7 +154,7 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
      * Compute the receive message.
      *
      * @access  protected
-     * @param   Hoa_Websocket_Node  $sourceNode    Source node.
+     * @param   \Hoa\Websocket\Node  $sourceNode    Source node.
      * @param   string              $message       Message.
      * @return  void
      */
@@ -167,11 +165,11 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
      * It is just a “inline” method, a shortcut.
      *
      * @access  protected
-     * @param   Hoa_Websocket_Node  $node       Node.
+     * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   string              $message    Message.
      * @return  void
      */
-    protected function send ( Hoa_Websocket_Node $node, $message ) {
+    protected function send ( Node $node, $message ) {
 
         $old = $this->getStream();
         $this->_setStream($node->getSocket());
@@ -207,4 +205,6 @@ abstract class Hoa_Websocket_Server extends Hoa_Socket_Connection_Server {
 
         return substr($string, 1, strlen($string) - 2);
     }
+}
+
 }
