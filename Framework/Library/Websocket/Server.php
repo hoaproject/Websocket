@@ -97,6 +97,8 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
                     $this->compute($node, $buffer);
                 }
             }
+
+        return;
     }
 
     /**
