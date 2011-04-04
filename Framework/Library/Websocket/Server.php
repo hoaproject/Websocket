@@ -85,26 +85,25 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
         $this->connectAndWait();
         $this->setNodeName('\Hoa\Websocket\Node');
 
-        while(true)
-            foreach($this->select() as $node) {
+        while(true) foreach($this->select() as $node) {
 
-                $buffer = $this->read(2048);
+            $buffer = $this->read(2048);
 
-                if(FAILED === $node->getHandshake())
-                    $this->handshake($node, $buffer);
-                else {
+            if(FAILED === $node->getHandshake())
+                $this->handshake($node, $buffer);
+            else {
 
-                    $buffer = $this->unwrap($buffer);
+                $buffer = $this->unwrap($buffer);
 
-                    if(empty($buffer)) {
+                if(empty($buffer)) {
 
-                        $this->disconnect();
-                        continue;
-                    }
-
-                    $this->compute($node, $buffer);
+                    $this->disconnect();
+                    continue;
                 }
+
+                $this->compute($node, $buffer);
             }
+        }
 
         return;
     }
