@@ -113,7 +113,7 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
      *
      * @access  private
      * @param   \Hoa\Websocket\Node  $node      Current connection node.
-     * @param   string              $buffer    HTTP headers.
+     * @param   string               $buffer    HTTP headers.
      * @return  void
      */
     final private function handshake ( Node $node, $buffer ) {
@@ -175,7 +175,7 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
      *
      * @access  protected
      * @param   \Hoa\Websocket\Node  $node       Node.
-     * @param   string              $message    Message.
+     * @param   string               $message    Message.
      * @return  void
      */
     protected function send ( Node $node, $message ) {
