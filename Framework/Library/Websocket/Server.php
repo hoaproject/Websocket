@@ -122,8 +122,8 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
         $h = array();
 
         for($i = 1, $m = count($x) - 3; $i <= $m; ++$i)
-            $h[strtolower(substr($x[$i], 0, strpos($x[$i], ':')))] =
-                trim(substr($x[$i], strpos($x[$i], ':') + 2));
+            $h[strtolower(trim(substr($x[$i], 0, $p = strpos($x[$i], ':'))))] =
+                trim(substr($x[$i], $p + 1));
 
         if(0 !== preg_match('#GET (.*) HTTP#', $buffer, $match))
             $h['resource'] = $match[1];
