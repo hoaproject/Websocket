@@ -66,6 +66,15 @@ namespace Hoa\Websocket {
 abstract class Server extends \Hoa\Socket\Connection\Server {
 
     /**
+     * Node name (easily extensible by children).
+     *
+     * @var \Hoa\Websocket\Server string
+     */
+    protected $nodeName = '\Hoa\Websocket\Node';
+
+
+
+    /**
      * Create a websocket server.
      *
      * @access  public
@@ -83,7 +92,7 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
 
         parent::__construct($socket, $timeout, $flag, $context);
         $this->connectAndWait();
-        $this->setNodeName('\Hoa\Websocket\Node');
+        $this->setNodeName($this->nodeName);
 
         while(true) foreach($this->select() as $node) {
 
@@ -98,6 +107,7 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
                 if(empty($buffer)) {
 
                     $this->disconnect();
+
                     continue;
                 }
 
