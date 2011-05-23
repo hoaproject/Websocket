@@ -34,18 +34,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket {
+namespace {
+
+from('Hoa')
 
 /**
- * Class \Hoa\Websocket\Exception.
+ * \Hoa\Websocket\Exception
+ */
+-> import('Websocket.Exception.~');
+
+}
+
+namespace Hoa\Websocket\Exception {
+
+/**
+ * Class \Hoa\Websocket\Exception\BadProtocol.
  *
- * Extending the \Hoa\Core\Exception class.
+ * Extending the \Hoa\Websocket\Exception class.
  *
  * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
  * @copyright  Copyright © 2007-2011 Ivan Enderlin.
  * @license    New BSD License
  */
 
-class Exception extends \Hoa\Core\Exception { }
+class BadProtocol extends Exception { }
 
 }

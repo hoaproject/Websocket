@@ -39,14 +39,29 @@ namespace {
 from('Hoa')
 
 /**
- * \Hoa\Socket\Connection\Server
+ * \Hoa\Websocket\Exception
  */
--> import('Socket.Connection.Server')
+-> import('Websocket.Exception.~')
+
+/**
+ * \Hoa\Websocket\Exception\BadProtocol
+ */
+-> import('Websocket.Exception.BadProtocol')
 
 /**
  * \Hoa\Websocket\Node
  */
--> import('Websocket.Node');
+-> import('Websocket.Node')
+
+/**
+ * \Hoa\Websocket\Protocol\Hybi07
+ */
+-> import('Websocket.Protocol.Hybi07')
+
+/**
+ * \Hoa\Websocket\Protocol\Hybi00
+ */
+-> import('Websocket.Protocol.Hybi00');
 
 }
 
@@ -55,63 +70,232 @@ namespace Hoa\Websocket {
 /**
  * Class \Hoa\Websocket\Server.
  *
- * Websocket server.
- * Please, read the http://dev.w3.org/html5/websockets/ documentation.
+ * A cross-protocol Websocket server.
  *
  * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
  * @copyright  Copyright © 2007-2011 Ivan Enderlin.
  * @license    New BSD License
  */
 
-abstract class Server extends \Hoa\Socket\Connection\Server {
+class Server implements \Hoa\Core\Event\Listenable {
 
     /**
-     * Node name (easily extensible by children).
+     * Opcode: continuation frame.
      *
-     * @var \Hoa\Websocket\Server string
+     * @const int
      */
-    protected $nodeName = '\Hoa\Websocket\Node';
+    const OPCODE_CONTINUATION_FRAME = 0x0;
+
+    /**
+     * Opcode: text frame.
+     *
+     * @const int
+     */
+    const OPCODE_TEXT_FRAME         = 0x1;
+
+    /**
+     * Opcode: binary frame.
+     *
+     * @const int
+     */
+    const OPCODE_BINARY_FRAME       = 0x2;
+
+    /**
+     * Opcode: connection close.
+     *
+     * @const int
+     */
+    const OPCODE_CONNECTION_CLOSE   = 0x8;
+
+    /**
+     * Opcode: ping.
+     *
+     * @const int
+     */
+    const OPCODE_PING               = 0x9;
+
+    /**
+     * Opcode: pong.
+     *
+     * @const int
+     */
+    const OPCODE_PONG               = 0xa;
+
+    /**
+     * Listeners.
+     *
+     * @var \Hoa\Core\Event\Listener object
+     */
+    protected $_on     = null;
+
+    /**
+     * Server.
+     *
+     * @var \Hoa\Socket\Connection\Server object
+     */
+    protected $_server = null;
 
 
 
     /**
      * Create a websocket server.
+     * 3 events can be listened: message, close & error.
      *
      * @access  public
-     * @param   \Hoa\Socket\Socketable  $socket     Socket.
-     * @param   int                     $timeout    Timeout.
-     * @param   int                     $flag       Flag, see the parent::*
-     *                                              constants.
-     * @param   string                  $context    Context ID (please, see the
-     *                                              \Hoa\Stream\Context class).
+     * @param   \Hoa\Socket\Connection\Server  $server    Server.
      * @return  void
      * @throw   \Hoa\Socket\Connection\Exception
      */
-    public function __construct ( \Hoa\Socket\Socketable $socket, $timeout = 30,
-                                  $flag = -1, $context = null ) {
+    public function __construct ( \Hoa\Socket\Connection\Server $server ) {
 
-        parent::__construct($socket, $timeout, $flag, $context);
-        $this->connectAndWait();
-        $this->setNodeName($this->nodeName);
+        $this->_server = $server;
+        $this->_server->setNodeName('\Hoa\Websocket\Node');
+        $this->_on     = new \Hoa\Core\Event\Listener($this, array(
+            'message',
+            'close',
+            'error'
+        ));
 
-        while(true) foreach($this->select() as $node) {
+        return;
+    }
 
-            $buffer = $this->read(2048);
+    /**
+     * Attach a callable to this listenable object.
+     *
+     * @access  public
+     * @param   string  $listenerId    Listener ID.
+     * @param   mixed   $call          First callable part.
+     * @param   mixed   $able          Second callable part (if needed).
+     * @return  \Hoa\Websocket\Server
+     * @throw   \Hoa\Core\Exception
+     */
+    public function on ( $listenerId, $call, $able = '' ) {
 
-            if(FAILED === $node->getHandshake())
-                $this->handshake($node, $buffer);
-            else {
+        return $this->_on->attach($listenerId, $call, $able);
+    }
 
-                $buffer = $this->unwrap($buffer);
+    /**
+     * Run the server.
+     *
+     * @access  public
+     * @return  void
+     */
+    public function run ( ) {
 
-                if(empty($buffer)) {
+        $this->_server->connectAndWait();
 
-                    $this->disconnect();
+        while(true) foreach($this->_server->select() as $node) {
+
+            try {
+
+                if(FAILED === $node->getHandshake()) {
+
+                    $this->doHandshake();
 
                     continue;
                 }
 
-                $this->compute($node, $buffer);
+                $frame = $node->getProtocolImplementation()->readFrame();
+
+                switch($frame['opcode']) {
+
+                    case self::OPCODE_CONTINUATION_FRAME:
+                        $node->appendMessageFragment($frame['message']);
+
+                        if(0x1 == $frame['fin']) {
+
+                            $message = $node->getFragmentedMessage();
+                            $node->clearFragmentation();
+                            $this->_on->fire(
+                                'message',
+                                new \Hoa\Core\Event\Bucket($message)
+                            );
+                        }
+                      break;
+
+                    case self::OPCODE_TEXT_FRAME:
+                        $this->_on->fire(
+                            'message',
+                            new \Hoa\Core\Event\Bucket($frame['message'])
+                        );
+                      break;
+
+                    case self::OPCODE_CONNECTION_CLOSE:
+                        $this->_on->fire(
+                            'close',
+                            new \Hoa\Core\Event\Bucket()
+                        );
+                        $this->_server->disconnect();
+                      break;
+
+                    default:
+                        throw new Exception(
+                            'Opcode 0x%x is not supported by this server.',
+                            0, $frame['opcode']);
+                }
+            }
+            catch ( \Hoa\Core\Exception\Idle $e ) {
+
+                $this->_on->fire('error', new \Hoa\Core\Event\Bucket($e));
+            }
+        }
+
+        $this->_server->disconnect();
+
+        return;
+    }
+
+    /**
+     * Try the handshake by trying different protocol implementation.
+     *
+     * @access  protected
+     * @return  void
+     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     */
+    protected function doHandshake ( ) {
+
+        $buffer = $this->_server->read(2048);
+        $x      = explode("\r\n", $buffer);
+        $h      = array();
+
+        for($i = 1, $m = count($x) - 3; $i <= $m; ++$i)
+            $h[strtolower(trim(substr($x[$i], 0, $p = strpos($x[$i], ':'))))] =
+                trim(substr($x[$i], $p + 1));
+
+        if(0 !== preg_match('#^GET (.*) HTTP/1\.[01]#', $buffer, $match))
+            $h['resource'] = trim($match[1], '/');
+
+        $h['__Body'] = $x[count($x) - 1];
+
+        // Hybi07.
+        try {
+
+            $hybi07 = new Protocol\Hybi07($this->_server);
+            $hybi07->doHandshake($h);
+            $this->_server->getCurrentNode()->setProtocolImplementation(
+                $hybi07
+            );
+        }
+        catch ( Exception\BadProtocol $e ) {
+
+            unset($hybi07);
+
+            // Hybi00.
+            try {
+
+                $hybi00 = new Protocol\Hybi00($this->_server);
+                $hybi00->doHandshake($h);
+                $this->_server->getCurrentNode()->setProtocolImplementation(
+                    $hybi00
+                );
+            }
+            catch ( Exception\BadProtocol $e ) {
+
+                unset($hybi00);
+                $this->_server->disconnect();
+
+                throw new Exception\BadProtocol(
+                    'All protocol failed.', 1, null);
             }
         }
 
@@ -119,110 +303,31 @@ abstract class Server extends \Hoa\Socket\Connection\Server {
     }
 
     /**
-     * Try the handshake.
-     *
-     * @access  private
-     * @param   \Hoa\Websocket\Node  $node      Current connection node.
-     * @param   string               $buffer    HTTP headers.
-     * @return  void
-     */
-    final private function handshake ( Node $node, $buffer ) {
-
-        $x = explode("\r\n", $buffer);
-        $h = array();
-
-        for($i = 1, $m = count($x) - 3; $i <= $m; ++$i)
-            $h[strtolower(trim(substr($x[$i], 0, $p = strpos($x[$i], ':'))))] =
-                trim(substr($x[$i], $p + 1));
-
-        if(0 !== preg_match('#GET (.*) HTTP#', $buffer, $match))
-            $h['resource'] = $match[1];
-
-        $key1      = $h['sec-websocket-key1'];
-        $key2      = $h['sec-websocket-key2'];
-        $key3      = $x[count($x) - 1];
-        $location  = $h['host'] . '/Server.php';
-        $keynumb1  = (int) preg_replace('#[^0-9]#', '', $key1);
-        $keynumb2  = (int) preg_replace('#[^0-9]#', '', $key2);
-
-        $spaces1   = substr_count($key1, ' ');
-        $spaces2   = substr_count($key2, ' ');        
-
-        $part1     = pack('N', $keynumb1 / $spaces1);
-        $part2     = pack('N', $keynumb2 / $spaces2);
-        $challenge = $part1 . $part2 . $key3;
-        $response  = md5($challenge, true);
-
-        $this->writeAll(
-            'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
-            'Upgrade: WebSocket' . "\r\n" .
-            'Connection: Upgrade' . "\r\n" .
-            'Sec-WebSocket-Origin: ' . $h['origin'] . "\r\n" .
-            'Sec-WebSocket-Location: ws://' . $h['host'] .
-            $h['resource'] . "\r\n" .
-            "\r\n" .
-            $response . "\r\n"
-        );
-
-        $node->setHandshake(SUCCEED);
-
-        return;
-    }
-
-    /**
-     * Compute the receive message.
-     *
-     * @access  protected
-     * @param   \Hoa\Websocket\Node  $sourceNode    Source node.
-     * @param   string              $message       Message.
-     * @return  void
-     */
-    abstract protected function compute ( $sourceNode, $message );
-
-    /**
      * Send a message to a specific node/connection.
      * It is just a “inline” method, a shortcut.
      *
-     * @access  protected
-     * @param   \Hoa\Websocket\Node  $node       Node.
+     * @access  public
      * @param   string               $message    Message.
+     * @param   \Hoa\Websocket\Node  $node       Node.
      * @return  void
      */
-    protected function send ( Node $node, $message ) {
+    public function send ( $message, Node $node = null ) {
 
-        $old = $this->getStream();
-        $this->_setStream($node->getSocket());
-
-        $message = $this->wrap($message);
-        $this->writeAll($message);
-
-        $this->_setStream($old);
-
-        return;
+        return $this->_server
+                    ->getCurrentNode()
+                    ->getProtocolImplementation()
+                    ->send($message, $node);
     }
 
     /**
-     * Wrap a string before writing/sending.
+     * Get server.
      *
      * @access  public
-     * @param   string  $string    String to wrap.
-     * @return  string
+     * @return  \Hoa\Socket\Connection\Server
      */
-    final public function wrap ( $string ) {
+    public function getServer ( ) {
 
-        return chr(0) . $string . chr(255);
-    }
-
-    /**
-     * Unwrap a string before reading/receiving.
-     *
-     * @access  public
-     * @param   string  $string    String to unwrap.
-     * @return  string
-     */
-    final public function unwrap ( $string ) {
-
-        return substr($string, 1, strlen($string) - 2);
+        return $this->_server;
     }
 }
 

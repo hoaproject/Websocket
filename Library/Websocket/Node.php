@@ -50,7 +50,7 @@ namespace Hoa\Websocket {
 /**
  * Class \Hoa\Websocket\Node.
  *
- * Describes a websocket node.
+ * Describe a websocket node.
  *
  * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
  * @copyright  Copyright © 2007-2011 Ivan Enderlin.
@@ -60,20 +60,60 @@ namespace Hoa\Websocket {
 class Node extends \Hoa\Socket\Connection\Node {
 
     /**
+     * Protocol implementation.
+     *
+     * @var \Hoa\Websocket\Protocol\Generic object
+     */
+    protected $_protocol         = null;
+
+    /**
      * Whether it is the first message.
      *
      * @var \Hoa\Websocket\Node bool
      */
-    protected $_first     = true;
+    protected $_first            = true;
 
     /**
      * Whether the handshake succeed.
      *
      * @var \Hoa\Websocket\Node bool
      */
-    protected $_handshake = false;
+    protected $_handshake        = false;
+
+    /**
+     * Fragments of a continuous message.
+     *
+     * @var \Hoa\Websocket\Node string
+     */
+    protected $_messageFragments = null;
 
 
+
+    /**
+     * Set protocol implementation.
+     *
+     * @access  public
+     * @param   \Hoa\Websocket\Protocol\Generic  $protocol    Protocol.
+     * @return  \Hoa\Websocket\Protocol\Generic
+     */
+    public function setProtocolImplementation ( \Hoa\Websocket\Protocol\Generic $protocol ) {
+
+        $old             = $this->_protocol;
+        $this->_protocol = $protocol;
+
+        return $old;
+    }
+
+    /**
+     * Get protocol implementation.
+     *
+     * @access  public
+     * @return  \Hoa\Websocket\Protocol\Generic
+     */
+    public function getProtocolImplementation ( ) {
+
+        return $this->_protocol;
+    }
 
     /**
      * Set whether it is the first message.
@@ -88,6 +128,17 @@ class Node extends \Hoa\Socket\Connection\Node {
         $this->_first = $first;
 
         return $old;
+    }
+
+    /**
+     * Whether it is the first message.
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function isFirstMessage ( ) {
+
+        return $this->_first;
     }
 
     /**
@@ -106,17 +157,6 @@ class Node extends \Hoa\Socket\Connection\Node {
     }
 
     /**
-     * Whether it is the first message.
-     *
-     * @access  public
-     * @return  bool
-     */
-    public function isFirstMessage ( ) {
-
-        return $this->_first;
-    }
-
-    /**
      * Whether the handshake succeed.
      *
      * @access  public
@@ -125,6 +165,42 @@ class Node extends \Hoa\Socket\Connection\Node {
     public function getHandshake ( ) {
 
         return $this->_handshake;
+    }
+
+    /**
+     * Append a fragment to a message (if we have fragmentation).
+     *
+     * @access  public
+     * @param   string  $fragment    Fragment.
+     * @return  string
+     */
+    public function appendMessageFragment ( $fragment ) {
+
+        return $this->_messageFragments .= $fragment;
+    }
+
+    /**
+     * Get the fragmented message.
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getFragmentedMessage ( ) {
+
+        return $this->_messageFragments;
+    }
+
+    /**
+     * Clear the fragmentation.
+     *
+     * @access  public
+     * @return  string
+     */
+    public function clearFragmentation ( ) {
+
+        unset($this->_messageFragments);
+
+        return;
     }
 }
 
