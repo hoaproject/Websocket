@@ -90,11 +90,11 @@ abstract class Generic {
     abstract public function readFrame ( );
 
     /**
-     * write a frame.
+     * Write a frame.
      *
      * @access  public
-     * @param   string  $message    message.
-     * @param   bool    $end        whether it is the last frame of the message.
+     * @param   string  $message    Message.
+     * @param   bool    $end        Whether it is the last frame of the message.
      * @return  int
      */
     abstract public function writeFrame ( $message, $end = true );

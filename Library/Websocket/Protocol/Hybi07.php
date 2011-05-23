@@ -166,12 +166,12 @@ class Hybi07 extends Generic {
     }
 
     /**
-     * Send a message to a node (if not specified, current node).
+     * Write a frame.
      *
      * @access  public
-     * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
-     * @return  void
+     * @param   string  $message    Message.
+     * @param   bool    $end        Whether it is the last frame of the message.
+     * @return  int
      */
     public function writeFrame ( $message, $end = true ) {
 
