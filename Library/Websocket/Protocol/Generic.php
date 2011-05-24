@@ -86,6 +86,7 @@ abstract class Generic {
      *
      * @access  public
      * @return  array
+     * @throw   \Hoa\Websocket\Exception
      */
     abstract public function readFrame ( );
 
@@ -96,6 +97,7 @@ abstract class Generic {
      * @param   string  $message    Message.
      * @param   bool    $end        Whether it is the last frame of the message.
      * @return  int
+     * @throw   \Hoa\Websocket\Exception
      */
     abstract public function writeFrame ( $message, $end = true );
 
