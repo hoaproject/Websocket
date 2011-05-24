@@ -39,6 +39,11 @@ namespace {
 from('Hoa')
 
 /**
+ * \Hoa\Websocket\Exception
+ */
+-> import('Websocket.Exception.~')
+
+/**
  * \Hoa\Websocket\Exception\BadProtocol
  */
 -> import('Websocket.Exception.BadProtocol')
@@ -118,7 +123,7 @@ class Hybi07 extends Generic {
         $out['length'] =  $handle       & 0x7f;
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3'])
-            throw new Exception(
+            throw new \Hoa\Websocket\Exception(
                 'frame-rsv1, frame-rsv2 and frame-rsv3 must equal to 0x0; ' .
                 'given 0x%x, 0x%x and 0x%x.',
                 1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
@@ -134,7 +139,7 @@ class Hybi07 extends Generic {
             $out['length'] = $handle['l2'];
 
             if($out['length'] > 0x7fffffffffffffff)
-                throw new Exception(
+                throw new \Hoa\Websocket\Exception(
                     'Message is too long.', 2);
         }
 
@@ -201,7 +206,7 @@ class Hybi07 extends Generic {
         elseif(0x8000000000000000 >= $length)
             $out .= chr(($mask << 7) | 0x7f) . pack('N', $length);
         else
-            throw new Exception(
+            throw new \Hoa\Websocket\Exception(
                 'Message is too long.', 3);
 
         $maskN  = array(
