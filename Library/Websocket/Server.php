@@ -237,6 +237,7 @@ class Server implements \Hoa\Core\Event\Listenable {
             catch ( \Hoa\Core\Exception\Idle $e ) {
 
                 $this->_on->fire('error', new \Hoa\Core\Event\Bucket($e));
+                $this->_server->disconnect();
             }
         }
 
