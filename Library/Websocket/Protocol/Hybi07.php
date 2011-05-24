@@ -102,6 +102,7 @@ class Hybi07 extends Generic {
      *
      * @access  public
      * @return  array
+     * @throw   \Hoa\Websocket\Exception
      */
     public function readFrame ( ) {
 
@@ -172,6 +173,7 @@ class Hybi07 extends Generic {
      * @param   string  $message    Message.
      * @param   bool    $end        Whether it is the last frame of the message.
      * @return  int
+     * @throw   \Hoa\Websocket\Exception
      */
     public function writeFrame ( $message, $end = true ) {
 
@@ -190,11 +192,18 @@ class Hybi07 extends Generic {
           | ($rsv2 << 5)
           | ($rsv3 << 4)
           | $opcode
-        ) .
-        chr(
-            ($opcode << 7)
-          | $length
         );
+
+        if(0x7d >= $length)
+            $out .= chr(($mask << 7) | $length);
+        elseif(0x10000 >= $length)
+            $out .= chr(($mask << 7) | 0x7e) . pack('n', $length);
+        elseif(0x8000000000000000 >= $length)
+            $out .= chr(($mask << 7) | 0x7f) . pack('N', $length);
+        else
+            throw new Exception(
+                'Message is too long.', 3);
+
         $maskN  = array(
             mt_rand(0, 255),
             mt_rand(0, 255),
