@@ -39,9 +39,9 @@ namespace {
 from('Hoa')
 
 /**
- * \Hoa\Socket\Connection\Node
+ * \Hoa\Socket\Node
  */
--> import('Socket.Connection.Node');
+-> import('Socket.Node');
 
 }
 
@@ -57,7 +57,7 @@ namespace Hoa\Websocket {
  * @license    New BSD License
  */
 
-class Node extends \Hoa\Socket\Connection\Node {
+class Node extends \Hoa\Socket\Node {
 
     /**
      * Protocol implementation.

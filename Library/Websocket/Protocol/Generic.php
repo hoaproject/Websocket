@@ -51,7 +51,7 @@ abstract class Generic {
     /**
      * Server.
      *
-     * @var \Hoa\Socket\Connection\Server object
+     * @var \Hoa\Socket\Server object
      */
     protected $_server = null;
 
@@ -61,10 +61,10 @@ abstract class Generic {
      * Construct the protocol implementation.
      *
      * @access  public
-     * @param   \Hoa\Socket\Connection\Server  $server    Server.
+     * @param   \Hoa\Socket\Server  $server    Server.
      * @return  void
      */
-    public function __construct ( \Hoa\Socket\Connection\Server $server ) {
+    public function __construct ( \Hoa\Socket\Server $server ) {
 
         $this->_server = $server;
 

@@ -131,7 +131,7 @@ class Server implements \Hoa\Core\Event\Listenable {
     /**
      * Server.
      *
-     * @var \Hoa\Socket\Connection\Server object
+     * @var \Hoa\Socket\Server object
      */
     protected $_server = null;
 
@@ -142,11 +142,11 @@ class Server implements \Hoa\Core\Event\Listenable {
      * 3 events can be listened: message, close & error.
      *
      * @access  public
-     * @param   \Hoa\Socket\Connection\Server  $server    Server.
+     * @param   \Hoa\Socket\Server  $server    Server.
      * @return  void
-     * @throw   \Hoa\Socket\Connection\Exception
+     * @throw   \Hoa\Socket\Exception
      */
-    public function __construct ( \Hoa\Socket\Connection\Server $server ) {
+    public function __construct ( \Hoa\Socket\Server $server ) {
 
         $this->_server = $server;
         $this->_server->setNodeName('\Hoa\Websocket\Node');
@@ -324,7 +324,7 @@ class Server implements \Hoa\Core\Event\Listenable {
      * Get server.
      *
      * @access  public
-     * @return  \Hoa\Socket\Connection\Server
+     * @return  \Hoa\Socket\Server
      */
     public function getServer ( ) {
 
