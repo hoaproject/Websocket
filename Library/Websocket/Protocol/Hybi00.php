@@ -78,14 +78,14 @@ class Hybi00 extends Generic {
         $key2      = $headers['sec-websocket-key2'];
         $key3      = $headers['__Body'];
         $location  = $headers['host'] . '/' . $headers['resource'];
-        $keynumb1  = (int) preg_replace('#[^0-9]#', '', $key1);
-        $keynumb2  = (int) preg_replace('#[^0-9]#', '', $key2);
+        $keynumb1  = (float) preg_replace('#[^0-9]#', '', $key1);
+        $keynumb2  = (float) preg_replace('#[^0-9]#', '', $key2);
 
         $spaces1   = substr_count($key1, ' ');
         $spaces2   = substr_count($key2, ' ');
 
-        $part1     = pack('N', $keynumb1 / $spaces1);
-        $part2     = pack('N', $keynumb2 / $spaces2);
+        $part1     = pack('N', (int) ($keynumb1 / $spaces1));
+        $part2     = pack('N', (int) ($keynumb2 / $spaces2));
         $challenge = $part1 . $part2 . $key3;
         $response  = md5($challenge, true);
 
