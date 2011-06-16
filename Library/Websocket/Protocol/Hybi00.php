@@ -90,7 +90,7 @@ class Hybi00 extends Generic {
         $response  = md5($challenge, true);
 
         $this->_server->writeAll(
-            $a = 'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
+            'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
             'Upgrade: WebSocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
             'Sec-WebSocket-Origin: ' . $headers['origin'] . "\r\n" .
