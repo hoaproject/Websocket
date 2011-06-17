@@ -96,7 +96,7 @@ class Node extends \Hoa\Socket\Node {
      * @param   \Hoa\Websocket\Protocol\Generic  $protocol    Protocol.
      * @return  \Hoa\Websocket\Protocol\Generic
      */
-    public function setProtocolImplementation ( \Hoa\Websocket\Protocol\Generic $protocol ) {
+    public function setProtocolImplementation ( Protocol\Generic $protocol ) {
 
         $old             = $this->_protocol;
         $this->_protocol = $protocol;
