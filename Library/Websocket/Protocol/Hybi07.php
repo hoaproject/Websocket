@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2011, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2012, Ivan Enderlin. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -63,7 +63,7 @@ namespace Hoa\Websocket\Protocol {
  * Protocol implementation: draft-ietf-hybi-thewebsocketprotocol-07.
  *
  * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2011 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2012 Ivan Enderlin.
  * @license    New BSD License
  */
 
