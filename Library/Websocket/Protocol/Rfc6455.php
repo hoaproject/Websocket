@@ -92,18 +92,23 @@ class Rfc6455 extends Generic {
             throw new \Hoa\Websocket\Exception\BadProtocol(
                 'Bad protocol implementation: it is not RFC6455.', 0);
 
-        $key        = $request['sec-websocket-key'];
-        $origin     = $request['sec-websocket-origin'];
-        $protocol   = $request['sec-websocket-protocol'];
-        $version    = $request['sec-websocket-version'];
-        $extensions = $request['sec-websocket-extensions'];
-        $response   = base64_encode(sha1($key . static::GUID, true));
+        $key      = $request['sec-websocket-key'];
+        $response = base64_encode(sha1($key . static::GUID, true));
+
+        /**
+         * @TODO
+         *   • Sec-WebSocket-Origin
+         *   • Sec-WebSocket-Version
+         *   • Sec-WebSocket-Protocol
+         *   • Sec-WebSocket-Extensions
+         */
 
         $this->_server->writeAll(
             'HTTP/1.1 101 Switching Protocols' . "\r\n" .
             'Upgrade: websocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
-            'Sec-WebSocket-Accept: ' . $response . "\r\n\r\n"
+            'Sec-WebSocket-Accept: ' . $response . "\r\n" .
+            'Sec-WebSocket-Version: 13' . "\r\n\r\n"
         );
         $this->_server->getCurrentNode()->setHandshake(SUCCEED);
 
