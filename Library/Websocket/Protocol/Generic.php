@@ -75,11 +75,11 @@ abstract class Generic {
      * Do the handshake.
      *
      * @access  public
-     * @param   array  $headers    Headers.
+     * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract public function doHandshake ( Array $headers );
+    abstract public function doHandshake ( \Hoa\Http\Request $request );
 
     /**
      * Read a frame.

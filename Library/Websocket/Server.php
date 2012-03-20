@@ -54,14 +54,19 @@ from('Hoa')
 -> import('Websocket.Node')
 
 /**
- * \Hoa\Websocket\Protocol\Hybi07
+ * \Hoa\Websocket\Protocol\Rfc6455
  */
--> import('Websocket.Protocol.Hybi07')
+-> import('Websocket.Protocol.Rfc6455')
 
 /**
  * \Hoa\Websocket\Protocol\Hybi00
  */
--> import('Websocket.Protocol.Hybi00');
+-> import('Websocket.Protocol.Hybi00')
+
+/**
+ * \Hoa\Http\Request
+ */
+-> import('Http.Request');
 
 }
 
@@ -126,14 +131,21 @@ class Server implements \Hoa\Core\Event\Listenable {
      *
      * @var \Hoa\Core\Event\Listener object
      */
-    protected $_on     = null;
+    protected $_on      = null;
 
     /**
      * Server.
      *
      * @var \Hoa\Socket\Server object
      */
-    protected $_server = null;
+    protected $_server  = null;
+
+    /**
+     * Request (mainly parser).
+     *
+     * @var \Hoa\Http\Request object
+     */
+    protected $_request = null;
 
 
 
@@ -146,7 +158,8 @@ class Server implements \Hoa\Core\Event\Listenable {
      * @return  void
      * @throw   \Hoa\Socket\Exception
      */
-    public function __construct ( \Hoa\Socket\Server $server ) {
+    public function __construct ( \Hoa\Socket\Server $server,
+                                  \Hoa\Http\Request  $request = null ) {
 
         $this->_server = $server;
         $this->_server->setNodeName('\Hoa\Websocket\Node');
@@ -155,6 +168,11 @@ class Server implements \Hoa\Core\Event\Listenable {
             'close',
             'error'
         ));
+
+        if(null === $request)
+            $request = new \Hoa\Http\Request();
+
+        $this->setRequest($request);
 
         return;
     }
@@ -255,48 +273,36 @@ class Server implements \Hoa\Core\Event\Listenable {
      */
     protected function doHandshake ( ) {
 
-        $buffer = $this->_server->read(2048);
-        $x      = explode("\r\n", $buffer);
-        $h      = array();
+        $buffer  = $this->_server->read(2048);
+        $server  = $this->getServer();
+        $request = $this->getRequest();
+        $request->parse($buffer);
 
-        for($i = 1, $m = count($x) - 3; $i <= $m; ++$i)
-            $h[strtolower(trim(substr($x[$i], 0, $p = strpos($x[$i], ':'))))] =
-                trim(substr($x[$i], $p + 1));
-
-        if(0 !== preg_match('#^GET (.*) HTTP/1\.[01]#', $buffer, $match))
-            $h['resource'] = trim($match[1], '/');
-
-        $h['__Body'] = $x[count($x) - 1];
-
-        // Hybi07.
+        // Rfc6455.
         try {
 
-            $hybi07 = new Protocol\Hybi07($this->_server);
-            $hybi07->doHandshake($h);
-            $this->_server->getCurrentNode()->setProtocolImplementation(
-                $hybi07
-            );
+            $rfc6455 = new Protocol\Rfc6455($server);
+            $rfc6455->doHandshake($request);
+            $server->getCurrentNode()->setProtocolImplementation($rfc6455);
         }
         catch ( Exception\BadProtocol $e ) {
 
-            unset($hybi07);
+            unset($rfc6455);
 
             // Hybi00.
             try {
 
-                $hybi00 = new Protocol\Hybi00($this->_server);
-                $hybi00->doHandshake($h);
-                $this->_server->getCurrentNode()->setProtocolImplementation(
-                    $hybi00
-                );
+                $hybi00 = new Protocol\Hybi00($server);
+                $hybi00->doHandshake($request);
+                $server->getCurrentNode()->setProtocolImplementation($hybi00);
             }
             catch ( Exception\BadProtocol $e ) {
 
                 unset($hybi00);
-                $this->_server->disconnect();
+                $server->disconnect();
 
                 throw new Exception\BadProtocol(
-                    'All protocol failed.', 1, null);
+                    'All protocol failed.', 1);
             }
         }
 
@@ -314,7 +320,7 @@ class Server implements \Hoa\Core\Event\Listenable {
      */
     public function send ( $message, Node $node = null ) {
 
-        return $this->_server
+        return $this->getServer()
                     ->getCurrentNode()
                     ->getProtocolImplementation()
                     ->send($message, $node);
@@ -329,6 +335,32 @@ class Server implements \Hoa\Core\Event\Listenable {
     public function getServer ( ) {
 
         return $this->_server;
+    }
+
+    /**
+     * Set request (mainly parser).
+     *
+     * @access  public
+     * @param   \Hoa\Http\Request  $request    Request.
+     * @return  \Hoa\Http\Request
+     */
+    public function setRequest ( \Hoa\Http\Request $request ) {
+
+        $old            = $this->_request;
+        $this->_request = $request;
+
+        return $old;
+    }
+
+    /**
+     * Get request.
+     *
+     * @access  public
+     * @return  \Hoa\Http\Request
+     */
+    public function getRequest ( ) {
+
+        return $this->_request;
     }
 }
 

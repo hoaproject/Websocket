@@ -68,16 +68,16 @@ class Hybi00 extends Generic {
      * Do the handshake.
      *
      * @access  public
-     * @param   array  $headers    Headers.
+     * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake ( Array $headers ) {
+    public function doHandshake ( \Hoa\Http\Request $request ) {
 
-        $key1      = $headers['sec-websocket-key1'];
-        $key2      = $headers['sec-websocket-key2'];
-        $key3      = $headers['__Body'];
-        $location  = $headers['host'] . '/' . $headers['resource'];
+        $key1      = $request['sec-websocket-key1'];
+        $key2      = $request['sec-websocket-key2'];
+        $key3      = $request->getBody();
+        $location  = $request['host'] . $request->getUrl();
         $keynumb1  = (float) preg_replace('#[^0-9]#', '', $key1);
         $keynumb2  = (float) preg_replace('#[^0-9]#', '', $key2);
 
@@ -93,12 +93,11 @@ class Hybi00 extends Generic {
             'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
             'Upgrade: WebSocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
-            'Sec-WebSocket-Origin: ' . $headers['origin'] . "\r\n" .
+            'Sec-WebSocket-Origin: ' . $request['origin'] . "\r\n" .
             'Sec-WebSocket-Location: ws://' . $location . "\r\n" .
             "\r\n" .
             $response . "\r\n"
         );
-
         $this->_server->getCurrentNode()->setHandshake(SUCCEED);
 
         return;
