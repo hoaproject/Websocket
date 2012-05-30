@@ -163,15 +163,9 @@ class Rfc6455 extends Generic {
             return $out;
         }
 
-        $maskN          = array_map(
-            'ord',
-            str_split($this->_server->read(4))
-        );
-        $maskC          = 0;
-        $handle         = array_map(
-            'ord',
-            str_split($this->_server->read($out['length']))
-        );
+        $maskN  = array_map('ord', str_split($this->_server->read(4)));
+        $maskC  = 0;
+        $handle = array_map('ord', str_split($this->_server->read($out['length'])));
 
         foreach($handle as &$b) {
 
