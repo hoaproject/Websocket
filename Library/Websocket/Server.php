@@ -181,12 +181,12 @@ class Server implements \Hoa\Core\Event\Listenable {
      * Attach a callable to this listenable object.
      *
      * @access  public
-     * @param   string      $listenerId    Listener ID.
-     * @param   \XCallable  $callable      Callable.
+     * @param   string  $listenerId    Listener ID.
+     * @param   mixed   $callable      Callable.
      * @return  \Hoa\Websocket\Server
      * @throw   \Hoa\Core\Exception
      */
-    public function on ( $listenerId, \XCallable $callable ) {
+    public function on ( $listenerId, $callable ) {
 
         return $this->_on->attach($listenerId, $callable);
     }
