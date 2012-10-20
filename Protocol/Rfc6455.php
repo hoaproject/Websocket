@@ -141,7 +141,10 @@ class Rfc6455 extends Generic {
                 'given 0x%x, 0x%x and 0x%x.',
                 1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
 
-        if(0x7e === $out['length']) {
+        if(0 === $out['length'])
+            throw new \Hoa\Websocket\Exception(
+                'Length cannot be zero.', 2);
+        elseif(0x7e === $out['length']) {
 
             $handle        = unpack('nl', $this->_server->read(2));
             $out['length'] = $handle['l'];
@@ -153,7 +156,7 @@ class Rfc6455 extends Generic {
 
             if($out['length'] > 0x7fffffffffffffff)
                 throw new \Hoa\Websocket\Exception(
-                    'Message is too long.', 2);
+                    'Message is too long.', 3);
         }
 
         if(0x0 === $out['mask']) {
@@ -214,7 +217,7 @@ class Rfc6455 extends Generic {
             $out .= chr(($mask << 7) | 0x7f) . pack('N', $length);
         else
             throw new \Hoa\Websocket\Exception(
-                'Message is too long.', 3);
+                'Message is too long.', 4);
 
         $maskN  = array(
             mt_rand(0, 255),
