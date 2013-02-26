@@ -226,13 +226,15 @@ class Server implements \Hoa\Core\Event\Listenable {
                     case self::OPCODE_CONTINUATION_FRAME:
                         $node->appendMessageFragment($frame['message']);
 
-                        if(0x1 == $frame['fin']) {
+                        if(0x1 === $frame['fin']) {
 
                             $message = $node->getFragmentedMessage();
                             $node->clearFragmentation();
                             $this->_on->fire(
                                 'message',
-                                new \Hoa\Core\Event\Bucket($message)
+                                new \Hoa\Core\Event\Bucket(array(
+                                    'message' => $message
+                                ))
                             );
                         }
                       break;
@@ -240,7 +242,9 @@ class Server implements \Hoa\Core\Event\Listenable {
                     case self::OPCODE_TEXT_FRAME:
                         $this->_on->fire(
                             'message',
-                            new \Hoa\Core\Event\Bucket($frame['message'])
+                            new \Hoa\Core\Event\Bucket(array(
+                                'message' => $frame['message']
+                            ))
                         );
                       break;
 
@@ -260,7 +264,9 @@ class Server implements \Hoa\Core\Event\Listenable {
             }
             catch ( \Hoa\Core\Exception\Idle $e ) {
 
-                $this->_on->fire('error', new \Hoa\Core\Event\Bucket($e));
+                $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
+                    'exception' => $e
+                )));
                 $this->_server->disconnect();
             }
         }
