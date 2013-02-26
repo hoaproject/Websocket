@@ -164,6 +164,7 @@ class Server implements \Hoa\Core\Event\Listenable {
         $this->_server = $server;
         $this->_server->setNodeName('\Hoa\Websocket\Node');
         $this->_on     = new \Hoa\Core\Event\Listener($this, array(
+            'open',
             'message',
             'close',
             'error'
@@ -210,6 +211,10 @@ class Server implements \Hoa\Core\Event\Listenable {
                 if(FAILED === $node->getHandshake()) {
 
                     $this->doHandshake();
+                    $this->_on->fire(
+                        'open',
+                        new \Hoa\Core\Event\Bucket()
+                    );
 
                     continue;
                 }
