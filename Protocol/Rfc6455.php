@@ -97,8 +97,7 @@ class Rfc6455 extends Generic {
 
         /**
          * @TODO
-         *   • Sec-WebSocket-Origin
-         *   • Sec-WebSocket-Version
+         *   • Origin
          *   • Sec-WebSocket-Protocol
          *   • Sec-WebSocket-Extensions
          */
@@ -126,6 +125,7 @@ class Rfc6455 extends Generic {
 
         $out           = array();
         $handle        = ord($this->_server->read(1));
+
         $out['fin']    = ($handle >> 7) & 0x1;
         $out['rsv1']   = ($handle >> 6) & 0x1;
         $out['rsv2']   = ($handle >> 5) & 0x1;
@@ -137,7 +137,7 @@ class Rfc6455 extends Generic {
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3'])
             throw new \Hoa\Websocket\Exception(
-                'frame-rsv1, frame-rsv2 and frame-rsv3 must equal to 0x0; ' .
+                'frame-rsv1, frame-rsv2 and frame-rsv3 must be equal to 0x0; ' .
                 'given 0x%x, 0x%x and 0x%x.',
                 1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
 
@@ -210,33 +210,16 @@ class Rfc6455 extends Generic {
         );
 
         if(0x7d >= $length)
-            $out .= chr(($mask << 7) | $length);
+            $out .= chr($length);
         elseif(0x10000 >= $length)
-            $out .= chr(($mask << 7) | 0x7e) . pack('n', $length);
+            $out .= chr(0x7e) . pack('n', $length);
         elseif(0x8000000000000000 >= $length)
-            $out .= chr(($mask << 7) | 0x7f) . pack('N', $length);
+            $out .= chr(0x7f) . pack('N', $length);
         else
             throw new \Hoa\Websocket\Exception(
                 'Message is too long.', 4);
 
-        $maskN  = array(
-            mt_rand(0, 255),
-            mt_rand(0, 255),
-            mt_rand(0, 255),
-            mt_rand(0, 255)
-        );
-        $maskC  = 0;
-        $handle = array_map('ord', str_split($message));
-
-        foreach($handle as &$b) {
-
-            $b     ^= $maskN[$maskC];
-            $maskC  = ($maskC + 1) % 4;
-        }
-
-        $buffer = implode('', array_map('chr', $handle));
-        $out   .= implode('', array_map('chr', $maskN)) .
-                  $buffer;
+        $out .= $message;
 
         return $this->_server->writeAll($out);
     }
