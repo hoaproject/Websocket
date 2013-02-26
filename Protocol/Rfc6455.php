@@ -123,14 +123,23 @@ class Rfc6455 extends Generic {
      */
     public function readFrame ( ) {
 
-        $out           = array();
-        $handle        = ord($this->_server->read(1));
+        $out  = array();
+        $read = $this->_server->read(1);
 
+        if(empty($read)) {
+
+            $out['opcode'] = \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE;
+
+            return $out;
+        }
+
+        $handle        = ord($read);
         $out['fin']    = ($handle >> 7) & 0x1;
         $out['rsv1']   = ($handle >> 6) & 0x1;
         $out['rsv2']   = ($handle >> 5) & 0x1;
         $out['rsv3']   = ($handle >> 4) & 0x1;
         $out['opcode'] =  $handle       & 0xf;
+
         $handle        = ord($this->_server->read(1));
         $out['mask']   = ($handle >> 7) & 0x1;
         $out['length'] =  $handle       & 0x7f;
