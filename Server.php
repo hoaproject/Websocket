@@ -151,10 +151,11 @@ class Server implements \Hoa\Core\Event\Listenable {
 
     /**
      * Create a websocket server.
-     * 3 events can be listened: message, close & error.
+     * 4 events can be listened: open, message, close and error.
      *
      * @access  public
      * @param   \Hoa\Socket\Server  $server    Server.
+     * @param   \Hoa\Http\Request   $request   Request parser.
      * @return  void
      * @throw   \Hoa\Socket\Exception
      */
