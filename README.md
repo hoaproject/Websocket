@@ -93,38 +93,35 @@ Finally, we have to write a client in HTML and Javascript:
           }
       });
 
-      (function ( ) {
+      try {
 
-          try {
+          socket = new WebSocket(host);
+          socket.onopen = function ( ) {
 
-              socket = new WebSocket(host);
-              socket.onopen = function ( ) {
-
-                  print('connection is opened');
-                  input.focus();
-
-                  return;
-              };
-              socket.onmessage = function ( msg ) {
-
-                  print(msg.data);
-
-                  return;
-              };
-              socket.onclose = function ( ) {
-
-                  print('connection is closed');
-
-                  return;
-              };
-          }
-          catch ( e ) {
-
-              console.log(e);
+              print('connection is opened');
+              input.focus();
 
               return;
-          }
-      })();
+          };
+          socket.onmessage = function ( msg ) {
+
+              print(msg.data);
+
+              return;
+          };
+          socket.onclose = function ( ) {
+
+              print('connection is closed');
+
+              return;
+          };
+      }
+      catch ( e ) {
+
+          console.log(e);
+
+          return;
+      }
     </script>
 
 Here we are. All sent messages are echoed.
