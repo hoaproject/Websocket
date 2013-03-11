@@ -288,9 +288,9 @@ class Server implements \Hoa\Core\Event\Listenable {
      */
     public function run ( ) {
 
-        $this->_server->connectAndWait();
+        $this->getServer()->connectAndWait();
 
-        while(true) foreach($this->_server->select() as $node) {
+        while(true) foreach($this->getServer()->select() as $node) {
 
             try {
 
@@ -335,7 +335,8 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_PING:
-                        $this->_server
+
+                        $this->getServer()
                              ->getCurrentNode()
                              ->getProtocolImplementation()
                              ->writeFrame(
@@ -367,7 +368,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                 $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
                     'exception' => $e
                 )));
-                $this->_server->disconnect();
+                $this->close();
             }
         }
 
@@ -385,7 +386,7 @@ class Server implements \Hoa\Core\Event\Listenable {
      */
     protected function doHandshake ( ) {
 
-        $buffer  = $this->_server->read(2048);
+        $buffer  = $this->getServer()->read(2048);
         $server  = $this->getServer();
         $request = $this->getRequest();
         $request->parse($buffer);
@@ -436,6 +437,26 @@ class Server implements \Hoa\Core\Event\Listenable {
                     ->getCurrentNode()
                     ->getProtocolImplementation()
                     ->send($message, $node);
+    }
+
+    /**
+     * Close a specific node/connection.
+     * It is just a “inline” method, a shortcut.
+     *
+     * @access  public
+     * @param   int                  $reason    Reason (please, see
+     *                                          self::CLOSE_* constants).
+     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @return  void
+     */
+    public function close ( $reason = self::CLOSE_NORMAL, Node $node = null ) {
+
+        $server = $this->getServer();
+        $server->getCurrentNode()
+               ->getProtocolImplementation()
+               ->close($reason, $node);
+
+        return $server->disconnect();
     }
 
     /**
