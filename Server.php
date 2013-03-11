@@ -127,6 +127,91 @@ class Server implements \Hoa\Core\Event\Listenable {
     const OPCODE_PONG               = 0xa;
 
     /**
+     * Close: normal.
+     *
+     * @const int
+     */
+    const CLOSE_NORMAL              = 1000;
+
+    /**
+     * Close: going away.
+     *
+     * @const int
+     */
+    const CLOSE_GOING_AWAY          = 1001;
+
+    /**
+     * Close: protocol error.
+     *
+     * @const int
+     */
+    const CLOSE_PROTOCOL_ERROR      = 1002;
+
+    /**
+     * Close: data error.
+     *
+     * @const int
+     */
+    const CLOSE_DATA_ERROR          = 1003;
+
+    /**
+     * Close: status error.
+     *
+     * @const int
+     */
+    const CLOSE_STATUS_ERROR        = 1005;
+
+    /**
+     * Close: abnormal.
+     *
+     * @const int
+     */
+    const CLOSE_ABNORMAL            = 1006;
+
+    /**
+     * Close: message error.
+     *
+     * @const int
+     */
+    const CLOSE_MESSAGE_ERROR       = 1007;
+
+    /**
+     * Close: policy error.
+     *
+     * @const int
+     */
+    const CLOSE_POLICY_ERROR        = 1008;
+
+    /**
+     * Close: message too big.
+     *
+     * @const int
+     */
+    const CLOSE_MESSAGE_TOO_BIG     = 1009;
+
+    /**
+     * Close: extension missing.
+     *
+     * @const int
+     */
+    const CLOSE_EXTENSION_MISSING   = 1010;
+
+    /**
+     * Close: server error.
+     *
+     * @const int
+     */
+    const CLOSE_SERVER_ERROR        = 1011;
+
+    /**
+     * Close: TLS.
+     *
+     * @const int
+     */
+    const CLOSE_TLS                 = 1015;
+
+
+    /**
      * Listeners.
      *
      * @var \Hoa\Core\Event\Listener object
