@@ -150,6 +150,12 @@ class Rfc6455 extends Generic {
                 'given 0x%x, 0x%x and 0x%x.',
                 1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
 
+        if(0 === $out['length']) {
+
+            $out['message'] = '';
+
+            return $out;
+        }
         if(0 === $out['length'])
             throw new \Hoa\Websocket\Exception(
                 'Length cannot be zero.', 2);
