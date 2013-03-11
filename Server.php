@@ -326,6 +326,14 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_TEXT_FRAME:
+                        if(0 === $frame['length']) {
+
+                            $this->send($frame['message']);
+                            $this->close(self::CLOSE_NORMAL);
+
+                            break;
+                        }
+
                         $this->_on->fire(
                             'message',
                             new \Hoa\Core\Event\Bucket(array(
