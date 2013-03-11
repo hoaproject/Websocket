@@ -204,7 +204,6 @@ class Rfc6455 extends Generic {
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   int     $opcode     Opcode.
      * @return  int
-     * @throw   \Hoa\Websocket\Exception
      */
     public function writeFrame ( $message,
                                  $end    = true,
@@ -224,15 +223,12 @@ class Rfc6455 extends Generic {
           | $opcode
         );
 
-        if(0x7d >= $length)
-            $out .= chr($length);
-        elseif(0x10000 >= $length)
+        if(0xffff < $length)
+            $out .= chr(0x7f) . pack('NN', 0, $length);
+        elseif(0x7d < $length)
             $out .= chr(0x7e) . pack('n', $length);
-        elseif(0x8000000000000000 >= $length)
-            $out .= chr(0x7f) . pack('N', $length);
         else
-            throw new \Hoa\Websocket\Exception(
-                'Message is too long.', 4);
+            $out .= chr($length);
 
         $out .= $message;
 
