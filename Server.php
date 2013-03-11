@@ -336,11 +336,20 @@ class Server implements \Hoa\Core\Event\Listenable {
 
                     case self::OPCODE_PING:
 
+                        $message = &$frame['message'];
+
+                        if(0x7d < strlen($message)) {
+
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                            break;
+                        }
+
                         $this->getServer()
                              ->getCurrentNode()
                              ->getProtocolImplementation()
                              ->writeFrame(
-                                 $frame['message'],
+                                 $message,
                                  true,
                                  self::OPCODE_PONG
                              );
