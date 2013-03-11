@@ -177,6 +177,22 @@ class Hybi00 extends Generic {
 
         return;
     }
+
+    /**
+     * Close a specific node/connection.
+     *
+     * @access  public
+     * @param   int                  $reason    Reason (please, see
+     *                                          \Hoa\Websocket\Server::CLOSE_*
+     *                                          constants).
+     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @return  void
+     */
+    public function close ( $reason = \Hoa\Websocket\Server::CLOSE_NORMAL,
+                            \Hoa\Websocket\Node $node = null ) {
+
+        return;
+    }
 }
 
 }
