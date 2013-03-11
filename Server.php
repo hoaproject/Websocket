@@ -335,7 +335,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_PING:
-
                         $message = &$frame['message'];
 
                         if(0x7d < strlen($message)) {
