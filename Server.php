@@ -249,6 +249,20 @@ class Server implements \Hoa\Core\Event\Listenable {
                         );
                       break;
 
+                    case self::OPCODE_PING:
+                        $this->_server
+                             ->getCurrentNode()
+                             ->getProtocolImplementation()
+                             ->writeFrame(
+                                 $frame['message'],
+                                 true,
+                                 self::OPCODE_PONG
+                             );
+                      break;
+
+                    case self::OPCODE_PONG:
+                      break;
+
                     case self::OPCODE_CONNECTION_CLOSE:
                         $this->_on->fire(
                             'close',
