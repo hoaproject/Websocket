@@ -96,10 +96,13 @@ abstract class Generic {
      * @access  public
      * @param   string  $message    Message.
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   int     $opcode     Opcode.
      * @return  int
      * @throw   \Hoa\Websocket\Exception
      */
-    abstract public function writeFrame ( $message, $end = true );
+    abstract public function writeFrame ( $message,
+                                          $end    = true,
+                                          $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME );
 
     /**
      * Send a message to a node (if not specified, current node).

@@ -196,18 +196,18 @@ class Rfc6455 extends Generic {
      * @access  public
      * @param   string  $message    Message.
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   int     $opcode     Opcode.
      * @return  int
      * @throw   \Hoa\Websocket\Exception
      */
-    public function writeFrame ( $message, $end = true ) {
+    public function writeFrame ( $message,
+                                 $end    = true,
+                                 $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
 
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
         $rsv2   = 0x0;
         $rsv3   = 0x0;
-        $opcode = true === $end
-                      ? \Hoa\Websocket\Server::OPCODE_TEXT_FRAME
-                      : \Hoa\Websocket\Server::OPCODE_CONTINUATION_FRAME;
         $mask   = 0x1;
         $length = strlen($message);
         $out    = chr(

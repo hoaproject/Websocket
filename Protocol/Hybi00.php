@@ -144,9 +144,10 @@ class Hybi00 extends Generic {
      * @access  public
      * @param   string  $message    Message.
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   int     $opcode     Opcode (useless here).
      * @return  int
      */
-    public function writeFrame ( $message, $end = true ) {
+    public function writeFrame ( $message, $end = true, $opcode = -1 ) {
 
         return $this->_server->writeAll(
             chr(0) . $message . chr(255)
