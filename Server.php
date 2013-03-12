@@ -425,10 +425,39 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_CONNECTION_CLOSE:
+                        $length = &$frame['length'];
+
+                        if(   1    === $length
+                           || 0x7d  <  $length) {
+
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                            break;
+                        }
+
                         $this->close(self::CLOSE_NORMAL);
+
+                        $code   = self::CLOSE_NORMAL;
+                        $reason = null;
+
+                        if(0 < $length) {
+
+                            $message = &$frame['message'];
+                            $_code   = unpack('nc', substr($message, 0, 2));
+                            $code    = &$_code['c'];
+
+                            if(2 === $length)
+                                $reason = null;
+                            else
+                                $reason = substr($message, 2);
+                        }
+
                         $this->_on->fire(
                             'close',
-                            new \Hoa\Core\Event\Bucket()
+                            new \Hoa\Core\Event\Bucket(array(
+                                'code'   => $code,
+                                'reason' => $reason
+                            ))
                         );
                       break;
 
