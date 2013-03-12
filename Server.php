@@ -425,11 +425,11 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_CONNECTION_CLOSE:
+                        $this->close(self::CLOSE_NORMAL);
                         $this->_on->fire(
                             'close',
                             new \Hoa\Core\Event\Bucket()
                         );
-                        $this->_server->disconnect();
                       break;
 
                     default:
