@@ -444,6 +444,16 @@ class Server implements \Hoa\Core\Event\Listenable {
                             $_code   = unpack('nc', substr($message, 0, 2));
                             $code    = &$_code['c'];
 
+                            if(   1000  >  $code
+                               || (1004 <= $code && $code <= 1006)
+                               || (1012 <= $code && $code <= 1016)
+                               || 5000  <= $code) {
+
+                                $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                                break;
+                            }
+
                             if(2 < $length) {
 
                                 $reason = substr($message, 2);
