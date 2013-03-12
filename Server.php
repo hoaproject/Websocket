@@ -391,13 +391,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                             break;
                         }
 
-                        if(false === (bool) preg_match('//u', $message)) {
-
-                            $this->close(self::CLOSE_MESSAGE_ERROR);
-
-                            break;
-                        }
-
                         $this->getServer()
                              ->getCurrentNode()
                              ->getProtocolImplementation()
