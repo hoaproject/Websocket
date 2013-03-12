@@ -310,9 +310,53 @@ class Server implements \Hoa\Core\Event\Listenable {
                 if(false === $frame)
                     continue;
 
+                $fromText = false;
+
                 switch($frame['opcode']) {
 
+                    case self::OPCODE_TEXT_FRAME:
+                        if(0 === $frame['length']) {
+
+                            $this->send($frame['message']);
+                            $this->close(self::CLOSE_NORMAL);
+
+                            break;
+                        }
+
+                        if(0x1 === $frame['fin']) {
+
+                            if(0 < $node->getNumberOfFragments()) {
+
+                                $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                                break;
+                            }
+
+                            $this->_on->fire(
+                                'message',
+                                new \Hoa\Core\Event\Bucket(array(
+                                    'message' => $frame['message']
+                                ))
+                            );
+
+                            break;
+                        }
+
+                        $fromText = true;
+
                     case self::OPCODE_CONTINUATION_FRAME:
+                        if(false === $fromText) {
+
+                            if(0 === $node->getNumberOfFragments()) {
+
+                                $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                                break;
+                            }
+                        }
+                        else
+                            $fromText = false;
+
                         $node->appendMessageFragment($frame['message']);
 
                         if(0x1 === $frame['fin']) {
@@ -326,23 +370,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                                 ))
                             );
                         }
-                      break;
-
-                    case self::OPCODE_TEXT_FRAME:
-                        if(0 === $frame['length']) {
-
-                            $this->send($frame['message']);
-                            $this->close(self::CLOSE_NORMAL);
-
-                            break;
-                        }
-
-                        $this->_on->fire(
-                            'message',
-                            new \Hoa\Core\Event\Bucket(array(
-                                'message' => $frame['message']
-                            ))
-                        );
                       break;
 
                     case self::OPCODE_PING:

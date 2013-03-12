@@ -64,28 +64,35 @@ class Node extends \Hoa\Socket\Node {
      *
      * @var \Hoa\Websocket\Protocol\Generic object
      */
-    protected $_protocol         = null;
+    protected $_protocol          = null;
 
     /**
      * Whether it is the first message.
      *
      * @var \Hoa\Websocket\Node bool
      */
-    protected $_first            = true;
+    protected $_first             = true;
 
     /**
      * Whether the handshake succeed.
      *
      * @var \Hoa\Websocket\Node bool
      */
-    protected $_handshake        = false;
+    protected $_handshake         = false;
 
     /**
-     * Fragments of a continuous message.
+     * Fragments of message.
      *
      * @var \Hoa\Websocket\Node string
      */
-    protected $_messageFragments = null;
+    protected $_messageFragments  = null;
+
+    /**
+     * Number of fragments.
+     *
+     * @var \Hoa\Websocket\Node int
+     */
+    protected $_numberOfFragments = 0;
 
 
 
@@ -176,6 +183,8 @@ class Node extends \Hoa\Socket\Node {
      */
     public function appendMessageFragment ( $fragment ) {
 
+        ++$this->_numberOfFragments;
+
         return $this->_messageFragments .= $fragment;
     }
 
@@ -191,6 +200,17 @@ class Node extends \Hoa\Socket\Node {
     }
 
     /**
+     * Get number of fragments.
+     *
+     * @access  public
+     * @return  int
+     */
+    public function getNumberOfFragments ( ) {
+
+        return $this->_numberOfFragments;
+    }
+
+    /**
      * Clear the fragmentation.
      *
      * @access  public
@@ -199,6 +219,7 @@ class Node extends \Hoa\Socket\Node {
     public function clearFragmentation ( ) {
 
         unset($this->_messageFragments);
+        $this->_numberOfFragments = 0;
 
         return;
     }
