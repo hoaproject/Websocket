@@ -325,6 +325,13 @@ class Server implements \Hoa\Core\Event\Listenable {
                                 break;
                             }
 
+                            if(false === (bool) preg_match('//u', $frame['message'])) {
+
+                                $this->close(self::CLOSE_MESSAGE_ERROR);
+
+                                break;
+                            }
+
                             $this->_on->fire(
                                 'message',
                                 new \Hoa\Core\Event\Bucket(array(
@@ -356,6 +363,14 @@ class Server implements \Hoa\Core\Event\Listenable {
 
                             $message = $node->getFragmentedMessage();
                             $node->clearFragmentation();
+
+                            if(false === (bool) preg_match('//u', $message)) {
+
+                                $this->close(self::CLOSE_MESSAGE_ERROR);
+
+                                break;
+                            }
+
                             $this->_on->fire(
                                 'message',
                                 new \Hoa\Core\Event\Bucket(array(
@@ -376,6 +391,13 @@ class Server implements \Hoa\Core\Event\Listenable {
                             break;
                         }
 
+                        if(false === (bool) preg_match('//u', $message)) {
+
+                            $this->close(self::CLOSE_MESSAGE_ERROR);
+
+                            break;
+                        }
+
                         $this->getServer()
                              ->getCurrentNode()
                              ->getProtocolImplementation()
@@ -388,7 +410,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                         $this->_on->fire(
                             'ping',
                             new \Hoa\Core\Event\Bucket(array(
-                                'message' => $frame['message']
+                                'message' => $message
                             ))
                         );
                       break;
