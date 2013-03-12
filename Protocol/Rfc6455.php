@@ -145,11 +145,12 @@ class Rfc6455 extends Generic {
         $out['length'] =  $handle       & 0x7f;
         $length        = &$out['length'];
 
-        if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3'])
-            throw new \Hoa\Websocket\Exception(
-                'frame-rsv1, frame-rsv2 and frame-rsv3 must be equal to 0x0; ' .
-                'given 0x%x, 0x%x and 0x%x.',
-                1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
+        if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
+
+            $this->_server->close(\Hoa\Websocket\Server::CLOSE_PROTOCOL_ERROR);
+
+            return false;
+        }
 
         if(0 === $length) {
 
