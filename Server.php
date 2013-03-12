@@ -435,8 +435,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                             break;
                         }
 
-                        $this->close(self::CLOSE_NORMAL);
-
                         $code   = self::CLOSE_NORMAL;
                         $reason = null;
 
@@ -448,10 +446,20 @@ class Server implements \Hoa\Core\Event\Listenable {
 
                             if(2 === $length)
                                 $reason = null;
-                            else
+                            else {
+
                                 $reason = substr($message, 2);
+
+                                if(false === (bool) preg_match('//u', $reason)) {
+
+                                    $this->close(self::CLOSE_MESSAGE_ERROR);
+
+                                    break;
+                                }
+                            }
                         }
 
+                        $this->close(self::CLOSE_NORMAL);
                         $this->_on->fire(
                             'close',
                             new \Hoa\Core\Event\Bucket(array(
