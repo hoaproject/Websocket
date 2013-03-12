@@ -375,7 +375,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                     case self::OPCODE_PING:
                         $message = &$frame['message'];
 
-                        if(   0    === $frame['fin']
+                        if(   0x0  === $frame['fin']
                            || 0x7d  <  strlen($message)) {
 
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
