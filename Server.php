@@ -310,13 +310,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                 if(false === $frame)
                     continue;
 
-                if(false === (bool) preg_match('//u', $frame['message'])) {
-
-                    $this->close(self::CLOSE_MESSAGE_ERROR);
-
-                    continue;
-                }
-
                 $fromText = false;
 
                 switch($frame['opcode']) {
