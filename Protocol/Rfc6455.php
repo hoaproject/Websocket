@@ -157,9 +157,6 @@ class Rfc6455 extends Generic {
 
             return $out;
         }
-        if(0 === $length)
-            throw new \Hoa\Websocket\Exception(
-                'Length cannot be zero.', 2);
         elseif(0x7e === $length) {
 
             $handle = unpack('nl', $this->_server->read(2));
