@@ -444,9 +444,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                             $_code   = unpack('nc', substr($message, 0, 2));
                             $code    = &$_code['c'];
 
-                            if(2 === $length)
-                                $reason = null;
-                            else {
+                            if(2 < $length) {
 
                                 $reason = substr($message, 2);
 
