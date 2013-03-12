@@ -143,6 +143,7 @@ class Rfc6455 extends Generic {
         $handle        = ord($this->_server->read(1));
         $out['mask']   = ($handle >> 7) & 0x1;
         $out['length'] =  $handle       & 0x7f;
+        $length        = &$out['length'];
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3'])
             throw new \Hoa\Websocket\Exception(
@@ -150,48 +151,59 @@ class Rfc6455 extends Generic {
                 'given 0x%x, 0x%x and 0x%x.',
                 1, array($out['rsv1'], $out['rsv2'], $out['rsv3']));
 
-        if(0 === $out['length']) {
+        if(0 === $length) {
 
             $out['message'] = '';
 
             return $out;
         }
-        if(0 === $out['length'])
+        if(0 === $length)
             throw new \Hoa\Websocket\Exception(
                 'Length cannot be zero.', 2);
-        elseif(0x7e === $out['length']) {
+        elseif(0x7e === $length) {
 
-            $handle        = unpack('nl', $this->_server->read(2));
-            $out['length'] = $handle['l'];
+            $handle = unpack('nl', $this->_server->read(2));
+            $length = $handle['l'];
         }
-        elseif(0x7f === $out['length']) {
+        elseif(0x7f === $length) {
 
-            $handle        = unpack('N*l', $this->_server->read(8));
-            $out['length'] = $handle['l2'];
+            $handle = unpack('N*l', $this->_server->read(8));
+            $length = $handle['l2'];
 
-            if($out['length'] > 0x7fffffffffffffff)
+            if($length > 0x7fffffffffffffff)
                 throw new \Hoa\Websocket\Exception(
                     'Message is too long.', 3);
         }
 
         if(0x0 === $out['mask']) {
 
-            $out['message'] = $this->_server->read($out['length']);
+            $out['message'] = $this->_server->read($length);
 
             return $out;
         }
 
-        $maskN  = array_map('ord', str_split($this->_server->read(4)));
-        $maskC  = 0;
-        $handle = array_map('ord', str_split($this->_server->read($out['length'])));
+        $maskN = array_map('ord', str_split($this->_server->read(4)));
+        $maskC = 0;
 
-        foreach($handle as &$b) {
+        $buffer       = 0;
+        $bufferLength = 3000;
+        $message      = null;
 
-            $b     ^= $maskN[$maskC];
-            $maskC  = ($maskC + 1) % 4;
+        for($i = 0; $i < $length; $i += $bufferLength) {
+
+            $buffer = min($bufferLength, $length - $i);
+            $handle = $this->_server->read($buffer);
+
+            for($j = 0; $j < $buffer; ++$j) {
+
+                $handle[$j] = chr(ord($handle[$j]) ^ $maskN[$maskC]);
+                $maskC      = ($maskC + 1) % 4;
+            }
+
+            $message .= $handle;
         }
 
-        $out['message'] = implode('', array_map('chr', $handle));
+        $out['message'] = $message;
 
         return $out;
     }
