@@ -252,6 +252,7 @@ class Server implements \Hoa\Core\Event\Listenable {
         $this->_on     = new \Hoa\Core\Event\Listener($this, array(
             'open',
             'message',
+            'ping',
             'close',
             'error'
         ));
@@ -368,7 +369,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                         $message = &$frame['message'];
 
                         if(   0x0  === $frame['fin']
-                           || 0x7d  <  strlen($message)) {
+                           || 0x7d  <  $frame['length']) {
 
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
 
@@ -383,6 +384,13 @@ class Server implements \Hoa\Core\Event\Listenable {
                                  true,
                                  self::OPCODE_PONG
                              );
+
+                        $this->_on->fire(
+                            'ping',
+                            new \Hoa\Core\Event\Bucket(array(
+                                'message' => $frame['message']
+                            ))
+                        );
                       break;
 
                     case self::OPCODE_PONG:
