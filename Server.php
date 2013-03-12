@@ -377,7 +377,7 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     default:
-                        $this->close(self::CLOSE_DATA_ERROR);
+                        $this->close(self::CLOSE_PROTOCOL_ERROR);
                 }
             }
             catch ( \Hoa\Core\Exception\Idle $e ) {
