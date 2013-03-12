@@ -307,6 +307,9 @@ class Server implements \Hoa\Core\Event\Listenable {
 
                 $frame = $node->getProtocolImplementation()->readFrame();
 
+                if(false === $frame)
+                    continue;
+
                 switch($frame['opcode']) {
 
                     case self::OPCODE_CONTINUATION_FRAME:
