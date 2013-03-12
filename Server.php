@@ -315,14 +315,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                 switch($frame['opcode']) {
 
                     case self::OPCODE_TEXT_FRAME:
-                        if(0 === $frame['length']) {
-
-                            $this->send($frame['message']);
-                            $this->close(self::CLOSE_NORMAL);
-
-                            break;
-                        }
-
                         if(0x1 === $frame['fin']) {
 
                             if(0 < $node->getNumberOfFragments()) {
