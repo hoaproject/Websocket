@@ -394,6 +394,12 @@ class Server implements \Hoa\Core\Event\Listenable {
                       break;
 
                     case self::OPCODE_PONG:
+                        if(0 === $frame['fin']) {
+
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                            break;
+                        }
                       break;
 
                     case self::OPCODE_CONNECTION_CLOSE:
