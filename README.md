@@ -13,8 +13,8 @@ the same time).
 ## Quick usage
 
 As a quick overview, we propose to start a websocket server and echo messages.
-The class `Hoa\Websocket\Server` proposes four listeners: `open`, `message`,
-`close` and `error`. Thus:
+The class `Hoa\Websocket\Server` proposes five listeners: `open`, `message`,
+`ping`, `close` and `error`. Thus:
 
     $websocket = new Hoa\Websocket\Server(
         new Hoa\Socket\Server('tcp://127.0.0.1:8889')
