@@ -170,7 +170,7 @@ class Rfc6455 extends Generic {
 
             if($length > 0x7fffffffffffffff)
                 throw new \Hoa\Websocket\Exception(
-                    'Message is too long.', 3);
+                    'Message is too long.', 1);
         }
 
         if(0x0 === $out['mask']) {
@@ -253,9 +253,15 @@ class Rfc6455 extends Generic {
      * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   int                  $opcode     Opcode.
      * @return  void
+     * @throw   \Hoa\Websocket\Exception
      */
     public function send ( $message, \Hoa\Websocket\Node $node = null,
                            $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
+
+        if(false === (bool) preg_match('//u', $message))
+            throw new \Hoa\Websocket\Exception(
+                'Message “%s” is not in UTF-8, cannot send it.',
+                2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
         if(null === $node) {
 
