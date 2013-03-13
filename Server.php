@@ -486,10 +486,10 @@ class Server implements \Hoa\Core\Event\Listenable {
             }
             catch ( \Hoa\Core\Exception\Idle $e ) {
 
+                $this->close(self::CLOSE_SERVER_ERROR);
                 $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
                     'exception' => $e
                 )));
-                $this->close();
             }
         }
 
