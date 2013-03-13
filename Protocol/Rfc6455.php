@@ -251,19 +251,21 @@ class Rfc6455 extends Generic {
      * @access  public
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
+     * @param   int                  $opcode     Opcode.
      * @return  void
      */
-    public function send ( $message, \Hoa\Websocket\Node $node = null ) {
+    public function send ( $message, \Hoa\Websocket\Node $node = null,
+                           $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
 
         if(null === $node) {
 
-            $this->writeFrame($message);
+            $this->writeFrame($message, true, $opcode);
 
             return;
         }
 
         $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame($message);
+        $node->getProtocolImplementation()->writeFrame($message, true, $opcode);
         $this->_server->_setStream($old);
 
         return;

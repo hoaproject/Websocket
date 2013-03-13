@@ -110,9 +110,12 @@ abstract class Generic {
      * @access  public
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
+     * @param   int                  $opcode     Opcode.
      * @return  void
      */
-    abstract public function send ( $message, \Hoa\Websocket\Node $node = null );
+    abstract public function send ( $message,
+                                    \Hoa\Websocket\Node $node = null,
+                                    $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME );
 
     /**
      * Close a specific node/connection.

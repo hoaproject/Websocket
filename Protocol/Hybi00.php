@@ -160,9 +160,11 @@ class Hybi00 extends Generic {
      * @access  public
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
+     * @param   int                  $opcode     Opcode.
      * @return  void
      */
-    public function send ( $message, \Hoa\Websocket\Node $node = null ) {
+    public function send ( $message, \Hoa\Websocket\Node $node = null,
+                           $opcode = -1) {
 
         if(null === $node) {
 
