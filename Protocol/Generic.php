@@ -111,11 +111,14 @@ abstract class Generic {
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   int                  $opcode     Opcode.
+     * @param   bool                 $end        Whether it is the last frame of
+     *                                           the message.
      * @return  void
      */
     abstract public function send ( $message,
                                     \Hoa\Websocket\Node $node = null,
-                                    $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME );
+                                    $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                                    $end    = true );
 
     /**
      * Close a specific node/connection.

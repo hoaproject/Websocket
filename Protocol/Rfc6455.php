@@ -257,26 +257,31 @@ class Rfc6455 extends Generic {
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   int                  $opcode     Opcode.
+     * @param   bool                 $end        Whether it is the last frame of
+     *                                           the message.
      * @return  void
      * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send ( $message, \Hoa\Websocket\Node $node = null,
-                           $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
+                           $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                           $end    = true ) {
 
-        if(false === (bool) preg_match('//u', $message))
+        if(   (\Hoa\Websocket\Server::OPCODE_TEXT_FRAME         === $opcode
+           ||  \Hoa\Websocket\Server::OPCODE_CONTINUATION_FRAME === $opcode)
+           && false === (bool) preg_match('//u', $message))
             throw new \Hoa\Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
                 2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
         if(null === $node) {
 
-            $this->writeFrame($message, $opcode);
+            $this->writeFrame($message, $opcode, $end);
 
             return;
         }
 
         $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame($message, $opcode);
+        $node->getProtocolImplementation()->writeFrame($message, $opcode, $end);
         $this->_server->_setStream($old);
 
         return;

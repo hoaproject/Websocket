@@ -161,10 +161,12 @@ class Hybi00 extends Generic {
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   int                  $opcode     Opcode.
+     * @param   bool                 $end        Whether it is the last frame of
+     *                                           the message.
      * @return  void
      */
     public function send ( $message, \Hoa\Websocket\Node $node = null,
-                           $opcode = -1) {
+                           $opcode = -1, $end = true ) {
 
         if(null === $node) {
 
