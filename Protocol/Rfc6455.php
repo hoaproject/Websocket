@@ -211,13 +211,13 @@ class Rfc6455 extends Generic {
      *
      * @access  public
      * @param   string  $message    Message.
-     * @param   bool    $end        Whether it is the last frame of the message.
      * @param   int     $opcode     Opcode.
+     * @param   bool    $end        Whether it is the last frame of the message.
      * @return  int
      */
     public function writeFrame ( $message,
-                                 $end    = true,
-                                 $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
+                                 $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                                 $end    = true ) {
 
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
@@ -259,13 +259,13 @@ class Rfc6455 extends Generic {
 
         if(null === $node) {
 
-            $this->writeFrame($message, true, $opcode);
+            $this->writeFrame($message, $opcode);
 
             return;
         }
 
         $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame($message, true, $opcode);
+        $node->getProtocolImplementation()->writeFrame($message, $opcode);
         $this->_server->_setStream($old);
 
         return;
@@ -288,7 +288,6 @@ class Rfc6455 extends Generic {
 
             $this->writeFrame(
                 pack('n', $reason),
-                true,
                 \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
             );
 
@@ -298,7 +297,6 @@ class Rfc6455 extends Generic {
         $old = $this->_server->_setStream($node->getSocket());
         $node->getProtocolImplementation()->writeFrame(
             pack('n', $reason),
-            true,
             \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
         );
         $this->_server->_setStream($old);

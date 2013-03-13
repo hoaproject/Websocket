@@ -406,8 +406,8 @@ class Server implements \Hoa\Core\Event\Listenable {
                              ->getProtocolImplementation()
                              ->writeFrame(
                                  $message,
-                                 true,
-                                 self::OPCODE_PONG
+                                 self::OPCODE_PONG,
+                                 true
                              );
 
                         $this->_on->fire(
