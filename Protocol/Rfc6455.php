@@ -49,6 +49,11 @@ from('Hoa')
 -> import('Websocket.Exception.BadProtocol')
 
 /**
+ * \Hoa\Websocket\Exception\InvalidMessage
+ */
+-> import('Websocket.Exception.InvalidMessage')
+
+/**
  * \Hoa\Websocket\Protocol\Generic
  */
 -> import('Websocket.Protocol.Generic');
@@ -253,13 +258,13 @@ class Rfc6455 extends Generic {
      * @param   \Hoa\Websocket\Node  $node       Node.
      * @param   int                  $opcode     Opcode.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception
+     * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send ( $message, \Hoa\Websocket\Node $node = null,
                            $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME ) {
 
         if(false === (bool) preg_match('//u', $message))
-            throw new \Hoa\Websocket\Exception(
+            throw new \Hoa\Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
                 2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
