@@ -291,19 +291,21 @@ class Rfc6455 extends Generic {
      * Close a specific node/connection.
      *
      * @access  public
-     * @param   int                  $reason    Reason (please, see
+     * @param   int                  $code      Code (please, see
      *                                          \Hoa\Websocket\Server::CLOSE_*
      *                                          constants).
+     * @param   string               $reason    Reason.
      * @param   \Hoa\Websocket\Node  $node      Node.
      * @return  void
      */
-    public function close ( $reason = \Hoa\Websocket\Server::CLOSE_NORMAL,
+    public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
+                            $reason = null,
                             \Hoa\Websocket\Node $node = null ) {
 
         if(null === $node) {
 
             $this->writeFrame(
-                pack('n', $reason),
+                pack('n', $code) . $reason,
                 \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
             );
 
@@ -312,7 +314,7 @@ class Rfc6455 extends Generic {
 
         $old = $this->_server->_setStream($node->getSocket());
         $node->getProtocolImplementation()->writeFrame(
-            pack('n', $reason),
+            pack('n', $code) . $reason,
             \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
         );
         $this->_server->_setStream($old);

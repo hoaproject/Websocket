@@ -124,13 +124,15 @@ abstract class Generic {
      * Close a specific node/connection.
      *
      * @access  public
-     * @param   int                  $reason    Reason (please, see
+     * @param   int                  $code      Code (please, see
      *                                          \Hoa\Websocket\Server::CLOSE_*
      *                                          constants).
+     * @param   string               $reason    Reason.
      * @param   \Hoa\Websocket\Node  $node      Node.
      * @return  void
      */
-    abstract public function close ( $reason = \Hoa\Websocket\Server::CLOSE_NORMAL,
+    abstract public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
+                                     $reason = null,
                                      \Hoa\Websocket\Node $node = null );
 }
 

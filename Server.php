@@ -569,17 +569,19 @@ class Server implements \Hoa\Core\Event\Listenable {
      * It is just a “inline” method, a shortcut.
      *
      * @access  public
-     * @param   int                  $reason    Reason (please, see
+     * @param   int                  $code      Code (please, see
      *                                          self::CLOSE_* constants).
+     * @param   string               $reason    Reason.
      * @param   \Hoa\Websocket\Node  $node      Node.
      * @return  void
      */
-    public function close ( $reason = self::CLOSE_NORMAL, Node $node = null ) {
+    public function close ( $code = self::CLOSE_NORMAL, $reason = null,
+                            Node $node = null ) {
 
         $server = $this->getServer();
         $server->getCurrentNode()
                ->getProtocolImplementation()
-               ->close($reason, $node);
+               ->close($code, $reason, $node);
 
         return $server->disconnect();
     }
