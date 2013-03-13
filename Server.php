@@ -550,31 +550,18 @@ class Server implements \Hoa\Core\Event\Listenable {
      * @access  public
      * @param   string               $message    Message.
      * @param   \Hoa\Websocket\Node  $node       Node.
+     * @param   int                  $opcode     Opcode.
+     * @param   bool                 $end        Whether it is the last frame of
+     *                                           the message.
      * @return  void
      */
-    public function send ( $message, Node $node = null ) {
+    public function send ( $message, Node $node = null,
+                           $opcode = self::OPCODE_TEXT_FRAME, $end = true ) {
 
         return $this->getServer()
                     ->getCurrentNode()
                     ->getProtocolImplementation()
-                    ->send($message, $node);
-    }
-
-    /**
-     * Send a binary message to a specific node/connection.
-     * It is just a “inline” method, a shortcut.
-     *
-     * @access  public
-     * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
-     * @return  void
-     */
-    public function sendBinary ( $message, Node $node = null ) {
-
-        return $this->getServer()
-                    ->getCurrentNode()
-                    ->getProtocolImplementation()
-                    ->send($message, $node, self::OPCODE_BINARY_FRAME);
+                    ->send($message, $node, $opcode, $end);
     }
 
     /**
