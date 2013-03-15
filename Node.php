@@ -94,6 +94,13 @@ class Node extends \Hoa\Socket\Node {
      */
     protected $_numberOfFragments = 0;
 
+    /**
+     * Whether the message is binary or not.
+     *
+     * @var \Hoa\Websocket\Node bool
+     */
+    protected $_isBinary          = false;
+
 
 
     /**
@@ -211,6 +218,32 @@ class Node extends \Hoa\Socket\Node {
     }
 
     /**
+     * Whether the message is binary or not.
+     *
+     * @access  public
+     * @param   bool  $binary    Binary.
+     * @return  bool
+     */
+    public function setBinary ( $binary ) {
+
+        $old             = $this->_binary;
+        $this->_isBinary = $binary;
+
+        return $old;
+    }
+
+    /**
+     * Check if the message is binary or not.
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function isBinary ( ) {
+
+        return $this->_isBinary;
+    }
+
+    /**
      * Clear the fragmentation.
      *
      * @access  public
@@ -220,6 +253,7 @@ class Node extends \Hoa\Socket\Node {
 
         unset($this->_messageFragments);
         $this->_numberOfFragments = 0;
+        $this->_isBinary          = false;
 
         return;
     }

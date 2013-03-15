@@ -313,9 +313,13 @@ class Server implements \Hoa\Core\Event\Listenable {
                 if(false === $frame)
                     continue;
 
-                $fromText = false;
+                $fromText   = false;
+                $fromBinary = false;
 
                 switch($frame['opcode']) {
+
+                    case self::OPCODE_BINARY_FRAME:
+                        $fromBinary = true;
 
                     case self::OPCODE_TEXT_FRAME:
                         if(0x1 === $frame['fin']) {
@@ -323,6 +327,19 @@ class Server implements \Hoa\Core\Event\Listenable {
                             if(0 < $node->getNumberOfFragments()) {
 
                                 $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                                break;
+                            }
+
+                            if(true === $fromBinary) {
+
+                                $fromBinary = false;
+                                $this->_on->fire(
+                                    'binary-message',
+                                    new \Hoa\Core\Event\Bucket(array(
+                                        'message' => $frame['message']
+                                    ))
+                                );
 
                                 break;
                             }
@@ -356,15 +373,36 @@ class Server implements \Hoa\Core\Event\Listenable {
                                 break;
                             }
                         }
-                        else
+                        else {
+
                             $fromText = false;
+
+                            if(true === $fromBinary) {
+
+                                $node->setBinary(true);
+                                $fromBinary = false;
+                            }
+                        }
 
                         $node->appendMessageFragment($frame['message']);
 
                         if(0x1 === $frame['fin']) {
 
-                            $message = $node->getFragmentedMessage();
+                            $message  = $node->getFragmentedMessage();
+                            $isBinary = $node->isBinary();
                             $node->clearFragmentation();
+
+                            if(true === $isBinary) {
+
+                                $this->_on->fire(
+                                    'binary-message',
+                                    new \Hoa\Core\Event\Bucket(array(
+                                        'message' => $message
+                                    ))
+                                );
+
+                                break;
+                            }
 
                             if(false === (bool) preg_match('//u', $message)) {
 
@@ -380,15 +418,6 @@ class Server implements \Hoa\Core\Event\Listenable {
                                 ))
                             );
                         }
-                      break;
-
-                    case self::OPCODE_BINARY_FRAME:
-                        $this->_on->fire(
-                            'binary-message',
-                            new \Hoa\Core\Event\Bucket(array(
-                                'message' => $frame['message']
-                            ))
-                        );
                       break;
 
                     case self::OPCODE_PING:
