@@ -5,10 +5,10 @@ Moreover, Hoa aims at being a bridge between industrial and research worlds.
 
 # Hoa\Websocket
 
-This library allows to manipulate Websockets and proposes a server. It supports
-two specifications [RFC6455](https://tools.ietf.org/html/rfc6455) and
-[Hybi](https://tools.ietf.org/wg/hybi/draft-ietf-hybi-thewebsocketprotocol/) (at
-the same time).
+This library allows to manipulate the WebSocket protocol and proposes a server.
+It supports two specifications [RFC6455](https://tools.ietf.org/html/rfc6455)
+and [Hybi](https://tools.ietf.org/wg/hybi/draft-ietf-hybi-thewebsocketprotocol/)
+(at the same time).
 
 ## Quick usage
 
@@ -37,13 +37,6 @@ The class `Hoa\Websocket\Server` proposes six listeners: `open`, `message`,
     $websocket->on('close', function ( Hoa\Core\Event\Bucket $bucket ) {
 
         echo 'connection closed', "\n";
-
-        return;
-    });
-    $websocket->on('error', function ( Hoa\Core\Event\Bucket $bucket ) {
-
-        $data = $bucket->getData();
-        echo 'error: ', $data['exception']->raise(), "\n";
 
         return;
     });
