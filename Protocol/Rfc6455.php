@@ -102,9 +102,9 @@ class Rfc6455 extends Generic {
 
         /**
          * @TODO
-         *   • Origin
-         *   • Sec-WebSocket-Protocol
-         *   • Sec-WebSocket-Extensions
+         *   • Origin;
+         *   • Sec-WebSocket-Protocol;
+         *   • Sec-WebSocket-Extensions.
          */
 
         $this->_server->writeAll(
