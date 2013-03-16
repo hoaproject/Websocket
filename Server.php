@@ -523,7 +523,7 @@ class Server implements \Hoa\Core\Event\Listenable {
             }
         }
 
-        $this->_server->disconnect();
+        $this->getServer()->disconnect();
 
         return;
     }
