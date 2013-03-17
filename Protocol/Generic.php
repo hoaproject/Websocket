@@ -108,15 +108,13 @@ abstract class Generic {
      * Send a message to a node (if not specified, current node).
      *
      * @access  public
-     * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
-     * @param   int                  $opcode     Opcode.
-     * @param   bool                 $end        Whether it is the last frame of
-     *                                           the message.
+     * @param   string  $message    Message.
+     * @param   int     $opcode     Opcode.
+     * @param   bool    $end        Whether it is the last frame of
+     *                              the message.
      * @return  void
      */
     abstract public function send ( $message,
-                                    \Hoa\Websocket\Node $node = null,
                                     $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
                                     $end    = true );
 
@@ -124,16 +122,14 @@ abstract class Generic {
      * Close a specific node/connection.
      *
      * @access  public
-     * @param   int                  $code      Code (please, see
-     *                                          \Hoa\Websocket\Server::CLOSE_*
-     *                                          constants).
-     * @param   string               $reason    Reason.
-     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @param   int     $code      Code (please, see
+     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             constants).
+     * @param   string  $reason    Reason.
      * @return  void
      */
     abstract public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
-                                     $reason = null,
-                                     \Hoa\Websocket\Node $node = null );
+                                     $reason = null );
 }
 
 }

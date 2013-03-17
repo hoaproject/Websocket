@@ -64,6 +64,11 @@ from('Hoa')
 -> import('Websocket.Protocol.Hybi00')
 
 /**
+ * \Hoa\Socket\Server\Handler
+ */
+-> import('Socket.Server.Handler')
+
+/**
  * \Hoa\Http\Request
  */
 -> import('Http.Request');
@@ -82,7 +87,9 @@ namespace Hoa\Websocket {
  * @license    New BSD License
  */
 
-class Server implements \Hoa\Core\Event\Listenable {
+class          Server
+    extends    \Hoa\Socket\Server\Handler
+    implements \Hoa\Core\Event\Listenable {
 
     /**
      * Opcode: continuation frame.
@@ -219,13 +226,6 @@ class Server implements \Hoa\Core\Event\Listenable {
     protected $_on      = null;
 
     /**
-     * Server.
-     *
-     * @var \Hoa\Socket\Server object
-     */
-    protected $_server  = null;
-
-    /**
      * Request (mainly parser).
      *
      * @var \Hoa\Http\Request object
@@ -248,7 +248,7 @@ class Server implements \Hoa\Core\Event\Listenable {
     public function __construct ( \Hoa\Socket\Server $server,
                                   \Hoa\Http\Request  $request = null ) {
 
-        $this->_server = $server;
+        parent::__construct($server);
         $this->_server->setNodeName('\Hoa\Websocket\Node');
         $this->_on     = new \Hoa\Core\Event\Listener($this, array(
             'open',
@@ -284,75 +284,55 @@ class Server implements \Hoa\Core\Event\Listenable {
     }
 
     /**
-     * Run the server.
+     * Run a node.
      *
-     * @access  public
+     * @access  protected
+     * @param   \Hoa\Socket\Node  $node    Node.
      * @return  void
      */
-    public function run ( ) {
+    protected function _run ( \Hoa\Socket\Node $node ) {
 
-        $this->getServer()->connectAndWait();
+        try {
 
-        while(true) foreach($this->getServer()->select() as $node) {
+            if(FAILED === $node->getHandshake()) {
 
-            try {
+                $this->doHandshake();
+                $this->_on->fire(
+                    'open',
+                    new \Hoa\Core\Event\Bucket()
+                );
 
-                if(FAILED === $node->getHandshake()) {
+                return;
+            }
 
-                    $this->doHandshake();
-                    $this->_on->fire(
-                        'open',
-                        new \Hoa\Core\Event\Bucket()
-                    );
+            $frame = $node->getProtocolImplementation()->readFrame();
 
-                    continue;
-                }
+            if(false === $frame)
+                return;
 
-                $frame = $node->getProtocolImplementation()->readFrame();
+            $fromText   = false;
+            $fromBinary = false;
 
-                if(false === $frame)
-                    continue;
+            switch($frame['opcode']) {
 
-                $fromText   = false;
-                $fromBinary = false;
+                case self::OPCODE_BINARY_FRAME:
+                    $fromBinary = true;
 
-                switch($frame['opcode']) {
+                case self::OPCODE_TEXT_FRAME:
+                    if(0x1 === $frame['fin']) {
 
-                    case self::OPCODE_BINARY_FRAME:
-                        $fromBinary = true;
+                        if(0 < $node->getNumberOfFragments()) {
 
-                    case self::OPCODE_TEXT_FRAME:
-                        if(0x1 === $frame['fin']) {
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
 
-                            if(0 < $node->getNumberOfFragments()) {
+                            break;
+                        }
 
-                                $this->close(self::CLOSE_PROTOCOL_ERROR);
+                        if(true === $fromBinary) {
 
-                                break;
-                            }
-
-                            if(true === $fromBinary) {
-
-                                $fromBinary = false;
-                                $this->_on->fire(
-                                    'binary-message',
-                                    new \Hoa\Core\Event\Bucket(array(
-                                        'message' => $frame['message']
-                                    ))
-                                );
-
-                                break;
-                            }
-
-                            if(false === (bool) preg_match('//u', $frame['message'])) {
-
-                                $this->close(self::CLOSE_MESSAGE_ERROR);
-
-                                break;
-                            }
-
+                            $fromBinary = false;
                             $this->_on->fire(
-                                'message',
+                                'binary-message',
                                 new \Hoa\Core\Event\Bucket(array(
                                     'message' => $frame['message']
                                 ))
@@ -361,169 +341,183 @@ class Server implements \Hoa\Core\Event\Listenable {
                             break;
                         }
 
-                        $fromText = true;
+                        if(false === (bool) preg_match('//u', $frame['message'])) {
 
-                    case self::OPCODE_CONTINUATION_FRAME:
-                        if(false === $fromText) {
+                            $this->close(self::CLOSE_MESSAGE_ERROR);
 
-                            if(0 === $node->getNumberOfFragments()) {
-
-                                $this->close(self::CLOSE_PROTOCOL_ERROR);
-
-                                break;
-                            }
-                        }
-                        else {
-
-                            $fromText = false;
-
-                            if(true === $fromBinary) {
-
-                                $node->setBinary(true);
-                                $fromBinary = false;
-                            }
+                            break;
                         }
 
-                        $node->appendMessageFragment($frame['message']);
+                        $this->_on->fire(
+                            'message',
+                            new \Hoa\Core\Event\Bucket(array(
+                                'message' => $frame['message']
+                            ))
+                        );
 
-                        if(0x1 === $frame['fin']) {
+                        break;
+                    }
 
-                            $message  = $node->getFragmentedMessage();
-                            $isBinary = $node->isBinary();
-                            $node->clearFragmentation();
+                    $fromText = true;
 
-                            if(true === $isBinary) {
+                case self::OPCODE_CONTINUATION_FRAME:
+                    if(false === $fromText) {
 
-                                $this->_on->fire(
-                                    'binary-message',
-                                    new \Hoa\Core\Event\Bucket(array(
-                                        'message' => $message
-                                    ))
-                                );
+                        if(0 === $node->getNumberOfFragments()) {
 
-                                break;
-                            }
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
 
-                            if(false === (bool) preg_match('//u', $message)) {
+                            break;
+                        }
+                    }
+                    else {
+
+                        $fromText = false;
+
+                        if(true === $fromBinary) {
+
+                            $node->setBinary(true);
+                            $fromBinary = false;
+                        }
+                    }
+
+                    $node->appendMessageFragment($frame['message']);
+
+                    if(0x1 === $frame['fin']) {
+
+                        $message  = $node->getFragmentedMessage();
+                        $isBinary = $node->isBinary();
+                        $node->clearFragmentation();
+
+                        if(true === $isBinary) {
+
+                            $this->_on->fire(
+                                'binary-message',
+                                new \Hoa\Core\Event\Bucket(array(
+                                    'message' => $message
+                                ))
+                            );
+
+                            break;
+                        }
+
+                        if(false === (bool) preg_match('//u', $message)) {
+
+                            $this->close(self::CLOSE_MESSAGE_ERROR);
+
+                            break;
+                        }
+
+                        $this->_on->fire(
+                            'message',
+                            new \Hoa\Core\Event\Bucket(array(
+                                'message' => $message
+                            ))
+                        );
+                    }
+                  break;
+
+                case self::OPCODE_PING:
+                    $message = &$frame['message'];
+
+                    if(   0x0  === $frame['fin']
+                       || 0x7d  <  $frame['length']) {
+
+                        $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                        break;
+                    }
+
+                    $this->getServer()
+                         ->getCurrentNode()
+                         ->getProtocolImplementation()
+                         ->writeFrame(
+                             $message,
+                             self::OPCODE_PONG,
+                             true
+                         );
+
+                    $this->_on->fire(
+                        'ping',
+                        new \Hoa\Core\Event\Bucket(array(
+                            'message' => $message
+                        ))
+                    );
+                  break;
+
+                case self::OPCODE_PONG:
+                    if(0 === $frame['fin']) {
+
+                        $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                        break;
+                    }
+                  break;
+
+                case self::OPCODE_CONNECTION_CLOSE:
+                    $length = &$frame['length'];
+
+                    if(   1    === $length
+                       || 0x7d  <  $length) {
+
+                        $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                        break;
+                    }
+
+                    $code   = self::CLOSE_NORMAL;
+                    $reason = null;
+
+                    if(0 < $length) {
+
+                        $message = &$frame['message'];
+                        $_code   = unpack('nc', substr($message, 0, 2));
+                        $code    = &$_code['c'];
+
+                        if(   1000  >  $code
+                           || (1004 <= $code && $code <= 1006)
+                           || (1012 <= $code && $code <= 1016)
+                           || 5000  <= $code) {
+
+                            $this->close(self::CLOSE_PROTOCOL_ERROR);
+
+                            break;
+                        }
+
+                        if(2 < $length) {
+
+                            $reason = substr($message, 2);
+
+                            if(false === (bool) preg_match('//u', $reason)) {
 
                                 $this->close(self::CLOSE_MESSAGE_ERROR);
 
                                 break;
                             }
-
-                            $this->_on->fire(
-                                'message',
-                                new \Hoa\Core\Event\Bucket(array(
-                                    'message' => $message
-                                ))
-                            );
                         }
-                      break;
+                    }
 
-                    case self::OPCODE_PING:
-                        $message = &$frame['message'];
+                    $this->close(self::CLOSE_NORMAL);
+                    $this->_on->fire(
+                        'close',
+                        new \Hoa\Core\Event\Bucket(array(
+                            'code'   => $code,
+                            'reason' => $reason
+                        ))
+                    );
+                  break;
 
-                        if(   0x0  === $frame['fin']
-                           || 0x7d  <  $frame['length']) {
-
-                            $this->close(self::CLOSE_PROTOCOL_ERROR);
-
-                            break;
-                        }
-
-                        $this->getServer()
-                             ->getCurrentNode()
-                             ->getProtocolImplementation()
-                             ->writeFrame(
-                                 $message,
-                                 self::OPCODE_PONG,
-                                 true
-                             );
-
-                        $this->_on->fire(
-                            'ping',
-                            new \Hoa\Core\Event\Bucket(array(
-                                'message' => $message
-                            ))
-                        );
-                      break;
-
-                    case self::OPCODE_PONG:
-                        if(0 === $frame['fin']) {
-
-                            $this->close(self::CLOSE_PROTOCOL_ERROR);
-
-                            break;
-                        }
-                      break;
-
-                    case self::OPCODE_CONNECTION_CLOSE:
-                        $length = &$frame['length'];
-
-                        if(   1    === $length
-                           || 0x7d  <  $length) {
-
-                            $this->close(self::CLOSE_PROTOCOL_ERROR);
-
-                            break;
-                        }
-
-                        $code   = self::CLOSE_NORMAL;
-                        $reason = null;
-
-                        if(0 < $length) {
-
-                            $message = &$frame['message'];
-                            $_code   = unpack('nc', substr($message, 0, 2));
-                            $code    = &$_code['c'];
-
-                            if(   1000  >  $code
-                               || (1004 <= $code && $code <= 1006)
-                               || (1012 <= $code && $code <= 1016)
-                               || 5000  <= $code) {
-
-                                $this->close(self::CLOSE_PROTOCOL_ERROR);
-
-                                break;
-                            }
-
-                            if(2 < $length) {
-
-                                $reason = substr($message, 2);
-
-                                if(false === (bool) preg_match('//u', $reason)) {
-
-                                    $this->close(self::CLOSE_MESSAGE_ERROR);
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        $this->close(self::CLOSE_NORMAL);
-                        $this->_on->fire(
-                            'close',
-                            new \Hoa\Core\Event\Bucket(array(
-                                'code'   => $code,
-                                'reason' => $reason
-                            ))
-                        );
-                      break;
-
-                    default:
-                        $this->close(self::CLOSE_PROTOCOL_ERROR);
-                }
-            }
-            catch ( \Hoa\Core\Exception\Idle $e ) {
-
-                $this->close(self::CLOSE_SERVER_ERROR);
-                $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
-                    'exception' => $e
-                )));
+                default:
+                    $this->close(self::CLOSE_PROTOCOL_ERROR);
             }
         }
+        catch ( \Hoa\Core\Exception\Idle $e ) {
 
-        $this->getServer()->disconnect();
+            $this->close(self::CLOSE_SERVER_ERROR);
+            $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
+                'exception' => $e
+            )));
+        }
 
         return;
     }
@@ -537,8 +531,8 @@ class Server implements \Hoa\Core\Event\Listenable {
      */
     protected function doHandshake ( ) {
 
-        $buffer  = $this->getServer()->read(2048);
         $server  = $this->getServer();
+        $buffer  = $server->read(2048);
         $request = $this->getRequest();
         $request->parse($buffer);
 
@@ -574,12 +568,28 @@ class Server implements \Hoa\Core\Event\Listenable {
     }
 
     /**
+     * Send a message.
+     *
+     * @access  protected
+     * @param   string            $message    Message.
+     * @param   \Hoa\Socket\Node  $node       Node.
+     * @return  \Closure
+     */
+    protected function _send ( $message, \Hoa\Socket\Node $node ) {
+
+        return function ( $opcode, $end ) use ( &$message, $node ) {
+
+            return $node->getProtocolImplementation()
+                        ->send($message, $opcode, $end);
+        };
+    }
+
+    /**
      * Send a message to a specific node/connection.
-     * It is just a “inline” method, a shortcut.
      *
      * @access  public
      * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
+     * @param   \Hoa\Websocket\Node  $node       Node (if null, current node).
      * @param   int                  $opcode     Opcode.
      * @param   bool                 $end        Whether it is the last frame of
      *                                           the message.
@@ -588,10 +598,9 @@ class Server implements \Hoa\Core\Event\Listenable {
     public function send ( $message, Node $node = null,
                            $opcode = self::OPCODE_TEXT_FRAME, $end = true ) {
 
-        return $this->getServer()
-                    ->getCurrentNode()
-                    ->getProtocolImplementation()
-                    ->send($message, $node, $opcode, $end);
+        $send = parent::send($message, $node);
+
+        return $send($opcode, $end);
     }
 
     /**
@@ -599,32 +608,19 @@ class Server implements \Hoa\Core\Event\Listenable {
      * It is just a “inline” method, a shortcut.
      *
      * @access  public
-     * @param   int                  $code      Code (please, see
-     *                                          self::CLOSE_* constants).
-     * @param   string               $reason    Reason.
-     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @param   int     $code      Code (please, see
+     *                             self::CLOSE_* constants).
+     * @param   string  $reason    Reason.
      * @return  void
      */
-    public function close ( $code = self::CLOSE_NORMAL, $reason = null,
-                            Node $node = null ) {
+    public function close ( $code = self::CLOSE_NORMAL, $reason = null ) {
 
         $server = $this->getServer();
         $server->getCurrentNode()
                ->getProtocolImplementation()
-               ->close($code, $reason, $node);
+               ->close($code, $reason);
 
         return $server->disconnect();
-    }
-
-    /**
-     * Get server.
-     *
-     * @access  public
-     * @return  \Hoa\Socket\Server
-     */
-    public function getServer ( ) {
-
-        return $this->_server;
     }
 
     /**

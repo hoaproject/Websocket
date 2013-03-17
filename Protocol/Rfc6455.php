@@ -251,18 +251,17 @@ class Rfc6455 extends Generic {
     }
 
     /**
-     * Send a message to a node (if not specified, current node).
+     * Send a message.
      *
      * @access  public
-     * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
-     * @param   int                  $opcode     Opcode.
-     * @param   bool                 $end        Whether it is the last frame of
-     *                                           the message.
+     * @param   string  $message    Message.
+     * @param   int     $opcode     Opcode.
+     * @param   bool    $end        Whether it is the last frame of
+     *                              the message.
      * @return  void
      * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
-    public function send ( $message, \Hoa\Websocket\Node $node = null,
+    public function send ( $message,
                            $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
                            $end    = true ) {
 
@@ -273,51 +272,28 @@ class Rfc6455 extends Generic {
                 'Message “%s” is not in UTF-8, cannot send it.',
                 2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
-        if(null === $node) {
-
-            $this->writeFrame($message, $opcode, $end);
-
-            return;
-        }
-
-        $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame($message, $opcode, $end);
-        $this->_server->_setStream($old);
+        $this->writeFrame($message, $opcode, $end);
 
         return;
     }
 
     /**
-     * Close a specific node/connection.
+     * Close a connection.
      *
      * @access  public
-     * @param   int                  $code      Code (please, see
-     *                                          \Hoa\Websocket\Server::CLOSE_*
-     *                                          constants).
-     * @param   string               $reason    Reason.
-     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @param   int     $code      Code (please, see
+     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             constants).
+     * @param   string  $reason    Reason.
      * @return  void
      */
     public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
-                            $reason = null,
-                            \Hoa\Websocket\Node $node = null ) {
+                            $reason = null ) {
 
-        if(null === $node) {
-
-            $this->writeFrame(
-                pack('n', $code) . $reason,
-                \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
-            );
-
-            return;
-        }
-
-        $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame(
+        $this->writeFrame(
             pack('n', $code) . $reason,
             \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
         );
-        $this->_server->_setStream($old);
 
         return;
     }

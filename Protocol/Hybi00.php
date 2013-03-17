@@ -158,26 +158,15 @@ class Hybi00 extends Generic {
      * Send a message to a node (if not specified, current node).
      *
      * @access  public
-     * @param   string               $message    Message.
-     * @param   \Hoa\Websocket\Node  $node       Node.
-     * @param   int                  $opcode     Opcode.
-     * @param   bool                 $end        Whether it is the last frame of
-     *                                           the message.
+     * @param   string  $message    Message.
+     * @param   int     $opcode     Opcode.
+     * @param   bool    $end        Whether it is the last frame of
+     *                              the message.
      * @return  void
      */
-    public function send ( $message, \Hoa\Websocket\Node $node = null,
-                           $opcode = -1, $end = true ) {
+    public function send ( $message, $opcode = -1, $end = true ) {
 
-        if(null === $node) {
-
-            $this->writeFrame($message);
-
-            return;
-        }
-
-        $old = $this->_server->_setStream($node->getSocket());
-        $node->getProtocolImplementation()->writeFrame($message);
-        $this->_server->_setStream($old);
+        $this->writeFrame($message);
 
         return;
     }
@@ -186,16 +175,14 @@ class Hybi00 extends Generic {
      * Close a specific node/connection.
      *
      * @access  public
-     * @param   int                  $code      Code (please, see
-     *                                          \Hoa\Websocket\Server::CLOSE_*
-     *                                          constants).
-     * @param   string               $reason    Reason.
-     * @param   \Hoa\Websocket\Node  $node      Node.
+     * @param   int     $code      Code (please, see
+     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             constants).
+     * @param   string  $reason    Reason.
      * @return  void
      */
     public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
-                            $reason = null,
-                            \Hoa\Websocket\Node $node = null ) {
+                            $reason = null ) {
 
         return;
     }
