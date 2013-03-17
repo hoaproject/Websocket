@@ -67,13 +67,6 @@ class Node extends \Hoa\Socket\Node {
     protected $_protocol          = null;
 
     /**
-     * Whether it is the first message.
-     *
-     * @var \Hoa\Websocket\Node bool
-     */
-    protected $_first             = true;
-
-    /**
      * Whether the handshake succeed.
      *
      * @var \Hoa\Websocket\Node bool
@@ -127,32 +120,6 @@ class Node extends \Hoa\Socket\Node {
     public function getProtocolImplementation ( ) {
 
         return $this->_protocol;
-    }
-
-    /**
-     * Set whether it is the first message.
-     *
-     * @access  public
-     * @param   bool    $first    First.
-     * @return  bool
-     */
-    public function setFirst ( $first ) {
-
-        $old          = $this->_first;
-        $this->_first = $first;
-
-        return $old;
-    }
-
-    /**
-     * Whether it is the first message.
-     *
-     * @access  public
-     * @return  bool
-     */
-    public function isFirstMessage ( ) {
-
-        return $this->_first;
     }
 
     /**
