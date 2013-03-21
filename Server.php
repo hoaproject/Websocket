@@ -64,9 +64,9 @@ from('Hoa')
 -> import('Websocket.Protocol.Hybi00')
 
 /**
- * \Hoa\Socket\Server\Handler
+ * \Hoa\Socket\Connection\Handler
  */
--> import('Socket.Server.Handler')
+-> import('Socket.Connection.Handler')
 
 /**
  * \Hoa\Http\Request
@@ -88,7 +88,7 @@ namespace Hoa\Websocket {
  */
 
 class          Server
-    extends    \Hoa\Socket\Server\Handler
+    extends    \Hoa\Socket\Connection\Handler
     implements \Hoa\Core\Event\Listenable {
 
     /**
@@ -249,8 +249,8 @@ class          Server
                                   \Hoa\Http\Request  $request = null ) {
 
         parent::__construct($server);
-        $this->_server->setNodeName('\Hoa\Websocket\Node');
-        $this->_on     = new \Hoa\Core\Event\Listener($this, array(
+        $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
+        $this->_on = new \Hoa\Core\Event\Listener($this, array(
             'open',
             'message',
             'binary-message',
@@ -428,7 +428,7 @@ class          Server
                         break;
                     }
 
-                    $this->getServer()
+                    $this->getConnection()
                          ->getCurrentNode()
                          ->getProtocolImplementation()
                          ->writeFrame(
@@ -531,17 +531,17 @@ class          Server
      */
     protected function doHandshake ( ) {
 
-        $server  = $this->getServer();
-        $buffer  = $server->read(2048);
-        $request = $this->getRequest();
+        $connection = $this->getConnection();
+        $buffer     = $connection->read(2048);
+        $request    = $this->getRequest();
         $request->parse($buffer);
 
         // Rfc6455.
         try {
 
-            $rfc6455 = new Protocol\Rfc6455($server);
+            $rfc6455 = new Protocol\Rfc6455($connection);
             $rfc6455->doHandshake($request);
-            $server->getCurrentNode()->setProtocolImplementation($rfc6455);
+            $connection->getCurrentNode()->setProtocolImplementation($rfc6455);
         }
         catch ( Exception\BadProtocol $e ) {
 
@@ -550,14 +550,14 @@ class          Server
             // Hybi00.
             try {
 
-                $hybi00 = new Protocol\Hybi00($server);
+                $hybi00 = new Protocol\Hybi00($connection);
                 $hybi00->doHandshake($request);
-                $server->getCurrentNode()->setProtocolImplementation($hybi00);
+                $connection->getCurrentNode()->setProtocolImplementation($hybi00);
             }
             catch ( Exception\BadProtocol $e ) {
 
                 unset($hybi00);
-                $server->disconnect();
+                $connection->disconnect();
 
                 throw new Exception\BadProtocol(
                     'All protocol failed.', 1);
@@ -615,12 +615,12 @@ class          Server
      */
     public function close ( $code = self::CLOSE_NORMAL, $reason = null ) {
 
-        $server = $this->getServer();
-        $server->getCurrentNode()
+        $connection = $this->getConnection();
+        $connection->getCurrentNode()
                ->getProtocolImplementation()
                ->close($code, $reason);
 
-        return $server->disconnect();
+        return $connection->disconnect();
     }
 
     /**
