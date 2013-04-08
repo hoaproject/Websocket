@@ -617,8 +617,8 @@ class          Server
 
         $connection = $this->getConnection();
         $connection->getCurrentNode()
-               ->getProtocolImplementation()
-               ->close($code, $reason);
+                   ->getProtocolImplementation()
+                   ->close($code, $reason);
 
         return $connection->disconnect();
     }
