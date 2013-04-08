@@ -595,7 +595,7 @@ class          Server
      *                                           the message.
      * @return  void
      */
-    public function send ( $message, Node $node = null,
+    public function send ( $message, \Hoa\Socket\Node $node = null,
                            $opcode = self::OPCODE_TEXT_FRAME, $end = true ) {
 
         $send = parent::send($message, $node);
