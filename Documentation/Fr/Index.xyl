@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<overlay xmlns="http://hoa-project.net/xyl/xylophone">
+<yield id="chapter">
+
+  <p>Le protocole WebSocket permet une communication
+  <strong>bidirectionnelle</strong> et <strong>full-duplex</strong> entre un
+  client et un serveur. La bibliothèque <code>Hoa\Websocket</code> permet de
+  créer un <strong>serveur</strong> WebSocket.</p>
+
+  <h2 id="Table_des_matieres">Table des matières</h2>
+
+  <tableofcontents id="main-toc" />
+
+  <h2 id="Introduction" for="main-toc">Introduction</h2>
+
+  <p>Le protocole WebSocket est <strong>standardisé</strong> dans la <a
+  href="https://tools.ietf.org/html/rfc6455">RFC6455</a>. Il permet à un client
+  et à un serveur de communiquer ensemble. Cette communication est
+  <strong>bidirectionnelle</strong>, cela signifie que le client peut envoyer
+  des messages au serveur, et <strong>inversement</strong>. Le serveur n'envoie
+  pas uniquement des réponses il peut envoyer un message
+  <strong>spontanément</strong>. Cela change des habitudes du Web et de son
+  protocole HTTP. Le protocole WebSocket est également
+  <strong>full-duplex</strong>, c'est à dire que les données sont échangées
+  <strong>simultanément</strong> dans les <strong>deux</strong> sens : ce n'est
+  parce que le serveur a envoyé une donnée qui est en cours d'acheminement que
+  le client ne peut pas envoyer de données à son tour. Le protocole WebSocket
+  permet alors une forte <strong>interactivité</strong> entre le client et le
+  serveur. Le client sera très souvent un navigateur. Notons que le schéma URI
+  (voir la <a href="https://tools.ietf.org/html/rfc3986">RFC3986</a>) du
+  protocole WebSocket est <code>ws://</code>.</p>
+  <p>Le protocole WebSocket commence par une phase de
+  <em lang="en">handshake</em> afin de permettre, par la suite, les échanges de
+  messages sous forme de <em lang="en">frames</em>.</p>
+
+  <h3 id="Handshake_et_challenge" for="main-toc"><em lang="en">Handshake</em> et
+  <em lang="en">challenge</em></h3>
+
+  <p>Pour <strong>démarrer</strong> une communication avec le protocole
+  WebSocket, le client doit envoyer une requête HTTP au serveur en lui demandant
+  de changer de protocole. Dans cette requête, le client insère un
+  <strong><em lang="en">challenge</em></strong>, une sorte de petite énigme, que
+  le serveur doit résoudre. S'il l'a résolu correctement, alors la communication
+  démarrera.</p>
+  <p>Le fait de commencer par une requête HTTP n'est pas anodin. Cela permet au
+  protocole WebSocket d'emprunter le même chemin que les requêtes HTTP, et
+  ainsi, par exemple, traverser les proxys, les pare-feu etc. Cela facilite
+  également le déploiement de ce protocole : pas besoin de lui réserver un port
+  particulier, pas besoin d'avoir une configuration serveur particulière etc.
+  Cela permet enfin d'utiliser une connexion <strong>sécurisée</strong>, à
+  travers SSL. Dans ce cas, nous utilisons le schéma URI
+  <code>wss://</code>.</p>
+
+  <h3 id="Frame_et_opcode" for="main-toc"><em lang="en">Frame</em> et
+  <em>opcode</em></h3>
+
+  <p>Les messages qui sont échangés entre le client et le serveur ne se font pas
+  verbatim. En réalité, le message est <strong>encapsulé</strong> dans une <em
+  lang="en">frame</em> : un <strong>paquet</strong> de bits qui a une forme
+  particulière.  Dans ce cas, nous trouverons des informations concernant le
+  type du message, sa taille, des codes de vérifications etc. Nous trouverons un
+  schéma explicatif dans la
+  <a href="https://tools.ietf.org/html/rfc6455#section-5.2">section 5.2,
+  <em lang="en">Base Framing Protocol</em></a> de la spécification du protocole
+  pour les plus curieux.</p>
+  <p>Le <strong>type</strong> du message est appelé <em lang="en">opcode</em>.
+  C'est l'information la plus importante. Nous retrouverons ce terme dans ce
+  chapitre plusieurs fois. Des constantes pour chaque <em lang="en">opcode</em>
+  existent dans la classe <code>Hoa\Websocket\Server</code> afin de simplifier
+  leur utilisation.</p>
+
+  <h3 id="Historique" for="main-toc">Historique</h3>
+
+  <p>Il existe deux versions du protocole WebSocket dans la nature : la version
+  standard et la version non-standard. La version standard est celle décrite
+  dans la RFC6455. La dernière version non-standard porte le petit nom de
+  <em>draft-ietf-hybi-thewebsocketprotocol-00</em> (ou
+  <em>draft-hixie-thewebsocketprotocol-76</em>), abrégé
+  <a href="https://tools.ietf.org/wg/hybi/draft-ietf-hybi-thewebsocketprotocol/">Hybi00</a>.
+  Cette version non-standard a plusieurs problèmes de sécurité importants mais
+  elle est utilisée dans des langages comme Flash. Heureusement, elle disparaît
+  de plus en plus et laisse la place à la RFC6455.</p>
+  <p>La bibliothèque <code>Hoa\Websocket</code> supporte ces deux versions. Elle
+  permet à des clients supportant des versions différentes du protocole de
+  communiquer quand même.</p>
+
+  <h2 id="Ecrire_un_serveur" for="main-toc">Écrire un serveur</h2>
+
+  <p>La classe <code>Hoa\Websocket\Server</code> permet de
+  <strong>manipuler</strong> le protocole WebSocket. La
+  <strong>communication</strong> s'effectue à travers un serveur de socket. Nous
+  utiliserons la classe <code>Hoa\Socket\Server</code> (de la bibliothèque
+  <a href="@lh:chapter=Socket"><code>Hoa\Socket</code></a>) pour remplir ce
+  rôle.</p>
+  <p>Le protocole WebSocket fonctionne en TCP, ainsi nous allons démarrer un
+  serveur WebSocket en local sur le port 8889 :</p>
+  <pre><code class="language-php">from('Hoa')
+-> import('Socket.Server')
+-> import('Websocket.Server');
+
+$server = new Hoa\Websocket\Server(
+    new Hoa\Socket\Server('tcp://127.0.0.1:8889')
+);</code></pre>
+  <p>Maintenant, voyons comment <strong>interagir</strong> avec ce serveur.</p>
+
+  <h3 id="Ecouteurs" for="main-toc">Écouteurs</h3>
+
+  <p>La classe <code>Hoa\Websocket\Server</code> propose six écouteurs :</p>
+  <ul>
+    <li><code>open</code>, quand une <strong>nouvelle</strong> connexion est
+    ouverte ;</li>
+    <li><code>message</code>, quand un <strong>message</strong> arrive sur le
+    serveur ;</li>
+    <li><code>binary-message</code>, quand un message <strong>binaire</strong>
+    arrive sur le serveur ;</li>
+    <li><code>ping</code>, quand un <strong>ping</strong> arrive sur le
+    serveur ;</li>
+    <li><code>error</code>, quand une <strong>erreur</strong> s'est
+    produite ;</li>
+    <li><code>close</code>, quand une connexion se <strong>ferme</strong>.</li>
+  </ul>
+  <p>Pour les écouteurs <code>message</code> et <code>binary-message</code>, il
+  n'y a qu'une seule donnée associée : <code>message</code>, qui contient sans
+  surprise le <strong>message</strong> provenant du client.</p>
+  <p>Pour l'écouteur <code>ping</code>, nous trouvons aussi la donnée
+  <code>message</code>. Notons que le pong se fait
+  <strong>automatiquement</strong> avant de déclencher l'écouteur.</p>
+  <p>Pour l'écouteur <code>error</code>, nous trouvons la donnée
+  <code>exception</code> qui contient une <strong>exception</strong> (pas
+  nécessairement <code>Hoa\Websocket\Exception</code>, cela peut-être par
+  exemple <code>Hoa\Socket\Exception</code>). L'écouteur est déclenché après que
+  la connexion avec le client ait été fermée.</p>
+  <p>L'écouteur <code>close</code> a deux données associées : <code>code</code>
+  pour le <strong>code</strong> et <code>reason</code> qui explique la
+  <strong>raison</strong> de cette fermeture avec un message court.  Nous
+  trouverons les codes de fermetures standards sous forme de constantes
+  <code>CLOSE_<em>*</em></code> dans la classe
+  <code>Hoa\Websocket\Server</code>. Par exemple,
+  <code>Hoa\Websocket\Server::CLOSE_NORMAL</code> symbolise une fermeture de
+  connexion normale, sans erreur, alors que
+  <code>Hoa\Websocket\Server::CLOSE_MESSAGE_ERROR</code> symbolise une fermeture
+  de connexion suite à un message mal formé. Cet écouteur est déclenché après
+  que la connexion ait été fermée.</p>
+
+  <h3 id="Echanges_de_messages" for="main-toc">Échanges de messages</h3>
+
+  <p>Complétons notre exemple pour, dans l'écouteur <code>message</code>,
+  <strong>renvoyer</strong> au client tous les messages qu'il nous envoie de
+  façon à créer un <strong>écho</strong>. Pour cela, nous allons utiliser la
+  méthode <code>Hoa\Websocket\Server::send</code>. Une fois que notre écouteur
+  est positionné, nous pouvons démarrer le serveur à l'aide de la méthode
+  <code>Hoa\Websocket\Server::run</code>. Ainsi :</p>
+  <pre data-line="6"><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $data = $bucket->getData();
+
+    echo 'message: ', $data['message'], "\n";
+    $bucket->getSource()->send($data['message']);
+
+    return;
+});
+
+$server->run();</code></pre>
+  <p>Nous allons maintenant tester notre serveur en créant un client HTML très
+  simple :</p>
+  <pre data-line="6,45"><code class="language-markup">&amp;lt;input type="text" id="input" placeholder="Message…" />
+&amp;lt;hr />
+&amp;lt;pre id="output">&amp;lt;/pre>
+
+&amp;lt;script>
+  var host   = 'ws://127.0.0.1:8889';
+  var socket = null;
+  var input  = document.getElementById('input');
+  var output = document.getElementById('output');
+  var print  = function ( message ) {
+
+      var samp       = document.createElement('samp');
+      samp.innerHTML = message + '\n';
+      output.appendChild(samp);
+
+      return;
+  };
+
+  input.addEventListener('keyup', function ( evt ) {
+
+      if(13 === evt.keyCode) {
+
+          var msg = input.value;
+
+          if(!msg)
+              return;
+
+          try {
+
+              socket.send(msg);
+              input.value = '';
+              input.focus();
+          }
+          catch ( e ) {
+
+              console.log(e);
+          }
+
+          return;
+      }
+  });
+
+  try {
+
+      socket = new WebSocket(host);
+      socket.onopen = function ( ) {
+
+          print('connection is opened');
+          input.focus();
+
+          return;
+      };
+      socket.onmessage = function ( msg ) {
+
+          print(msg.data);
+
+          return;
+      };
+      socket.onclose = function ( ) {
+
+          print('connection is closed');
+
+          return;
+      };
+  }
+  catch ( e ) {
+
+      console.log(e);
+  }
+&amp;lt;/script></code></pre>
+  <p>À la ligne 6, nous déclarons l'adresse du serveur WebSocket en utilisant le
+  protocole <code>ws</code>. À la ligne 45, nous utilisons
+  l'<a href="https://developer.mozilla.org/docs/WebSockets/WebSockets_reference/WebSocket">objet
+  <code>WebSocket</code></a>, et nous lui attachons des écouteurs, fortement
+  semblables à ceux de <code>Hoa\Websocket\Socket</code> !</p>
+  <p>Pour tester, il suffit de démarrer le serveur :</p>
+  <pre><code class="language-shell">$ php Server.php</code></pre>
+  <p>Puis, d'ouvrir le client avec son navigateur préféré. À chaque message
+  envoyé au serveur, il nous revient à l'identique, nous avons bien un écho.</p>
+
+  <h3 id="Diffusions_de_messages" for="main-toc">Diffusions de messages</h3>
+
+  <p>Pour l'instant, le client parle avec le serveur et le serveur lui répond,
+  mais ça ne reste qu'un <strong>dialogue</strong>. Le serveur a pourtant toutes
+  les connexions en mémoire, nous sommes donc capable de
+  <strong>diffuser</strong> le message à tous les clients connectés. Pour cela,
+  nous allons utiliser la méthode <code>Hoa\Websocket\Server::broadcast</code>
+  qui va envoyer un message à tous les autres clients connectés, ainsi :</p>
+  <pre data-line="6"><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $data = $bucket->getData();
+
+    echo 'message: ', $data['message'], "\n";
+    $bucket->getSource()->broadcast($data['message');
+
+    return;
+});</code></pre>
+  <p>Et voilà ! C'est aussi simple que ça. Redémarrons le serveur, et ouvrons
+  plusieurs clients. Chaque message envoyé sera diffusé à <strong>tous</strong>
+  les autres ! Notre exemple est devenu un outil de <strong>messagerie
+  instantannée</strong>.</p>
+  <p>Il faut comprendre que le serveur de socket <code>Hoa\Socket\Server</code>
+  travaille avec des <strong>nœuds</strong>, c'est à dire un objet qui
+  représente une connexion ouverte. Dans un écouteur, pour connaître le nœud
+  <strong>courant</strong> qui a déclenché l'appel à cet écouteur, nous devons
+  appeler la méthode <code>Hoa\Websocket\Server::getConnection</code> pour
+  obtenir le serveur de socket, puis
+  <code>Hoa\Socket\Server::getCurrentNode</code>.  Similairement, nous avons la
+  méthode <code>Hoa\Socket\Server::getNodes</code> pour obtenir tous les nœuds.
+  La méthode <code>Hoa\Websocket\Server::broadcast</code> vient en réalité de la
+  bibliothèque <code>Hoa\Socket</code> et cache cette complexité. Il est
+  préférable d'utiliser cette méthode pour des raisons de
+  <strong>performance</strong> et de compatibilité.</p>
+
+  <h3 id="Fermeture" for="main-toc">Fermeture</h3>
+
+  <p>Pour <strong>fermer</strong> la connexion avec le client, nous utilisons la
+  méthode <code>Hoa\Websocket\Server::close</code>. Elle est très similaire à
+  <code>Hoa\Websocket\Server::send</code>. Ses arguments sont :</p>
+  <ul>
+    <li><code>code</code> : le <strong>code</strong> de fermeture, voir les
+    constantes <code>Hoa\Websocket\Server::CLOSE_<em>*</em></code>
+    (<code>CLOSE_NORMAL</code> par défaut) ;</li>
+    <li><code>reason</code> : un message court expliquant la
+    <strong>raison</strong> de la fermeture (<code>null</code> par
+    défaut) ;</li>
+    <li><code>node</code> : le <strong>nœud</strong> qui va fermer la connexion
+    (<code>null</code>, par défault, indique le nœud courant).</li>
+  </ul>
+  <p>Par exemple, quand nous recevons le message <code>I love you</code>, nous
+  fermerons la connexion en expliquant pourquoi, sinon nous faisons un simple
+  écho du message :</p>
+  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $data = $bucket->getData();
+
+    if('I love you' === $data['message']) {
+
+        $bucket->getSource()->close(
+            Hoa\Websocket\Server::CLOSE_NORMAL,
+            'Thank you but my heart is already taken, bye bye!'
+        );
+
+        return;
+    }
+
+    $bucket->getSource()->send($data['message']);
+
+    return;
+});</code></pre>
+  <p>Nous pouvons modifier notre client pour qu'il nous affiche le code et la
+  raison d'une fermeture :</p>
+  <pre><code class="language-javascript">      socket.onclose = function ( e ) {
+
+          print(
+              'connection is closed (' + e.code + ' ' +
+              (e.reason || '—no reason—') + ')'
+          );
+
+          return;
+      };</code></pre>
+  <p>Il est préférable de <strong>toujours</strong> utiliser cette méthode pour
+  fermer une connexion plutôt que de fermer directement la connexion TCP.</p>
+
+
+  <h2 id="Message" for="main-toc">Message</h2>
+
+  <p>Nous avons deux façons d'envoyer des messages : soit en un seul morceau si
+  nous avons le message en <strong>entier</strong>, soit en
+  <strong>plusieurs</strong> morceaux. Notre message peut aussi contenir autre
+  chose que du texte, il peut contenir une donnée <strong>binaire</strong>. Dans
+  ce cas, nous parlons de message binaire.</p>
+
+  <h3 id="Fragmentation" for="main-toc">Fragmentation</h3>
+
+  <p>Pour envoyer un message en un seul bloc, nous utilisons la méthode
+  <code>Hoa\Websocket\Server::send</code> comme nous l'avons vu dans les
+  sections précédentes :</p>
+  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $bucket->getSource()->send('foobar');
+
+    return;
+});</code></pre>
+  <p>Cette méthode comporte en réalité quatre arguments :</p>
+  <ul>
+    <li><code>message</code> : le <strong>message</strong> ;</li>
+    <li><code>node</code> : le <strong>nœud</strong> qui va envoyer le message
+    (<code>null</code>, par défaut, indique le nœud courant) ;</li>
+    <li><code>opcode</code> : l'<strong><em>opcode</em></strong>, c'est à dire
+    le type de la <em lang="en">frame</em>
+    (<code>Hoa\Websocket\Server::OPCODE_TEXT_FRAME</code> par défaut) ;</li>
+    <li><code>fin</code> : indique si le message est <strong>terminé</strong> ou
+    pas (<code>true</code> par défaut).</li>
+  </ul>
+  <p>Nous allons utiliser tous les arguments en essayant d'envoyer un message
+  <strong>fragmenté</strong>.</p>
+  <p>Dans notre exemple, nous avons envoyé un message en entier, ce qui est le
+  cas le plus courant. Si nous envoyons un très long message, nous utiliserons
+  également cette même méthode. Toutefois, il peut arriver que nous ayons le
+  message morceau après morceau et nous sommes alors incapable de l'envoyer en
+  entier. Par exemple, si le message, de taille <strong>indéterminée</strong>,
+  est lu sur un flux et que nous voulons ensuite l'envoyer au client, nous
+  n'allons pas attendre d'avoir tout le message : nous allons envoyer chaque
+  morceau directement au client. Dans ce cas, nous parlons de messages
+  fragmentés.</p>
+  <p>Nous allons utiliser les deux <em>opcodes</em> suivants :
+  <code>OPCODE_TEXT_FRAME</code> pour le <strong>premier</strong> fragment, puis
+  <code>OPCODE_CONTINUATION_FRAME</code> pour tous les
+  <strong>suivants</strong>. À chaque fois, nous allons préciser que le message
+  n'est pas <strong>terminé</strong> à l'aide de l'argument <code>fin</code> qui
+  sera à <code>false</code>, sauf pour le dernier fragment où <code>fin</code>
+  sera à <code>true</code>.</p>
+  <p>L'utilisateur final derrière le client ne recevra pas des messages
+  fragmentés, mais le message en entier une fois que le dernier fragment aura
+  été reçu. Côté serveur, cela nous évite de surcharger la mémoire avec des
+  données « en transit » et aussi de surcharger le réseau avec un gros message.
+  Nous envoyons les données dès que nous les avons et c'est le client qui
+  s'occupe de <strong>reconstituer</strong> le message. Le serveur opère de la
+  même façon lorsqu'il reçoit un message fragmenté. Entre deux fragments, le
+  serveur peut aussi traiter d'autres tâches. Il est donc plus intéressant
+  d'utiliser les fragments plutôt que de temporiser le message.</p>
+  <p>Passons à un exemple. Nous allons envoyer le message <code>foobarbaz</code>
+  fragmenté en trois parties. Nous pouvons imaginer que nous lisons ces données
+  sur une socket par exemple, et que les données viennent au fur et à mesure.
+  Ainsi :</p>
+  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $self = $bucket->getSource();
+
+    $self->send(
+        'foo',
+        null,
+        Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+        false // not the end…
+    );
+    echo 'sent foo', "\n";
+    sleep(1);
+
+    $self->send(
+        'bar',
+        null,
+        Hoa\Websocket\Server::OPCODE_CONTINUATION_FRAME,
+        false // not the end…
+    );
+    echo 'sent bar', "\n";
+    sleep(1);
+
+    $self->send(
+        'baz',
+        null,
+        Hoa\Websocket\Server::OPCODE_CONTINUATION_FRAME,
+        true // the end!
+    );
+    echo 'sent baz, over', "\n";
+
+    return;
+});</code></pre>
+  <p>Les instructions <a href="http://php.net/sleep"><code>sleep</code></a>
+  permettent d'émuler une latence réseau ou quelque chose du genre. À chaque
+  appel de la méthode <code>send</code>, les données sont
+  <strong>effectivement</strong> envoyées au client, ce n'est pas un tampon côté
+  serveur.</p>
+
+  <h3 id="Encodage" for="main-toc">Encodage</h3>
+
+  <p>Tous les messages échangés doivent être au format <strong>UTF-8</strong>
+  (voir la <a href="https://tools.ietf.org/html/rfc3629">RFC3629</a>). Si les
+  messages provenant du client ne sont pas conformes,
+  <code>Hoa\Websocket\Server</code> fermera la connexion de façon appropriée
+  avec le code <code>Hoa\Websocket\Server::CLOSE_MESSAGE_ERROR</code>, nous
+  n'avons rien à faire de spécial. Par conséquent, tous les messages reçus dans
+  nos écouteurs sont au bon encodage.</p>
+  <p>En revanche, <code>Hoa\Websocket\Server</code> vérifie que les messages à
+  <strong>destination</strong> du client sont dans le bon encodage. Si
+  l'encodage n'est pas approprié, alors une exception
+  <code>Hoa\Websocket\Exception\InvalidMessage</code> sera levée, ce qui fermera
+  la connexion et déclenchera l'écouteur <code>error</code> si elle n'est pas
+  capturée à temps.</p>
+
+  <h3 id="Binaire" for="main-toc">Binaire</h3>
+
+  <p>Il est également possible d'envoyer des données <strong>binaires</strong>,
+  bien plus <strong>compactes</strong> que des données textuelles. Nous parlons
+  alors de messages binaires.  Nous allons toujours utiliser la méthode
+  <code>Hoa\Websocket\Server::send</code> mais avec l'<em>opcode</em>
+  <code>OPCODE_BINARY_FRAME</code>. Cela n'a de sens que dans l'écouteur
+  <code>binary-message</code>, c'est à dire dans un « échange binaire » entre
+  le client et le serveur. Nous pouvons imaginer le client qui envoie des
+  coordonnées et le serveur qui lui en redonne d'autres (échange fort probable
+  pour un jeu de plateau par exemple) :</p>
+  <pre><code class="language-php">$server->on('binary-message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $data                          = $bucket->getData();
+    $message                       = $data['message'];
+    $point                         = array();
+    list($point['x'], $point['y']) = array_values(unpack('nx/ny', $message));
+
+    // compute a next point.
+
+    $bucket->getSource()->send(
+        pack('nn', $point['x'], $point['y']),
+        null,
+        Hoa\Websocket\Server::OPCODE_BINARY_FRAME
+    );
+
+    return;
+});</code></pre>
+  <p>Les fonctions <a href="http://php.net/pack"><code>pack</code></a> et
+  <a href="http://php.net/unpack"><code>unpack</code></a> seront des alliés
+  précieux dans ce cas.</p>
+  <p>Notons que les messages binaires peuvent également être
+  <strong>fragmentés</strong>. Il faut utiliser l'<em>opcode</em>
+  <code>OPCODE_BINARY_FRAME</code> à la place de <code>OPCODE_TEXT_FRAME</code>
+  puis continuer avec <code>OPCODE_CONTINUATION_FRAME</code> comme nous l'avons
+  appris.</p>
+
+  <h2 id="Noeud_personnalise" for="main-toc">Nœud personnalisé</h2>
+
+  <p>La classe <code>Hoa\Socket\Server</code> travaille avec des
+  <strong>nœuds</strong> : des objets qui représentent une
+  <strong>connexion</strong> ouverte. La classe de base pour représenter un nœud
+  est <code>Hoa\Socket\Node</code>. La bibliothèque <code>Hoa\Websocket</code>
+  propose son propre nœud : <code>Hoa\Websocket\Node</code>. Nous pouvons encore
+  <strong>étendre</strong> cette classe pour ajouter et manipuler des
+  <strong>informations</strong> sur une connexion.</p>
+  <p>Par exemple, dans le cas d'une messagerie, nous pourrions stocker le pseudo
+  du client :</p>
+  <pre><code class="language-php">from('Hoa')
+-> import('Websocket.Node');
+
+class ChatNode extends Hoa\Websocket\Node {
+
+    protected $_pseudo = null;
+
+
+    public function setPseudo ( $pseudo ) {
+
+        $old           = $this->_pseudo;
+        $this->_pseudo = $pseudo;
+
+        return $old;
+    }
+
+    public function getPseudo ( ) {
+
+        return $this->_pseudo;
+    }
+}</code></pre>
+  <p>Pour préciser au serveur de socket d'<strong>utiliser</strong> notre classe
+  de nœud, nous devons utiliser la méthode
+  <code>Hoa\Socket\Server::setNodeName</code> de cette manière :</p>
+  <pre><code class="language-php">$server = new Hoa\Websocket\Server(
+    new Hoa\Socket\Server('tcp://127.0.0.1:8889')
+);
+$server->getConnection()->setNodeName('ChatNode');</code></pre>
+  <p>Et après, dans nos écouteurs, nous pourrons utiliser notre méthode
+  <code>getPseudo</code> par exemple :</p>
+  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
+
+    $node = $bucket->getSource()->getConnection()->getCurrentNode();
+
+    var_dump($node->getPseudo());
+
+    // …
+});</code></pre>
+  <p>Si vous mettez en place un <strong>protocole</strong> en utilisant le canal
+  des WebSockets entre vos clients et votre serveur, les nœuds personnalisés
+  seront très utiles pour stocker quelques informations récurrentes.</p>
+
+  <h2 id="Conclusion" for="main-toc">Conclusion</h2>
+
+  <p>La bibliothèque <code>Hoa\Websocket</code> permet de créer un
+  <strong>serveur</strong> WebSocket pour plus d'<strong>interactivité</strong>
+  dans vos applications. Le serveur est facilement extensible avec la notion de
+  <strong>nœud</strong>, qui facilite le stockage et la manipulation de données
+  utiles pour créer son propre protocole.</p>
+
+</yield>
+</overlay>
