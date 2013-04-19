@@ -197,7 +197,7 @@ class Rfc6455 extends Generic {
             $buffer = min($bufferLength, $length - $i);
             $handle = $this->_server->read($buffer);
 
-            for($j = 0; $j < $buffer; ++$j) {
+            for($j = 0, $_length = strlen($handle); $j < $_length; ++$j) {
 
                 $handle[$j] = chr(ord($handle[$j]) ^ $maskN[$maskC]);
                 $maskC      = ($maskC + 1) % 4;
