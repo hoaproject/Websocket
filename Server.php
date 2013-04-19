@@ -598,6 +598,9 @@ class          Server
 
         $send = parent::send($message, $node);
 
+        if(null === $send)
+            return null;
+
         return $send($opcode, $end);
     }
 
