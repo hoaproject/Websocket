@@ -428,9 +428,7 @@ class          Server
                         break;
                     }
 
-                    $this->getConnection()
-                         ->getCurrentNode()
-                         ->getProtocolImplementation()
+                    $node->getProtocolImplementation()
                          ->writeFrame(
                              $message,
                              self::OPCODE_PONG,
