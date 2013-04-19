@@ -112,8 +112,6 @@ Finally, we have to write a client in HTML and Javascript:
       catch ( e ) {
 
           console.log(e);
-
-          return;
       }
     </script>
 
