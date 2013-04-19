@@ -193,7 +193,7 @@ class Node extends \Hoa\Socket\Node {
      */
     public function setBinary ( $binary ) {
 
-        $old             = $this->_binary;
+        $old             = $this->_isBinary;
         $this->_isBinary = $binary;
 
         return $old;
