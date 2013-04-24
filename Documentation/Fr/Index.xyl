@@ -31,12 +31,12 @@
   (voir la <a href="https://tools.ietf.org/html/rfc3986">RFC3986</a>) du
   protocole WebSocket est <code>ws://</code>.</p>
   <p>Nous pouvons nous demander quelles sont les différences entre WebSocket et
-  EventSource. Ces deux solutions sont en fait fondamentalement différentes :
-  WebSocket est un protocole full-duplex et bidirectionnel. EventSource est une
-  technologie basée sur le <strong>protocole HTTP</strong> et ne propose qu'une
-  communication <strong>unidirectionnelle</strong> ; pour cet usage,
-  un serveur EventSource est plus léger, plus simple et conçu pour être
-  robuste aux déconnexions (voir la bibliothèque
+  EventSource. Ces deux solutions sont en fait fondamentalement différentes :
+  WebSocket permet une communication bidirectionnelle et full-duplex, alors que
+  EventSource est une technologie basée sur le <strong>protocole HTTP</strong>
+  et ne propose qu'une communication <strong>unidirectionnelle</strong>. Pour
+  cet usage, un serveur EventSource est plus léger, plus simple et conçu pour
+  être robuste aux déconnexions (voir la bibliothèque
   <a href="@lh:chapter=Eventsource"><code>Hoa\EventSource</code></a>).</p>
   <p>Le protocole WebSocket commence par une phase de
   <em lang="en">handshake</em> afin de permettre, par la suite, les échanges de
