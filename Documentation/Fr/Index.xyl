@@ -37,7 +37,7 @@
   et ne propose qu'une communication <strong>unidirectionnelle</strong>. Pour
   cet usage, un serveur EventSource est plus léger, plus simple et conçu pour
   être robuste aux déconnexions (voir la bibliothèque
-  <a href="@lh:chapter=Eventsource"><code>Hoa\EventSource</code></a>).</p>
+  <a href="@lh:chapter=Eventsource"><code>Hoa\Eventsource</code></a>).</p>
   <p>Le protocole WebSocket commence par une phase de
   <em lang="en">handshake</em> afin de permettre, par la suite, les échanges de
   messages sous forme de <em lang="en">frames</em>.</p>
