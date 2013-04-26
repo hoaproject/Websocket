@@ -22,8 +22,9 @@
         "source": "http://git.hoa-project.net/"
     },
     "require": {
-        "hoa/core"  : "master",
-        "hoa/socket": "master",
-        "hoa/http"  : "master"
-    }
+        "hoa/core"  : "dev-master",
+        "hoa/socket": "dev-master",
+        "hoa/http"  : "dev-master"
+    },
+    "minimum-stability": "dev"
 }
