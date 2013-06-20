@@ -57,7 +57,7 @@
   également le déploiement de ce protocole : pas besoin de lui réserver un port
   particulier, pas besoin d'avoir une configuration serveur particulière etc.
   Cela permet enfin d'utiliser une connexion <strong>sécurisée</strong>, à
-  travers SSL. Dans ce cas, nous utilisons le schéma URI
+  travers TLS. Dans ce cas, nous utilisons le schéma URI
   <code>wss://</code>.</p>
 
   <h3 id="Frame_et_opcode" for="main-toc"><em lang="en">Frame</em> et
