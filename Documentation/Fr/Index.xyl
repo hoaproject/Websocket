@@ -265,7 +265,7 @@ $server->run();</code></pre>
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
-    $bucket->getSource()->broadcast($data['message');
+    $bucket->getSource()->broadcast($data['message']);
 
     return;
 });</code></pre>
