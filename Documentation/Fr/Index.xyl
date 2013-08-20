@@ -24,12 +24,12 @@
   protocole HTTP. Le protocole WebSocket est également
   <strong>full-duplex</strong>, c'est à dire que les données sont échangées
   <strong>simultanément</strong> dans les <strong>deux</strong> sens : ce n'est
-  parce que le serveur a envoyé une donnée qui est en cours d'acheminement que
-  le client ne peut pas envoyer de données à son tour. Le protocole WebSocket
-  permet alors une forte <strong>interactivité</strong> entre le client et le
-  serveur. Le client sera très souvent un navigateur. Notons que le schéma URI
-  (voir la <a href="https://tools.ietf.org/html/rfc3986">RFC3986</a>) du
-  protocole WebSocket est <code>ws://</code>.</p>
+  pas parce que le serveur a envoyé une donnée qui est en cours d'acheminement
+  que le client ne peut pas envoyer de données à son tour. Le protocole
+  WebSocket permet alors une forte <strong>interactivité</strong> entre le
+  client et le serveur. Le client sera très souvent un navigateur. Notons que le
+  schéma URI (voir la <a href="https://tools.ietf.org/html/rfc3986">RFC3986</a>)
+  du protocole WebSocket est <code>ws://</code>.</p>
   <p>Nous pouvons nous demander quelles sont les différences entre WebSocket et
   EventSource. Ces deux solutions sont en fait fondamentalement différentes :
   WebSocket permet une communication bidirectionnelle et full-duplex, alors que
