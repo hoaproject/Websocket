@@ -26,5 +26,11 @@
         "hoa/socket": "dev-master",
         "hoa/http"  : "dev-master"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "target-dir": "Hoa/Websocket",
+    "autoload": {
+        "psr-0": {
+            "Hoa\\Websocket": "."
+        }
+    }
 }
