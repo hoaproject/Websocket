@@ -49,6 +49,11 @@ from('Hoa')
 -> import('Websocket.Exception.BadProtocol')
 
 /**
+ * \Hoa\Websocket\Exception\InvalidBucketClass
+ */
+-> import('Websocket.Exception.InvalidBucketClass')
+
+/**
  * \Hoa\Websocket\Node
  */
 -> import('Websocket.Node')
@@ -232,6 +237,13 @@ class          Server
      */
     protected $_request = null;
 
+    /**
+     * Bucket class name.
+     *
+     * @var string
+     */
+    protected $_bucketClass = null;
+
 
 
     /**
@@ -299,7 +311,7 @@ class          Server
                 $this->doHandshake();
                 $this->_on->fire(
                     'open',
-                    new \Hoa\Core\Event\Bucket()
+                    $this->_createBucket()
                 );
 
                 return;
@@ -333,7 +345,7 @@ class          Server
                             $fromBinary = false;
                             $this->_on->fire(
                                 'binary-message',
-                                new \Hoa\Core\Event\Bucket(array(
+                                $this->_createBucket(array(
                                     'message' => $frame['message']
                                 ))
                             );
@@ -350,7 +362,7 @@ class          Server
 
                         $this->_on->fire(
                             'message',
-                            new \Hoa\Core\Event\Bucket(array(
+                            $this->_createBucket(array(
                                 'message' => $frame['message']
                             ))
                         );
@@ -393,7 +405,7 @@ class          Server
 
                             $this->_on->fire(
                                 'binary-message',
-                                new \Hoa\Core\Event\Bucket(array(
+                                $this->_createBucket(array(
                                     'message' => $message
                                 ))
                             );
@@ -410,7 +422,7 @@ class          Server
 
                         $this->_on->fire(
                             'message',
-                            new \Hoa\Core\Event\Bucket(array(
+                            $this->_createBucket(array(
                                 'message' => $message
                             ))
                         );
@@ -437,7 +449,7 @@ class          Server
 
                     $this->_on->fire(
                         'ping',
-                        new \Hoa\Core\Event\Bucket(array(
+                        $this->_createBucket(array(
                             'message' => $message
                         ))
                     );
@@ -498,7 +510,7 @@ class          Server
                     $this->close(self::CLOSE_NORMAL);
                     $this->_on->fire(
                         'close',
-                        new \Hoa\Core\Event\Bucket(array(
+                        $this->_createBucket(array(
                             'code'   => $code,
                             'reason' => $reason
                         ))
@@ -512,7 +524,7 @@ class          Server
         catch ( \Hoa\Core\Exception\Idle $e ) {
 
             $this->close(self::CLOSE_SERVER_ERROR);
-            $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
+            $this->_on->fire('error', $this->_createBucket(array(
                 'exception' => $e
             )));
         }
@@ -648,6 +660,55 @@ class          Server
     public function getRequest ( ) {
 
         return $this->_request;
+    }
+
+    /**
+     * Set bucket class
+     *
+     * @access  public
+     * @param   string  $request    Request.
+     * @return  void
+     */
+    public function setBucketClass ( $class ) {
+
+        if(!is_subclass_of($class, '\Hoa\Core\Event\Bucket')) {
+
+            throw new Exception\InvalidBucketClass(
+                sprintf(
+                    '"%s" is not a valid bucket class. It must extends "\Hoa\Core\Event\Bucket".',
+                    $class
+                ), 2);
+        }
+
+        $this->_bucketClass = $class;
+
+        return;
+    }
+
+    /**
+     * Get bucket class.
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getBucketClass ( ) {
+
+        return $this->_bucketClass;
+    }
+
+
+    /**
+     * Create a bucket object.
+     *
+     * @access  protected
+     * @param   array                   $data   Data
+     * @return  \Hoa\Core\Event\Bucket
+     */
+    protected function _createBucket ( array $data = array() ) {
+
+        $class = $this->getBucketClass() ?: '\Hoa\Core\Event\Bucket';
+
+        return new $class($data);
     }
 }
 
