@@ -88,6 +88,11 @@ class Node extends \Hoa\Socket\Node {
     protected $_numberOfFragments = 0;
 
     /**
+     * Whether the message is complete or not.
+     */
+    protected $_complete          = true;
+
+    /**
      * Whether the message is binary or not.
      *
      * @var \Hoa\Websocket\Node bool
@@ -185,6 +190,32 @@ class Node extends \Hoa\Socket\Node {
     }
 
     /**
+     * Set whether the message is complete or not.
+     *
+     * @access  public
+     * @param   bool  $complete    Is it complete?
+     * @return  bool
+     */
+    public function setComplete ( $complete ) {
+
+        $old             = $this->_complete;
+        $this->_complete = $complete;
+
+        return $old;
+    }
+
+    /**
+     * Check if the message is complete or not.
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function isMessageComplete ( ) {
+
+        return $this->_complete;
+    }
+
+    /**
      * Whether the message is binary or not.
      *
      * @access  public
@@ -221,6 +252,7 @@ class Node extends \Hoa\Socket\Node {
         unset($this->_messageFragments);
         $this->_numberOfFragments = 0;
         $this->_isBinary          = false;
+        $this->_complete          = true;
 
         return;
     }

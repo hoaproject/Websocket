@@ -291,6 +291,7 @@ abstract class Connection
             if(false === $frame)
                 return;
 
+
             $fromText   = false;
             $fromBinary = false;
 
@@ -338,6 +339,8 @@ abstract class Connection
 
                         break;
                     }
+                    else
+                        $node->setComplete(false);
 
                     $fromText = true;
 
@@ -396,6 +399,8 @@ abstract class Connection
                             ))
                         );
                     }
+                    else
+                        $node->setComplete(false);
                   break;
 
                 case self::OPCODE_PING:
@@ -492,9 +497,24 @@ abstract class Connection
         }
         catch ( \Hoa\Core\Exception\Idle $e ) {
 
-            $this->close(self::CLOSE_SERVER_ERROR);
+            try {
+
+                $this->close(self::CLOSE_SERVER_ERROR);
+                $exception = $e;
+            }
+            catch ( \Hoa\Core\Exception\Idle $ee ) {
+
+                $this->getConnection()->disconnect();
+                $exception = new \Hoa\Core\Exception\Group(
+                    'An exception has been thrown. We have tried to close ' .
+                    'the connection but another exception has been thrown.', 42
+                );
+                $exception[] = $e;
+                $exception[] = $ee;
+            }
+
             $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
-                'exception' => $e
+                'exception' => $exception
             )));
         }
 
@@ -562,9 +582,10 @@ abstract class Connection
     public function close ( $code = self::CLOSE_NORMAL, $reason = null ) {
 
         $connection = $this->getConnection();
-        $connection->getCurrentNode()
-                   ->getProtocolImplementation()
-                   ->close($code, $reason);
+        $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
+
+        if(null !== $protocol)
+            $protocol->close($code, $reason);
 
         return $connection->disconnect();
     }
