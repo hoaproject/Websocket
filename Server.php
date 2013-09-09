@@ -74,7 +74,7 @@ class Server extends Connection {
 
 
     /**
-     * Create a websocket server.
+     * Create a Websocket server.
      *
      * @access  public
      * @param   \Hoa\Socket\Server  $server    Server.
