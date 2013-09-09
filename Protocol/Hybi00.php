@@ -89,7 +89,7 @@ class Hybi00 extends Generic {
         $challenge = $part1 . $part2 . $key3;
         $response  = md5($challenge, true);
 
-        $this->_server->writeAll(
+        $this->_connection->writeAll(
             'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
             'Upgrade: WebSocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
@@ -98,7 +98,7 @@ class Hybi00 extends Generic {
             "\r\n" .
             $response . "\r\n"
         );
-        $this->_server->getCurrentNode()->setHandshake(SUCCEED);
+        $this->_connection->getCurrentNode()->setHandshake(SUCCEED);
 
         return;
     }
@@ -111,7 +111,7 @@ class Hybi00 extends Generic {
      */
     public function readFrame ( ) {
 
-        $buffer  = $this->_server->read(2048);
+        $buffer  = $this->_connection->read(2048);
         $length  = strlen($buffer) - 2;
 
         if(empty($buffer))
@@ -120,7 +120,7 @@ class Hybi00 extends Generic {
                 'rsv1'    => 0x0,
                 'rsv2'    => 0x0,
                 'rsv3'    => 0x0,
-                'opcode'  => \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE,
+                'opcode'  => \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE,
                 'mask'    => 0x0,
                 'length'  => 0,
                 'message' => null
@@ -131,7 +131,7 @@ class Hybi00 extends Generic {
             'rsv1'    => 0x0,
             'rsv2'    => 0x0,
             'rsv3'    => 0x0,
-            'opcode'  => \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+            'opcode'  => \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
             'mask'    => 0x0,
             'length'  => $length,
             'message' => substr($buffer, 1, $length)
@@ -149,7 +149,7 @@ class Hybi00 extends Generic {
      */
     public function writeFrame ( $message, $opcode = -1, $end = true ) {
 
-        return $this->_server->writeAll(
+        return $this->_connection->writeAll(
             chr(0) . $message . chr(255)
         );
     }
@@ -176,12 +176,12 @@ class Hybi00 extends Generic {
      *
      * @access  public
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @return  void
      */
-    public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
+    public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
                             $reason = null ) {
 
         return;

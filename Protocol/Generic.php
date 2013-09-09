@@ -49,11 +49,11 @@ namespace Hoa\Websocket\Protocol {
 abstract class Generic {
 
     /**
-     * Server.
+     * Connection.
      *
-     * @var \Hoa\Socket\Server object
+     * @var \Hoa\Socket\Connection object
      */
-    protected $_server = null;
+    protected $_connection = null;
 
 
 
@@ -61,12 +61,12 @@ abstract class Generic {
      * Construct the protocol implementation.
      *
      * @access  public
-     * @param   \Hoa\Socket\Server  $server    Server.
+     * @param   \Hoa\Socket\Connection  $connection    Connection.
      * @return  void
      */
-    public function __construct ( \Hoa\Socket\Server $server ) {
+    public function __construct ( \Hoa\Socket\Connection $connection ) {
 
-        $this->_server = $server;
+        $this->_connection = $connection;
 
         return;
     }

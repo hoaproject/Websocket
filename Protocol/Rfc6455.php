@@ -107,14 +107,14 @@ class Rfc6455 extends Generic {
          *   • Sec-WebSocket-Extensions.
          */
 
-        $this->_server->writeAll(
+        $this->_connection->writeAll(
             'HTTP/1.1 101 Switching Protocols' . "\r\n" .
             'Upgrade: websocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
             'Sec-WebSocket-Accept: ' . $response . "\r\n" .
             'Sec-WebSocket-Version: 13' . "\r\n\r\n"
         );
-        $this->_server->getCurrentNode()->setHandshake(SUCCEED);
+        $this->_connection->getCurrentNode()->setHandshake(SUCCEED);
 
         return;
     }
@@ -129,11 +129,11 @@ class Rfc6455 extends Generic {
     public function readFrame ( ) {
 
         $out  = array();
-        $read = $this->_server->read(1);
+        $read = $this->_connection->read(1);
 
         if(empty($read)) {
 
-            $out['opcode'] = \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE;
+            $out['opcode'] = \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE;
 
             return $out;
         }
@@ -145,14 +145,14 @@ class Rfc6455 extends Generic {
         $out['rsv3']   = ($handle >> 4) & 0x1;
         $out['opcode'] =  $handle       & 0xf;
 
-        $handle        = ord($this->_server->read(1));
+        $handle        = ord($this->_connection->read(1));
         $out['mask']   = ($handle >> 7) & 0x1;
         $out['length'] =  $handle       & 0x7f;
         $length        = &$out['length'];
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
 
-            $this->_server->close(\Hoa\Websocket\Server::CLOSE_PROTOCOL_ERROR);
+            $this->_connection->close(\Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR);
 
             return false;
         }
@@ -165,12 +165,12 @@ class Rfc6455 extends Generic {
         }
         elseif(0x7e === $length) {
 
-            $handle = unpack('nl', $this->_server->read(2));
+            $handle = unpack('nl', $this->_connection->read(2));
             $length = $handle['l'];
         }
         elseif(0x7f === $length) {
 
-            $handle = unpack('N*l', $this->_server->read(8));
+            $handle = unpack('N*l', $this->_connection->read(8));
             $length = $handle['l2'];
 
             if($length > 0x7fffffffffffffff)
@@ -180,12 +180,12 @@ class Rfc6455 extends Generic {
 
         if(0x0 === $out['mask']) {
 
-            $out['message'] = $this->_server->read($length);
+            $out['message'] = $this->_connection->read($length);
 
             return $out;
         }
 
-        $maskN = array_map('ord', str_split($this->_server->read(4)));
+        $maskN = array_map('ord', str_split($this->_connection->read(4)));
         $maskC = 0;
 
         $buffer       = 0;
@@ -195,7 +195,7 @@ class Rfc6455 extends Generic {
         for($i = 0; $i < $length; $i += $bufferLength) {
 
             $buffer = min($bufferLength, $length - $i);
-            $handle = $this->_server->read($buffer);
+            $handle = $this->_connection->read($buffer);
 
             for($j = 0, $_length = strlen($handle); $j < $_length; ++$j) {
 
@@ -221,7 +221,7 @@ class Rfc6455 extends Generic {
      * @return  int
      */
     public function writeFrame ( $message,
-                                 $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                                 $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
                                  $end    = true ) {
 
         $fin    = true === $end ? 0x1 : 0x0;
@@ -247,7 +247,7 @@ class Rfc6455 extends Generic {
 
         $out .= $message;
 
-        return $this->_server->writeAll($out);
+        return $this->_connection->writeAll($out);
     }
 
     /**
@@ -262,11 +262,11 @@ class Rfc6455 extends Generic {
      * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send ( $message,
-                           $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                           $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
                            $end    = true ) {
 
-        if(   (\Hoa\Websocket\Server::OPCODE_TEXT_FRAME         === $opcode
-           ||  \Hoa\Websocket\Server::OPCODE_CONTINUATION_FRAME === $opcode)
+        if(   (\Hoa\Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode
+           ||  \Hoa\Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode)
            && false === (bool) preg_match('//u', $message))
             throw new \Hoa\Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
@@ -282,17 +282,17 @@ class Rfc6455 extends Generic {
      *
      * @access  public
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @return  void
      */
-    public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
+    public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
                             $reason = null ) {
 
         $this->writeFrame(
             pack('n', $code) . $reason,
-            \Hoa\Websocket\Server::OPCODE_CONNECTION_CLOSE
+            \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE
         );
 
         return;
