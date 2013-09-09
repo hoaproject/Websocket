@@ -101,7 +101,7 @@ abstract class Generic {
      * @throw   \Hoa\Websocket\Exception
      */
     abstract public function writeFrame ( $message,
-                                          $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                                          $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
                                           $end    = true );
 
     /**
@@ -115,7 +115,7 @@ abstract class Generic {
      * @return  void
      */
     abstract public function send ( $message,
-                                    $opcode = \Hoa\Websocket\Server::OPCODE_TEXT_FRAME,
+                                    $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
                                     $end    = true );
 
     /**
@@ -123,12 +123,12 @@ abstract class Generic {
      *
      * @access  public
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Server::CLOSE_*
+     *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @return  void
      */
-    abstract public function close ( $code   = \Hoa\Websocket\Server::CLOSE_NORMAL,
+    abstract public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
                                      $reason = null );
 }
 
