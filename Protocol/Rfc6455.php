@@ -97,7 +97,13 @@ class Rfc6455 extends Generic {
             throw new \Hoa\Websocket\Exception\BadProtocol(
                 'Bad protocol implementation: it is not RFC6455.', 0);
 
-        $key      = $request['sec-websocket-key'];
+        $key = $request['sec-websocket-key'];
+
+        if(    0 === preg_match('#^[+/0-9A-Za-z]{21}[AQgw]==$#', $key)
+           || 16 !== strlen(base64_decode($key)))
+            throw new \Hoa\Websocket\Exception\BadProtocol(
+                'Header Sec-WebSocket-Key: %s is illegal.', 0, $key);
+
         $response = base64_encode(sha1($key . static::GUID, true));
 
         /**
