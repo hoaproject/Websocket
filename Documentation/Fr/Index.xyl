@@ -514,7 +514,7 @@ $server->run();</code></pre>
   <code>Hoa\Websocket\Connection</code>. Nous retrouvons alors les mêmes
   méthodes <code>send</code>, <code>close</code>, <code>run</code> etc., ainsi
   que les mêmes écouteurs. Et comme pour le serveur, les écouteurs doivent être
-  positionner sur le client.</p>
+  positionnés sur le client.</p>
   <p>Ainsi, pour démarrer un client, nous écrirons :</p>
   <pre><code class="language-php">from('Hoa')
 -> import('Socket.Client')
