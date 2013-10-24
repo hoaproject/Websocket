@@ -96,6 +96,7 @@ class Client extends \Hoa\Console\Dispatcher\Kit {
 
             case 's':
                 $server = $v;
+              break;
 
             case 'h':
             case '?':
