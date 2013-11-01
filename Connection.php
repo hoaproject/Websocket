@@ -291,7 +291,6 @@ abstract class Connection
             if(false === $frame)
                 return;
 
-
             $fromText   = false;
             $fromBinary = false;
 
