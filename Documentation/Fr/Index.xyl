@@ -106,11 +106,7 @@
   rôle.</p>
   <p>Le protocole WebSocket fonctionne en TCP, ainsi nous allons démarrer un
   serveur WebSocket en local sur le port 8889 :</p>
-  <pre><code class="language-php">from('Hoa')
--> import('Socket.Server')
--> import('Websocket.Server');
-
-$server = new Hoa\Websocket\Server(
+  <pre><code class="language-php">$server = new Hoa\Websocket\Server(
     new Hoa\Socket\Server('tcp://127.0.0.1:8889')
 );</code></pre>
   <p>Maintenant, voyons comment <strong>interagir</strong> avec ce serveur.</p>
@@ -137,9 +133,9 @@ $server = new Hoa\Websocket\Server(
   <strong>automatiquement</strong> avant de déclencher l'écouteur.</p>
   <p>Pour l'écouteur <code>error</code>, nous trouvons la donnée
   <code>exception</code> qui contient une <strong>exception</strong> (pas
-  nécessairement <code>Hoa\Websocket\Exception</code>, cela peut-être par
-  exemple <code>Hoa\Socket\Exception</code>). L'écouteur est déclenché après que
-  la connexion ait été fermée.</p>
+  nécessairement <code>Hoa\Websocket\Exception\Exception</code>, cela peut-être
+  par exemple <code>Hoa\Socket\Exception</code>). L'écouteur est déclenché après
+  que la connexion ait été fermée.</p>
   <p>L'écouteur <code>close</code> a deux données associées : <code>code</code>
   pour le <strong>code</strong> et <code>reason</code> qui explique la
   <strong>raison</strong> de cette fermeture avec un message court.  Nous
@@ -516,11 +512,7 @@ $server->run();</code></pre>
   que les mêmes écouteurs. Et comme pour le serveur, les écouteurs doivent être
   positionnés sur le client.</p>
   <p>Ainsi, pour démarrer un client, nous écrirons :</p>
-  <pre><code class="language-php">from('Hoa')
--> import('Socket.Client')
--> import('Websocket.Client');
-
-$client = new Hoa\Websocket\Client(
+  <pre><code class="language-php">$client = new Hoa\Websocket\Client(
     new Hoa\Socket\Client('tcp://127.0.0.1:8889')
 );
 $client->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
@@ -580,7 +572,7 @@ $client->connect();
   <code>Hoa\Websocket\Client::getHost</code>. Elle retournera <code>null</code>
   si le nom de l'hôte est introuvable. Ou sinon, au moment du
   <em lang="en">handshake</em>, une exception
-  <code>Hoa\Websocket\Exception</code> sera levée.</p>
+  <code>Hoa\Websocket\Exception\Exception</code> sera levée.</p>
 
   <h2 id="Noeud_personnalise" for="main-toc">Nœud personnalisé</h2>
 
@@ -594,10 +586,7 @@ $client->connect();
   une connexion.</p>
   <p>Par exemple, dans le cas d'une messagerie, nous pourrions stocker le pseudo
   du client :</p>
-  <pre><code class="language-php">from('Hoa')
--> import('Websocket.Node');
-
-class ChatNode extends Hoa\Websocket\Node {
+  <pre><code class="language-php">class ChatNode extends Hoa\Websocket\Node {
 
     protected $_pseudo = null;
 
