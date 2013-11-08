@@ -283,7 +283,7 @@ class Client extends Connection {
         $old         = $this->_host;
         $this->_host = $host;
 
-        return;
+        return $old;
     }
 
     /**
