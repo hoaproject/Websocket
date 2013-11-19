@@ -84,7 +84,7 @@ class Hybi00 extends Generic {
         $spaces1   = substr_count($key1, ' ');
         $spaces2   = substr_count($key2, ' ');
 
-        if(0 === $spaces1 || 0 === $spaces)
+        if(0 === $spaces1 || 0 === $spaces2)
             throw new \Hoa\Websocket\Exception\BadProtocol(
                 'Header Sec-WebSocket-Key: %s is illegal.', 0);
 
