@@ -434,7 +434,7 @@ $server->run();</code></pre>
   <strong>effectivement</strong> envoyées au client, ce n'est pas un tampon côté
   serveur.</p>
 
-  <h3 id="Encodinge" for="main-toc">Encodage</h3>
+  <h3 id="Encoding" for="main-toc">Encodage</h3>
 
   <p>Tous les messages échangés doivent être au format <strong>UTF-8</strong>
   (voir la <a href="https://tools.ietf.org/html/rfc3629">RFC3629</a>). Si les
