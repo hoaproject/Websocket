@@ -15,9 +15,9 @@
 
   <h2 id="Introduction" for="main-toc">Introduction</h2>
 
-  <p>Le protocole WebSocket est <strong>standardisé</strong> dans la <a
-  href="https://tools.ietf.org/html/rfc6455">RFC6455</a>. Il permet à un client
-  et à un serveur de communiquer ensemble. Cette communication est
+  <p>Le protocole WebSocket est <strong>standardisé</strong> dans la
+  <a href="https://tools.ietf.org/html/rfc6455">RFC6455</a>. Il permet à un
+  client et à un serveur de communiquer ensemble. Cette communication est
   <strong>bidirectionnelle</strong>, cela signifie que le client peut envoyer
   des messages au serveur, et <strong>inversement</strong>. Le serveur n'envoie
   pas uniquement des réponses il peut envoyer un message
@@ -37,8 +37,9 @@
   EventSource est une technologie basée sur le <strong>protocole HTTP</strong>
   et ne propose qu'une communication <strong>unidirectionnelle</strong>. Pour
   cet usage, un serveur EventSource est plus léger, plus simple et conçu pour
-  être robuste aux déconnexions (voir la bibliothèque
-  <a href="@lh:chapter=Eventsource"><code>Hoa\Eventsource</code></a>).</p>
+  être robuste aux déconnexions (voir
+  <a href="@lh:chapter=Eventsource">la bibliothèque
+  <code>Hoa\Eventsource</code></a>).</p>
   <p>Le protocole WebSocket commence par une phase de
   <em lang="en">handshake</em> afin de permettre, par la suite, les échanges de
   messages sous forme de <em lang="en">frames</em>.</p>
@@ -65,8 +66,8 @@
   <em>opcode</em></h3>
 
   <p>Les messages qui sont échangés entre le client et le serveur ne se font pas
-  verbatim. En réalité, le message est <strong>encapsulé</strong> dans une <em
-  lang="en">frame</em> : un <strong>paquet</strong> de bits qui a une forme
+  verbatim. En réalité, le message est <strong>encapsulé</strong> dans une
+  <em lang="en">frame</em> : un <strong>paquet</strong> de bits qui a une forme
   particulière.  Dans ce cas, nous trouverons des informations concernant le
   type du message, sa taille, des codes de vérifications etc. Nous trouverons un
   schéma explicatif dans la
@@ -101,9 +102,8 @@
   <strong>manipulant</strong> le protocole WebSocket. Cette classe hérite de
   <code>Hoa\Websocket\Connection</code>. La <strong>communication</strong>
   s'effectue à travers un serveur de socket. Nous utiliserons la classe
-  <code>Hoa\Socket\Server</code> (de la bibliothèque
-  <a href="@lh:chapter=Socket"><code>Hoa\Socket</code></a>) pour remplir ce
-  rôle.</p>
+  <code>Hoa\Socket\Server</code> (de <a href="@lh:chapter=Socket">la
+  bibliothèque <code>Hoa\Socket</code></a>) pour remplir ce rôle.</p>
   <p>Le protocole WebSocket fonctionne en TCP, ainsi nous allons démarrer un
   serveur WebSocket en local sur le port 8889 :</p>
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
@@ -246,15 +246,15 @@ $server->run();</code></pre>
   semblables à ceux de <code>Hoa\Websocket\Connection</code> !</p>
   <p>Pour tester, il suffit de démarrer le serveur :</p>
   <pre><code class="language-shell">$ php Server.php</code></pre>
-  <p>Puis, d'ouvrir le client avec son navigateur préféré. À chaque message
-  envoyé au serveur, il nous revient à l'identique, nous avons bien un écho.</p>
+  <p>Puis, d'ouvrir le client avec son navigateur préféré. Chaque message
+  envoyé au serveur nous revient à l'identique, nous avons bien un écho.</p>
 
   <h3 id="Broadcast_messages" for="main-toc">Diffusions de messages</h3>
 
   <p>Pour l'instant, le client parle avec le serveur et le serveur lui répond,
   mais ça ne reste qu'un <strong>dialogue</strong>. Le serveur a pourtant toutes
-  les connexions en mémoire, nous sommes donc capable de
-  <strong>diffuser</strong> le message à tous les clients connectés. Pour cela,
+  les connexions en mémoire. Nous sommes donc capable de
+  <strong>diffuser</strong> un message à tous les clients connectés. Pour cela,
   nous allons utiliser la méthode
   <code>Hoa\Websocket\Connection::broadcast</code> qui va envoyer un message à
   tous les autres clients connectés, ainsi :</p>
@@ -494,9 +494,8 @@ $server->run();</code></pre>
   <code>Hoa\Websocket\Connection</code>, tout comme
   <code>Hoa\Websocket\Server</code>. La <strong>communication</strong>
   s'effectue à travers un client de socket. Nous utiliserons la classe
-  <code>Hoa\Socket\Client</code> (de la bibliothèque
-  <a href="@lh:chapter=Socket"><code>Hoa\Socket</code></a>) pour remplir ce
-  rôle.</p>
+  <code>Hoa\Socket\Client</code> (de <a href="@lh:chapter=Socket">la
+  bibliothèque <code>Hoa\Socket</code></a>) pour remplir ce rôle.</p>
   <p>Autant <code>Hoa\Websocket\Server</code> est capable de traiter avec des
   clients supportant plusieurs versions du protocole WebSocket, autant
   <code>Hoa\Websocket\Client</code> utilise <strong>uniquement</strong> le
@@ -532,7 +531,7 @@ $client->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
   <p>Si le serveur ne supporte pas le bon protocole, une exception
   <code>Hoa\Websocket\Exception\BadProtocol</code> sera levée.</p>
 
-  <h3 id="Send_or_broadcast_messages" for="main-toc">Échanges et
+  <h3 id="Send_and_broadcast_messages" for="main-toc">Échanges et
   diffusions de messages</h3>
 
   <p>Pour envoyer un message, nous utiliserons la méthode
@@ -604,8 +603,8 @@ $client->connect();
         return $this->_pseudo;
     }
 }</code></pre>
-  <p>Pour préciser au serveur de socket d'<strong>utiliser</strong> notre classe
-  de nœud, nous devons utiliser la méthode
+  <p>Pour préciser au serveur ou au client de socket d'<strong>utiliser</strong>
+  notre classe de nœud, nous devons utiliser la méthode
   <code>Hoa\Socket\Server::setNodeName</code> ou
   <code>Hoa\Socket\Client::setNodeName</code> de cette manière :</p>
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
