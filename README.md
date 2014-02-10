@@ -3,7 +3,7 @@
 Hoa is a **modular**, **extensible** and **structured** set of PHP libraries.
 Moreover, Hoa aims at being a bridge between industrial and research worlds.
 
-# Hoa\Websocket
+# Hoa\Websocket ![state](http://central.hoa-project.net/State/Websocket)
 
 This library allows to manipulate the WebSocket protocol and proposes a server
 and a client. It supports two specifications
