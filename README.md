@@ -118,6 +118,14 @@ Finally, we have to write a client in HTML and Javascript:
 
 Here we are. All sent messages are echoed.
 
+## Awecode
+
+The following awecodes show this library in action:
+
+  * [`Hoa\Websocket`](http://hoa-project.net/Awecode/Websocket.html):
+    *why and how to use `Hoa\Websocket\Server` and `Hoa\Websocket\Client`? A
+    simple example will illustrate the WebSocket protocol*.
+
 ## Documentation
 
 Different documentations can be found on the website:
