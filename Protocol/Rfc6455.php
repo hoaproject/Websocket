@@ -234,7 +234,7 @@ class Rfc6455 extends Generic {
         $rsv1   = 0x0;
         $rsv2   = 0x0;
         $rsv3   = 0x0;
-        $mask   = 0x1;
+        $mask   = 0x0;
         $length = strlen($message);
         $out    = chr(
             ($fin  << 7)
