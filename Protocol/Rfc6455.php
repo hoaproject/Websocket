@@ -215,6 +215,19 @@ class Rfc6455 extends Generic {
         $maskN = array_map('ord', str_split($this->_connection->read(4)));
         $maskC = 0;
 
+        if(4 !== count($maskN)) {
+
+            $exception = new \Hoa\Websocket\Exception\CloseError(
+                'Mask is not well-formed (too short).',
+                1
+            );
+            $exception->setErrorCode(
+                \Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR
+            );
+
+            throw $exception;
+        }
+
         $buffer       = 0;
         $bufferLength = 3000;
         $message      = null;
