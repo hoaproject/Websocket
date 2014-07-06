@@ -149,9 +149,11 @@ class Hybi00 extends Generic {
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode (useless here).
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
      */
-    public function writeFrame ( $message, $opcode = -1, $end = true ) {
+    public function writeFrame ( $message, $opcode = -1, $end = true,
+                                 $mask = false ) {
 
         return $this->_connection->writeAll(
             chr(0) . $message . chr(255)
@@ -164,11 +166,11 @@ class Hybi00 extends Generic {
      * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of
-     *                              the message.
+     * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      */
-    public function send ( $message, $opcode = -1, $end = true ) {
+    public function send ( $message, $opcode = -1, $end = true, $mask = false ) {
 
         $this->writeFrame($message);
 

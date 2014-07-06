@@ -258,17 +258,19 @@ class Rfc6455 extends Generic {
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
      */
     public function writeFrame ( $message,
                                  $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
-                                 $end    = true ) {
+                                 $end    = true,
+                                 $mask   = false ) {
 
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
         $rsv2   = 0x0;
         $rsv3   = 0x0;
-        $mask   = 0x0;
+        $mask   = true === $mask ? 0x1 : 0x0;
         $length = strlen($message);
         $out    = chr(
             ($fin  << 7)
@@ -279,13 +281,29 @@ class Rfc6455 extends Generic {
         );
 
         if(0xffff < $length)
-            $out .= chr(0x7f) . pack('NN', 0, $length);
+            $out .= chr(($mask << 7) | 0x7f) . pack('NN', 0, $length);
         elseif(0x7d < $length)
-            $out .= chr(0x7e) . pack('n', $length);
+            $out .= chr(($mask << 7) | 0x7e) . pack('n', $length);
         else
-            $out .= chr($length);
+            $out .= chr(($mask << 7) | $length);
 
-        $out .= $message;
+        if(0x0 === $mask)
+            $out .= $message;
+        else {
+
+            $maskingKey = array();
+
+            for($i = 0; $i < 4; ++$i)
+                $maskingKey[] = mt_rand(1, 255);
+
+            $maskedMessage = null;
+
+            for($i = 0, $max = strlen($message); $i < $max; ++$i)
+                $maskedMessage .= chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
+
+            $out .= implode('', array_map('chr', $maskingKey)) .
+                    $maskedMessage;
+        }
 
         return $this->_connection->writeAll($out);
     }
@@ -298,12 +316,14 @@ class Rfc6455 extends Generic {
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of
      *                              the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send ( $message,
                            $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
-                           $end    = true ) {
+                           $end    = true,
+                           $mask   = false ) {
 
         if(   (\Hoa\Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode
            ||  \Hoa\Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode)
@@ -312,7 +332,7 @@ class Rfc6455 extends Generic {
                 'Message “%s” is not in UTF-8, cannot send it.',
                 2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
-        $this->writeFrame($message, $opcode, $end);
+        $this->writeFrame($message, $opcode, $end, $mask);
 
         return;
     }

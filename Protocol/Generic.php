@@ -97,12 +97,14 @@ abstract class Generic {
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
      * @throw   \Hoa\Websocket\Exception
      */
     abstract public function writeFrame ( $message,
                                           $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
-                                          $end    = true );
+                                          $end    = true,
+                                          $mask   = false );
 
     /**
      * Send a message to a node (if not specified, current node).
@@ -110,13 +112,14 @@ abstract class Generic {
      * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of
-     *                              the message.
+     * @param   bool    $end        Whether it is the last frame of the message.
+     * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      */
     abstract public function send ( $message,
                                     $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
-                                    $end    = true );
+                                    $end    = true,
+                                    $mask   = false );
 
     /**
      * Close a specific node/connection.

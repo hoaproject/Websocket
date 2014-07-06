@@ -560,10 +560,12 @@ abstract class Connection
      */
     protected function _send ( $message, \Hoa\Socket\Node $node ) {
 
-        return function ( $opcode, $end ) use ( &$message, $node ) {
+        $mustMask = $this instanceof Client;
+
+        return function ( $opcode, $end ) use ( &$message, $node, $mustMask ) {
 
             return $node->getProtocolImplementation()
-                        ->send($message, $opcode, $end);
+                        ->send($message, $opcode, $end, $mustMask);
         };
     }
 
