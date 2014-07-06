@@ -291,6 +291,18 @@ abstract class Connection
             if(false === $frame)
                 return;
 
+            if(   $this instanceof Server
+               && isset($frame['mask'])
+               && 0x0 === $frame['mask']) {
+
+                $this->close(
+                    self::CLOSE_MESSAGE_ERROR,
+                    'All messages from the client must be masked.'
+                );
+
+                return;
+            }
+
             $fromText   = false;
             $fromBinary = false;
 
