@@ -168,6 +168,7 @@ class Client extends Connection {
 
         $connection = $this->getConnection();
         $connection->connect();
+        $connection->setStreamBlocking(true);
         $key        = substr(base64_encode(\Hoa\Core::uuid()), 0, 21) .
                       $_tail[mt_rand(0, 3)] . '==';
         $expected   = base64_encode(sha1($key . Protocol\Rfc6455::GUID, true));
