@@ -49,6 +49,11 @@ from('Hoa')
 -> import('Websocket.Exception.BadProtocol')
 
 /**
+ * \Hoa\Websocket\Exception\CloseError
+ */
+-> import('Websocket.Exception.CloseError')
+
+/**
  * \Hoa\Websocket\Exception\InvalidMessage
  */
 -> import('Websocket.Exception.InvalidMessage')
@@ -130,7 +135,7 @@ class Rfc6455 extends Generic {
      *
      * @access  public
      * @return  array
-     * @throw   \Hoa\Websocket\Exception
+     * @throw   \Hoa\Websocket\Exception\CloseError
      */
     public function readFrame ( ) {
 
@@ -158,9 +163,16 @@ class Rfc6455 extends Generic {
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
 
-            $this->_connection->close(\Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR);
+            $exception = new \Hoa\Websocket\Exception\CloseError(
+                'Get rsv1: %s, rsv2: %s, rsv3: %s, they all must be equal to 0.',
+                0,
+                array($out['rsv1'], $out['rsv2'], $out['rsv3'])
+            );
+            $exception->setErrorCode(
+                \Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR
+            );
 
-            return false;
+            throw $exception;
         }
 
         if(0 === $length) {
@@ -179,9 +191,18 @@ class Rfc6455 extends Generic {
             $handle = unpack('N*l', $this->_connection->read(8));
             $length = $handle['l2'];
 
-            if($length > 0x7fffffffffffffff)
-                throw new \Hoa\Websocket\Exception(
-                    'Message is too long.', 1);
+            if($length > 0x7fffffffffffffff) {
+
+                $exception = new \Hoa\Websocket\Exception\CloseError(
+                    'Message is too long.',
+                    1
+                );
+                $exception->setErrorCode(
+                    \Hoa\Websocket\Connection::CLOSE_MESSAGE_TOO_BIG
+                );
+
+                throw $exception;
+            }
         }
 
         if(0x0 === $out['mask']) {

@@ -286,7 +286,16 @@ abstract class Connection
                 return;
             }
 
-            $frame = $node->getProtocolImplementation()->readFrame();
+            try {
+
+                $frame = $node->getProtocolImplementation()->readFrame();
+            }
+            catch ( Exception\CloseError $e ) {
+
+                $this->close($e->getErrorCode(), $e->getMessage());
+
+                return;
+            }
 
             if(false === $frame)
                 return;
