@@ -293,8 +293,16 @@ class Rfc6455 extends Generic {
 
             $maskingKey = array();
 
-            for($i = 0; $i < 4; ++$i)
-                $maskingKey[] = mt_rand(1, 255);
+            if(function_exists('openssl_random_pseudo_bytes'))
+                $maskingKey = array_map(
+                    'ord',
+                    str_split(
+                        openssl_random_pseudo_bytes(4)
+                    )
+                );
+            else
+                for($i = 0; $i < 4; ++$i)
+                    $maskingKey[] = mt_rand(1, 255);
 
             $maskedMessage = null;
 

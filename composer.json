@@ -26,6 +26,9 @@
         "hoa/socket": "dev-master",
         "hoa/http"  : "dev-master"
     },
+    "suggest": {
+        "ext-openssl": "To get a better security when exchanging messages."
+    },
     "minimum-stability": "dev",
     "target-dir"       : "Hoa/Websocket",
     "autoload"         : { "psr-0": { "Hoa\\Websocket": "." } }
