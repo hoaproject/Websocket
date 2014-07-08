@@ -107,7 +107,7 @@ class Rfc6455 extends Generic {
         if(    0 === preg_match('#^[+/0-9A-Za-z]{21}[AQgw]==$#', $key)
            || 16 !== strlen(base64_decode($key)))
             throw new \Hoa\Websocket\Exception\BadProtocol(
-                'Header Sec-WebSocket-Key: %s is illegal.', 0, $key);
+                'Header Sec-WebSocket-Key: %s is illegal.', 1, $key);
 
         $response = base64_encode(sha1($key . static::GUID, true));
 
@@ -165,7 +165,7 @@ class Rfc6455 extends Generic {
 
             $exception = new \Hoa\Websocket\Exception\CloseError(
                 'Get rsv1: %s, rsv2: %s, rsv3: %s, they all must be equal to 0.',
-                0,
+                2,
                 array($out['rsv1'], $out['rsv2'], $out['rsv3'])
             );
             $exception->setErrorCode(
@@ -195,7 +195,7 @@ class Rfc6455 extends Generic {
 
                 $exception = new \Hoa\Websocket\Exception\CloseError(
                     'Message is too long.',
-                    1
+                    3
                 );
                 $exception->setErrorCode(
                     \Hoa\Websocket\Connection::CLOSE_MESSAGE_TOO_BIG
@@ -219,7 +219,7 @@ class Rfc6455 extends Generic {
 
             $exception = new \Hoa\Websocket\Exception\CloseError(
                 'Mask is not well-formed (too short).',
-                1
+                4
             );
             $exception->setErrorCode(
                 \Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR
@@ -338,7 +338,7 @@ class Rfc6455 extends Generic {
            && false === (bool) preg_match('//u', $message))
             throw new \Hoa\Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
-                2, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
+                5, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
         $this->writeFrame($message, $opcode, $end, $mask);
 
