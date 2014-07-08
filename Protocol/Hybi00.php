@@ -185,10 +185,12 @@ class Hybi00 extends Generic {
      *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
+     * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
     public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
-                            $reason = null ) {
+                            $reason = null,
+                            $mask   = false ) {
 
         return;
     }
