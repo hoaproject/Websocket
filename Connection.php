@@ -606,10 +606,8 @@ abstract class Connection
         $connection = $this->getConnection();
         $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
 
-        $mustMask   = $this instanceof Client;
-
         if(null !== $protocol)
-            $protocol->close($code, $reason, $mustMask);
+            $protocol->close($code, $reason);
 
         return $connection->disconnect();
     }

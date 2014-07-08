@@ -220,6 +220,30 @@ class Client extends Connection {
     }
 
     /**
+     * Close a specific node/connection.
+     *
+     * @access  public
+     * @param   int     $code      Code (please, see
+     *                             self::CLOSE_* constants).
+     * @param   string  $reason    Reason.
+     * @return  void
+     */
+    public function close ( $code = self::CLOSE_NORMAL, $reason = null ) {
+
+        $connection = $this->getConnection();
+        $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
+
+        if(null !== $protocol)
+            $protocol->close($code, $reason, true);
+
+        $connection->mute();
+        $connection->setStreamTimeout(0, 2 * 15000); // 2 * MLS (on FreeBSD)
+        $connection->read(1);
+
+        return $connection->disconnect();
+    }
+
+    /**
      * Set end-point.
      *
      * @access  protected
