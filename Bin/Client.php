@@ -127,6 +127,8 @@ class Client extends \Hoa\Console\Dispatcher\Kit {
 
         } while(true);
 
+        $client->close();
+
         return;
     }
 
