@@ -304,13 +304,11 @@ class Rfc6455 extends Generic {
                 for($i = 0; $i < 4; ++$i)
                     $maskingKey[] = mt_rand(1, 255);
 
-            $maskedMessage = null;
-
             for($i = 0, $max = strlen($message); $i < $max; ++$i)
-                $maskedMessage .= chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
+                $message[$i] .= chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
 
             $out .= implode('', array_map('chr', $maskingKey)) .
-                    $maskedMessage;
+                    $message;
         }
 
         return $this->_connection->writeAll($out);
