@@ -305,7 +305,7 @@ class Rfc6455 extends Generic {
                     $maskingKey[] = mt_rand(1, 255);
 
             for($i = 0, $max = strlen($message); $i < $max; ++$i)
-                $message[$i] .= chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
+                $message[$i] = chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
 
             $out .= implode('', array_map('chr', $maskingKey)) .
                     $message;
