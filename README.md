@@ -11,6 +11,23 @@ and a client. It supports two specifications
 [Hybi](https://tools.ietf.org/wg/hybi/draft-ietf-hybi-thewebsocketprotocol/) (at
 the same time).
 
+## Installation
+
+With [Composer](http://getcomposer.org/), to include this library into your
+dependencies, you need to require
+[`hoa/websocket`](https://packagist.org/packages/hoa/websocket):
+
+```json
+{
+    "require": {
+        "hoa/websocket": "~2.0"
+    }
+}
+```
+
+Please, read the website to [get more informations about how to
+install](http://hoa-project.net/Source.html).
+
 ## Quick usage
 
 As a quick overview, we propose to start a websocket server and echo messages.
