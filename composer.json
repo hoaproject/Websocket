@@ -30,5 +30,10 @@
         "ext-openssl": "To get a better security when exchanging messages."
     },
     "target-dir": "Hoa/Websocket",
-    "autoload"  : { "psr-0": { "Hoa\\Websocket": "." } }
+    "autoload"  : { "psr-0": { "Hoa\\Websocket": "." } },
+    "extra"     : {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+    }
 }
