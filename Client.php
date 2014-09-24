@@ -34,23 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Connection
- */
--> import('Websocket.Connection')
-
-/**
- * \Hoa\Http\Response
- */
--> import('Http.Response.~');
-
-}
-
-namespace Hoa\Websocket {
+use Hoa\Core;
+use Hoa\Http;
+use Hoa\Socket;
 
 /**
  * Class \Hoa\Websocket\Client.
@@ -97,14 +85,14 @@ class Client extends Connection {
      * @return  void
      * @throw   \Hoa\Socket\Exception
      */
-    public function __construct ( \Hoa\Socket\Client $client, $endPoint = '/',
-                                  \Hoa\Http\Response $response = null ) {
+    public function __construct ( Socket\Client $client, $endPoint = '/',
+                                  Http\Response $response = null ) {
 
         parent::__construct($client);
         $this->setEndPoint($endPoint);
 
         if(null === $response)
-            $response = new \Hoa\Http\Response(false);
+            $response = new Http\Response(false);
 
         $this->setResponse($response);
 
@@ -164,12 +152,12 @@ class Client extends Connection {
      */
     protected function doHandshake ( ) {
 
-        static $_tail = array('A', 'Q', 'g', 'w');
+        static $_tail = ['A', 'Q', 'g', 'w'];
 
         $connection = $this->getConnection();
         $connection->connect();
         $connection->setStreamBlocking(true);
-        $key        = substr(base64_encode(\Hoa\Core::uuid()), 0, 21) .
+        $key        = substr(base64_encode(Core::uuid()), 0, 21) .
                       $_tail[mt_rand(0, 3)] . '==';
         $expected   = base64_encode(sha1($key . Protocol\Rfc6455::GUID, true));
 
@@ -203,10 +191,10 @@ class Client extends Connection {
                 'response.' . "\n\n" .
                 'Client:' . "\n" . '    %s' . "\n" .
                 'Server:' . "\n" . '    %s',
-                0, array(
+                0, [
                     str_replace("\n", "\n" . '    ', $request),
                     str_replace("\n", "\n" . '    ', $buffer)
-                ));
+                ]);
 
         $currentNode = $connection->getCurrentNode();
         $currentNode->setHandshake(SUCCEED);
@@ -214,7 +202,7 @@ class Client extends Connection {
 
         $this->_on->fire(
             'open',
-            new \Hoa\Core\Event\Bucket()
+            new Core\Event\Bucket()
         );
 
         return;
@@ -277,7 +265,7 @@ class Client extends Connection {
      * @param   \Hoa\Http\Response  $response    Response.
      * @return  \Hoa\Http\Response
      */
-    public function setResponse ( \Hoa\Http\Response $response ) {
+    public function setResponse ( Http\Response $response ) {
 
         $old             = $this->_response;
         $this->_response = $response;
@@ -325,6 +313,4 @@ class Client extends Connection {
                          ? $_SERVER['HTTP_HOST']
                          : null);
     }
-}
-
 }

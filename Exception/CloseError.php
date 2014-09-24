@@ -34,18 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
-
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Exception
- */
--> import('Websocket.Exception.~');
-
-}
-
-namespace Hoa\Websocket\Exception {
+namespace Hoa\Websocket\Exception;
 
 /**
  * Class \Hoa\Websocket\Exception\CloseError.
@@ -94,6 +83,4 @@ class CloseError extends Exception {
 
         return $this->_errorCode;
     }
-}
-
 }

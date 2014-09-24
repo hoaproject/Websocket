@@ -34,23 +34,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Connection
- */
--> import('Websocket.Connection')
-
-/**
- * \Hoa\Http\Request
- */
--> import('Http.Request');
-
-}
-
-namespace Hoa\Websocket {
+use Hoa\Http;
+use Hoa\Socket;
 
 /**
  * Class \Hoa\Websocket\Server.
@@ -82,13 +69,13 @@ class Server extends Connection {
      * @return  void
      * @throw   \Hoa\Socket\Exception
      */
-    public function __construct ( \Hoa\Socket\Server $server,
-                                  \Hoa\Http\Request  $request = null ) {
+    public function __construct ( Socket\Server $server,
+                                  Http\Request  $request = null ) {
 
         parent::__construct($server);
 
         if(null === $request)
-            $request = new \Hoa\Http\Request();
+            $request = new Http\Request();
 
         $this->setRequest($request);
 
@@ -147,7 +134,7 @@ class Server extends Connection {
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  \Hoa\Http\Request
      */
-    public function setRequest ( \Hoa\Http\Request $request ) {
+    public function setRequest ( Http\Request $request ) {
 
         $old            = $this->_request;
         $this->_request = $request;
@@ -165,6 +152,4 @@ class Server extends Connection {
 
         return $this->_request;
     }
-}
-
 }

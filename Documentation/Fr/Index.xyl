@@ -465,7 +465,7 @@ $server->run();</code></pre>
 
     $data                          = $bucket->getData();
     $message                       = $data['message'];
-    $point                         = array();
+    $point                         = [];
     list($point['x'], $point['y']) = array_values(unpack('nx/ny', $message));
 
     // compute a next point.

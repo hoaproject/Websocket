@@ -34,7 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket\Exception {
+namespace Hoa\Websocket\Exception;
+
+use Hoa\Core;
 
 /**
  * Class \Hoa\Websocket\Exception.
@@ -46,15 +48,9 @@ namespace Hoa\Websocket\Exception {
  * @license    New BSD License
  */
 
-class Exception extends \Hoa\Core\Exception { }
-
-}
-
-namespace {
+class Exception extends Core\Exception { }
 
 /**
  * Flex entity.
  */
-Hoa\Core\Consistency::flexEntity('Hoa\Websocket\Exception\Exception');
-
-}
+Core\Consistency::flexEntity('Hoa\Websocket\Exception\Exception');

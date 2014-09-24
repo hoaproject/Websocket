@@ -34,28 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket\Bin;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Client
- */
--> import('Websocket.Client')
-
-/**
- * \Hoa\Socket\Client
- */
--> import('Socket.Client')
-
-/**
- * \Hoa\Console\Readline
- */
--> import('Console.Readline.~');
-
-}
-
-namespace Hoa\Websocket\Bin {
+use Hoa\Console;
+use Hoa\Socket;
+use Hoa\Websocket;
 
 /**
  * Class \Hoa\Websocket\Bin\Client.
@@ -67,18 +50,18 @@ namespace Hoa\Websocket\Bin {
  * @license    New BSD License
  */
 
-class Client extends \Hoa\Console\Dispatcher\Kit {
+class Client extends Console\Dispatcher\Kit {
 
     /**
      * Options description.
      *
      * @var \Hoa\Websocket\Bin\Client array
      */
-    protected $options = array(
-        array('server', \Hoa\Console\GetOption::REQUIRED_ARGUMENT, 's'),
-        array('help',   \Hoa\Console\GetOption::NO_ARGUMENT,       'h'),
-        array('help',   \Hoa\Console\GetOption::NO_ARGUMENT,       '?')
-    );
+    protected $options = [
+        ['server', Console\GetOption::REQUIRED_ARGUMENT, 's'],
+        ['help',   Console\GetOption::NO_ARGUMENT,       'h'],
+        ['help',   Console\GetOption::NO_ARGUMENT,       '?']
+    ];
 
 
 
@@ -109,9 +92,9 @@ class Client extends \Hoa\Console\Dispatcher\Kit {
         }
 
 
-        $readline = new \Hoa\Console\Readline();
-        $client   = new \Hoa\Websocket\Client(
-            new \Hoa\Socket\Client('tcp://' . $server)
+        $readline = new Console\Readline();
+        $client   = new Websocket\Client(
+            new Socket\Client('tcp://' . $server)
         );
         $client->setHost('localhost');
         $client->connect();
@@ -142,15 +125,13 @@ class Client extends \Hoa\Console\Dispatcher\Kit {
 
         echo 'Usage   : websocket:client <options>', "\n",
              'Options :', "\n",
-             $this->makeUsageOptionsList(array(
+             $this->makeUsageOptionsList([
                  's'    => 'Server URI (default: 127.0.0.1:8889).',
                  'help' => 'This help.'
-             )), "\n";
+             ]), "\n";
 
         return;
     }
-}
-
 }
 
 __halt_compiler();

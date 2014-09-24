@@ -34,7 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket\Protocol {
+namespace Hoa\Websocket\Protocol;
+
+use Hoa\Http;
+use Hoa\Socket;
+use Hoa\Websocket;
 
 /**
  * Class \Hoa\Websocket\Protocol\Generic.
@@ -64,7 +68,7 @@ abstract class Generic {
      * @param   \Hoa\Socket\Connection  $connection    Connection.
      * @return  void
      */
-    public function __construct ( \Hoa\Socket\Connection $connection ) {
+    public function __construct ( Socket\Connection $connection ) {
 
         $this->_connection = $connection;
 
@@ -79,7 +83,7 @@ abstract class Generic {
      * @return  void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract public function doHandshake ( \Hoa\Http\Request $request );
+    abstract public function doHandshake ( Http\Request $request );
 
     /**
      * Read a frame.
@@ -102,7 +106,7 @@ abstract class Generic {
      * @throw   \Hoa\Websocket\Exception
      */
     abstract public function writeFrame ( $message,
-                                          $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
+                                          $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
                                           $end    = true,
                                           $mask   = false );
 
@@ -117,7 +121,7 @@ abstract class Generic {
      * @return  void
      */
     abstract public function send ( $message,
-                                    $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
+                                    $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
                                     $end    = true,
                                     $mask   = false );
 
@@ -132,9 +136,7 @@ abstract class Generic {
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    abstract public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
+    abstract public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
                                      $reason = null,
                                      $mask   = false );
-}
-
 }

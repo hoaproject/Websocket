@@ -34,38 +34,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket\Protocol;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Exception
- */
--> import('Websocket.Exception.~')
-
-/**
- * \Hoa\Websocket\Exception\BadProtocol
- */
--> import('Websocket.Exception.BadProtocol')
-
-/**
- * \Hoa\Websocket\Exception\CloseError
- */
--> import('Websocket.Exception.CloseError')
-
-/**
- * \Hoa\Websocket\Exception\InvalidMessage
- */
--> import('Websocket.Exception.InvalidMessage')
-
-/**
- * \Hoa\Websocket\Protocol\Generic
- */
--> import('Websocket.Protocol.Generic');
-
-}
-
-namespace Hoa\Websocket\Protocol {
+use Hoa\Http;
+use Hoa\Websocket;
 
 /**
  * Class \Hoa\Websocket\Protocol\Rfc6455.
@@ -96,17 +68,17 @@ class Rfc6455 extends Generic {
      * @return  void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake ( \Hoa\Http\Request $request ) {
+    public function doHandshake ( Http\Request $request ) {
 
         if(!isset($request['sec-websocket-key']))
-            throw new \Hoa\Websocket\Exception\BadProtocol(
+            throw new Websocket\Exception\BadProtocol(
                 'Bad protocol implementation: it is not RFC6455.', 0);
 
         $key = $request['sec-websocket-key'];
 
         if(    0 === preg_match('#^[+/0-9A-Za-z]{21}[AQgw]==$#', $key)
            || 16 !== strlen(base64_decode($key)))
-            throw new \Hoa\Websocket\Exception\BadProtocol(
+            throw new Websocket\Exception\BadProtocol(
                 'Header Sec-WebSocket-Key: %s is illegal.', 1, $key);
 
         $response = base64_encode(sha1($key . static::GUID, true));
@@ -139,12 +111,12 @@ class Rfc6455 extends Generic {
      */
     public function readFrame ( ) {
 
-        $out  = array();
+        $out  = [];
         $read = $this->_connection->read(1);
 
         if(empty($read)) {
 
-            $out['opcode'] = \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE;
+            $out['opcode'] = Websocket\Connection::OPCODE_CONNECTION_CLOSE;
 
             return $out;
         }
@@ -163,13 +135,13 @@ class Rfc6455 extends Generic {
 
         if(0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
 
-            $exception = new \Hoa\Websocket\Exception\CloseError(
+            $exception = new Websocket\Exception\CloseError(
                 'Get rsv1: %s, rsv2: %s, rsv3: %s, they all must be equal to 0.',
                 2,
-                array($out['rsv1'], $out['rsv2'], $out['rsv3'])
+                [$out['rsv1'], $out['rsv2'], $out['rsv3']]
             );
             $exception->setErrorCode(
-                \Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR
+                Websocket\Connection::CLOSE_PROTOCOL_ERROR
             );
 
             throw $exception;
@@ -193,12 +165,12 @@ class Rfc6455 extends Generic {
 
             if($length > 0x7fffffffffffffff) {
 
-                $exception = new \Hoa\Websocket\Exception\CloseError(
+                $exception = new Websocket\Exception\CloseError(
                     'Message is too long.',
                     3
                 );
                 $exception->setErrorCode(
-                    \Hoa\Websocket\Connection::CLOSE_MESSAGE_TOO_BIG
+                    Websocket\Connection::CLOSE_MESSAGE_TOO_BIG
                 );
 
                 throw $exception;
@@ -217,12 +189,12 @@ class Rfc6455 extends Generic {
 
         if(4 !== count($maskN)) {
 
-            $exception = new \Hoa\Websocket\Exception\CloseError(
+            $exception = new Websocket\Exception\CloseError(
                 'Mask is not well-formed (too short).',
                 4
             );
             $exception->setErrorCode(
-                \Hoa\Websocket\Connection::CLOSE_PROTOCOL_ERROR
+                Websocket\Connection::CLOSE_PROTOCOL_ERROR
             );
 
             throw $exception;
@@ -262,7 +234,7 @@ class Rfc6455 extends Generic {
      * @return  int
      */
     public function writeFrame ( $message,
-                                 $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
+                                 $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
                                  $end    = true,
                                  $mask   = false ) {
 
@@ -291,7 +263,7 @@ class Rfc6455 extends Generic {
             $out .= $message;
         else {
 
-            $maskingKey = array();
+            $maskingKey = [];
 
             if(function_exists('openssl_random_pseudo_bytes'))
                 $maskingKey = array_map(
@@ -327,14 +299,14 @@ class Rfc6455 extends Generic {
      * @throw   \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send ( $message,
-                           $opcode = \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
+                           $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
                            $end    = true,
                            $mask   = false ) {
 
-        if(   (\Hoa\Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode
-           ||  \Hoa\Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode)
+        if(   (Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode
+           ||  Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode)
            && false === (bool) preg_match('//u', $message))
-            throw new \Hoa\Websocket\Exception\InvalidMessage(
+            throw new Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
                 5, 32 > strlen($message) ? substr($message, 0, 32) . '…' : $message);
 
@@ -354,19 +326,17 @@ class Rfc6455 extends Generic {
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
+    public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
                             $reason = null,
                             $mask   = false ) {
 
         $this->writeFrame(
             pack('n', $code) . $reason,
-            \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE,
+            Websocket\Connection::OPCODE_CONNECTION_CLOSE,
             true,
             $mask
         );
 
         return;
     }
-}
-
 }

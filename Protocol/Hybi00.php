@@ -34,23 +34,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket\Protocol;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Exception\BadProtocol
- */
--> import('Websocket.Exception.BadProtocol')
-
-/**
- * \Hoa\Websocket\Protocol\Generic
- */
--> import('Websocket.Protocol.Generic');
-
-}
-
-namespace Hoa\Websocket\Protocol {
+use Hoa\Http;
+use Hoa\Websocket;
 
 /**
  * Class \Hoa\Websocket\Protocol\Hybi00.
@@ -72,7 +59,7 @@ class Hybi00 extends Generic {
      * @return  void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake ( \Hoa\Http\Request $request ) {
+    public function doHandshake ( Http\Request $request ) {
 
         $key1      = $request['sec-websocket-key1'];
         $key2      = $request['sec-websocket-key2'];
@@ -85,7 +72,7 @@ class Hybi00 extends Generic {
         $spaces2   = substr_count($key2, ' ');
 
         if(0 === $spaces1 || 0 === $spaces2)
-            throw new \Hoa\Websocket\Exception\BadProtocol(
+            throw new Websocket\Exception\BadProtocol(
                 'Header Sec-WebSocket-Key: %s is illegal.', 0);
 
         $part1     = pack('N', (int) ($keynumb1 / $spaces1));
@@ -119,27 +106,27 @@ class Hybi00 extends Generic {
         $length  = strlen($buffer) - 2;
 
         if(empty($buffer))
-            return array(
+            return [
                 'fin'     => 0x1,
                 'rsv1'    => 0x0,
                 'rsv2'    => 0x0,
                 'rsv3'    => 0x0,
-                'opcode'  => \Hoa\Websocket\Connection::OPCODE_CONNECTION_CLOSE,
+                'opcode'  => Websocket\Connection::OPCODE_CONNECTION_CLOSE,
                 'mask'    => 0x0,
                 'length'  => 0,
                 'message' => null
-            );
+            ];
 
-        return array(
+        return [
             'fin'     => 0x1,
             'rsv1'    => 0x0,
             'rsv2'    => 0x0,
             'rsv3'    => 0x0,
-            'opcode'  => \Hoa\Websocket\Connection::OPCODE_TEXT_FRAME,
+            'opcode'  => Websocket\Connection::OPCODE_TEXT_FRAME,
             'mask'    => 0x0,
             'length'  => $length,
             'message' => substr($buffer, 1, $length)
-        );
+        ];
     }
 
     /**
@@ -188,12 +175,10 @@ class Hybi00 extends Generic {
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    public function close ( $code   = \Hoa\Websocket\Connection::CLOSE_NORMAL,
+    public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
                             $reason = null,
                             $mask   = false ) {
 
         return;
     }
-}
-
 }

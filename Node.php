@@ -34,18 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket;
 
-from('Hoa')
-
-/**
- * \Hoa\Socket\Node
- */
--> import('Socket.Node');
-
-}
-
-namespace Hoa\Websocket {
+use Hoa\Socket;
 
 /**
  * Class \Hoa\Websocket\Node.
@@ -57,7 +48,7 @@ namespace Hoa\Websocket {
  * @license    New BSD License
  */
 
-class Node extends \Hoa\Socket\Node {
+class Node extends Socket\Node {
 
     /**
      * Protocol implementation.
@@ -256,6 +247,4 @@ class Node extends \Hoa\Socket\Node {
 
         return;
     }
-}
-
 }

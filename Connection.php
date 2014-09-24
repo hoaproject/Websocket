@@ -34,43 +34,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
+namespace Hoa\Websocket;
 
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Exception
- */
--> import('Websocket.Exception.~')
-
-/**
- * \Hoa\Websocket\Exception\BadProtocol
- */
--> import('Websocket.Exception.BadProtocol')
-
-/**
- * \Hoa\Websocket\Node
- */
--> import('Websocket.Node')
-
-/**
- * \Hoa\Websocket\Protocol\Rfc6455
- */
--> import('Websocket.Protocol.Rfc6455')
-
-/**
- * \Hoa\Websocket\Protocol\Hybi00
- */
--> import('Websocket.Protocol.Hybi00')
-
-/**
- * \Hoa\Socket\Connection\Handler
- */
--> import('Socket.Connection.Handler');
-
-}
-
-namespace Hoa\Websocket {
+use Hoa\Core;
+use Hoa\Socket;
 
 /**
  * Class \Hoa\Websocket\Connection.
@@ -83,8 +50,8 @@ namespace Hoa\Websocket {
  */
 
 abstract class Connection
-    extends    \Hoa\Socket\Connection\Handler
-    implements \Hoa\Core\Event\Listenable {
+    extends    Socket\Connection\Handler
+    implements Core\Event\Listenable {
 
     /**
      * Opcode: continuation frame.
@@ -232,18 +199,18 @@ abstract class Connection
      * @return  void
      * @throw   \Hoa\Socket\Exception
      */
-    public function __construct ( \Hoa\Socket\Connection $connection ) {
+    public function __construct ( Socket\Connection $connection ) {
 
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
-        $this->_on = new \Hoa\Core\Event\Listener($this, array(
+        $this->_on = new Core\Event\Listener($this, [
             'open',
             'message',
             'binary-message',
             'ping',
             'close',
             'error'
-        ));
+        ]);
 
         return;
     }
@@ -271,7 +238,7 @@ abstract class Connection
      * @param   \Hoa\Socket\Node  $node    Node.
      * @return  void
      */
-    protected function _run ( \Hoa\Socket\Node $node ) {
+    protected function _run ( Socket\Node $node ) {
 
         try {
 
@@ -280,7 +247,7 @@ abstract class Connection
                 $this->doHandshake();
                 $this->_on->fire(
                     'open',
-                    new \Hoa\Core\Event\Bucket()
+                    new Core\Event\Bucket()
                 );
 
                 return;
@@ -335,9 +302,9 @@ abstract class Connection
                             $fromBinary = false;
                             $this->_on->fire(
                                 'binary-message',
-                                new \Hoa\Core\Event\Bucket(array(
+                                new Core\Event\Bucket([
                                     'message' => $frame['message']
-                                ))
+                                ])
                             );
 
                             break;
@@ -352,9 +319,9 @@ abstract class Connection
 
                         $this->_on->fire(
                             'message',
-                            new \Hoa\Core\Event\Bucket(array(
+                            new Core\Event\Bucket([
                                 'message' => $frame['message']
-                            ))
+                            ])
                         );
 
                         break;
@@ -397,9 +364,9 @@ abstract class Connection
 
                             $this->_on->fire(
                                 'binary-message',
-                                new \Hoa\Core\Event\Bucket(array(
+                                new Core\Event\Bucket([
                                     'message' => $message
-                                ))
+                                ])
                             );
 
                             break;
@@ -414,9 +381,9 @@ abstract class Connection
 
                         $this->_on->fire(
                             'message',
-                            new \Hoa\Core\Event\Bucket(array(
+                            new Core\Event\Bucket([
                                 'message' => $message
-                            ))
+                            ])
                         );
                     }
                     else
@@ -443,9 +410,9 @@ abstract class Connection
 
                     $this->_on->fire(
                         'ping',
-                        new \Hoa\Core\Event\Bucket(array(
+                        new Core\Event\Bucket([
                             'message' => $message
-                        ))
+                        ])
                     );
                   break;
 
@@ -504,10 +471,10 @@ abstract class Connection
                     $this->close(self::CLOSE_NORMAL);
                     $this->_on->fire(
                         'close',
-                        new \Hoa\Core\Event\Bucket(array(
+                        new Core\Event\Bucket([
                             'code'   => $code,
                             'reason' => $reason
-                        ))
+                        ])
                     );
                   break;
 
@@ -515,17 +482,17 @@ abstract class Connection
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
             }
         }
-        catch ( \Hoa\Core\Exception\Idle $e ) {
+        catch ( Core\Exception\Idle $e ) {
 
             try {
 
                 $this->close(self::CLOSE_SERVER_ERROR);
                 $exception = $e;
             }
-            catch ( \Hoa\Core\Exception\Idle $ee ) {
+            catch ( Core\Exception\Idle $ee ) {
 
                 $this->getConnection()->disconnect();
-                $exception = new \Hoa\Core\Exception\Group(
+                $exception = new Core\Exception\Group(
                     'An exception has been thrown. We have tried to close ' .
                     'the connection but another exception has been thrown.', 42
                 );
@@ -533,9 +500,12 @@ abstract class Connection
                 $exception[] = $ee;
             }
 
-            $this->_on->fire('error', new \Hoa\Core\Event\Bucket(array(
-                'exception' => $exception
-            )));
+            $this->_on->fire(
+                'error',
+                new Core\Event\Bucket([
+                    'exception' => $exception
+                ])
+            );
         }
 
         return;
@@ -558,7 +528,7 @@ abstract class Connection
      * @param   \Hoa\Socket\Node  $node       Node.
      * @return  \Closure
      */
-    protected function _send ( $message, \Hoa\Socket\Node $node ) {
+    protected function _send ( $message, Socket\Node $node ) {
 
         $mustMask = $this instanceof Client;
 
@@ -580,7 +550,7 @@ abstract class Connection
      *                                        the message.
      * @return  void
      */
-    public function send ( $message, \Hoa\Socket\Node $node = null,
+    public function send ( $message, Socket\Node $node = null,
                            $opcode = self::OPCODE_TEXT_FRAME, $end = true ) {
 
         $send = parent::send($message, $node);
@@ -611,6 +581,4 @@ abstract class Connection
 
         return $connection->disconnect();
     }
-}
-
 }

@@ -34,18 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace {
-
-from('Hoa')
-
-/**
- * \Hoa\Websocket\Exception
- */
--> import('Websocket.Exception.~');
-
-}
-
-namespace Hoa\Websocket\Exception {
+namespace Hoa\Websocket\Exception;
 
 /**
  * Class \Hoa\Websocket\Exception\InvalidMessage.
@@ -58,5 +47,3 @@ namespace Hoa\Websocket\Exception {
  */
 
 class InvalidMessage extends Exception { }
-
-}
