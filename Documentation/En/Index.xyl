@@ -35,7 +35,7 @@
   technology based on the <strong>HTTP protocol</strong> and provides only a
   <strong>unidirectional</strong> communication. For this kind of usage, an
   EventSource server is more likely to be light, simple and it is designed to be
-  robust regarding disconnections (see <a href="@lh:chapter=Eventsource">the
+  robust regarding disconnections (see <a href="@hack:chapter=Eventsource">the
   <code>Hoa\Eventsource</code> library</a>).</p>
   <p>The WebSocket protocol starts by a handshake in order to start the
   communication and exchange messages formatted as frames.</p>
@@ -92,7 +92,7 @@
   <strong>manipulating</strong> the WebSocket protocol. This class inherits
   from <code>Hoa\Websocket\Connection</code>. The <strong>communication</strong>
   is based on a socket server. We will use the <code>Hoa\Socket\Server</code>
-  class (from <a href="@lh:chapter=Socket">the <code>Hoa\Socket</code>
+  class (from <a href="@hack:chapter=Socket">the <code>Hoa\Socket</code>
   library</a>) to fill this role.</p>
   <p>The WebSocket protocol runs on TCP, thus we will start a local WebSocket
   server on the 8889 port:</p>
@@ -467,8 +467,8 @@ $server->run();</code></pre>
   <strong>manipulating</strong> the WebSocket protocol. This class inherits from
   <code>Hoa\Websocket\Connection</code>. The <strong>communication</strong> is
   based on a socket client. We will use the <code>Hoa\Socket\Client</code> class
-  (from <a href="@lh:chapter=Socket">the <code>Hoa\Socket</code> library</a>) to
-  fill this role.</p>
+  (from <a href="@hack:chapter=Socket">the <code>Hoa\Socket</code> library</a>)
+  to fill this role.</p>
   <p>Much as <code>Hoa\Websocket\Server</code> is able to communicate with
   clients supporting different versions of the WebSocket protocol,
   <code>Hoa\Websocket\Client</code> uses <strong>only</strong> the RFC6455
@@ -481,7 +481,8 @@ $server->run();</code></pre>
   <p>Like the server, the client inherits from
   <code>Hoa\Websocket\Connection</code>. We find the same <code>send</code>,
   <code>close</code>, <code>run</code> and other methods, and also the same
-  listeners. And like the server, listeners must be registered on the client.</p>
+  listeners. And like the server, listeners must be registered on the
+  client.</p>
   <p>Thus, to start a client, we will write:</p>
   <pre><code class="language-php">$client = new Hoa\Websocket\Client(
     new Hoa\Socket\Client('tcp://127.0.0.1:8889')
