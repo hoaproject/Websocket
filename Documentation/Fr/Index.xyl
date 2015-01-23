@@ -38,7 +38,7 @@
   et ne propose qu'une communication <strong>unidirectionnelle</strong>. Pour
   cet usage, un serveur EventSource est plus léger, plus simple et conçu pour
   être robuste aux déconnexions (voir
-  <a href="@lh:chapter=Eventsource">la bibliothèque
+  <a href="@hack:chapter=Eventsource">la bibliothèque
   <code>Hoa\Eventsource</code></a>).</p>
   <p>Le protocole WebSocket commence par une phase de
   <em lang="en">handshake</em> afin de permettre, par la suite, les échanges de
@@ -102,7 +102,7 @@
   <strong>manipulant</strong> le protocole WebSocket. Cette classe hérite de
   <code>Hoa\Websocket\Connection</code>. La <strong>communication</strong>
   s'effectue à travers un serveur de socket. Nous utiliserons la classe
-  <code>Hoa\Socket\Server</code> (de <a href="@lh:chapter=Socket">la
+  <code>Hoa\Socket\Server</code> (de <a href="@hack:chapter=Socket">la
   bibliothèque <code>Hoa\Socket</code></a>) pour remplir ce rôle.</p>
   <p>Le protocole WebSocket fonctionne en TCP, ainsi nous allons démarrer un
   serveur WebSocket en local sur le port 8889 :</p>
@@ -494,7 +494,7 @@ $server->run();</code></pre>
   <code>Hoa\Websocket\Connection</code>, tout comme
   <code>Hoa\Websocket\Server</code>. La <strong>communication</strong>
   s'effectue à travers un client de socket. Nous utiliserons la classe
-  <code>Hoa\Socket\Client</code> (de <a href="@lh:chapter=Socket">la
+  <code>Hoa\Socket\Client</code> (de <a href="@hack:chapter=Socket">la
   bibliothèque <code>Hoa\Socket</code></a>) pour remplir ce rôle.</p>
   <p>Autant <code>Hoa\Websocket\Server</code> est capable de traiter avec des
   clients supportant plusieurs versions du protocole WebSocket, autant
