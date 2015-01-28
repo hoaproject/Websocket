@@ -33,7 +33,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 namespace Hoa\Websocket\Exception;
 
 use Hoa\Core;
@@ -47,8 +46,9 @@ use Hoa\Core;
  * @copyright  Copyright © 2007-2015 Ivan Enderlin.
  * @license    New BSD License
  */
-
-class Exception extends Core\Exception { }
+class Exception extends Core\Exception
+{
+}
 
 /**
  * Flex entity.

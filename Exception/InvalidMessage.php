@@ -33,7 +33,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 namespace Hoa\Websocket\Exception;
 
 /**
@@ -45,5 +44,6 @@ namespace Hoa\Websocket\Exception;
  * @copyright  Copyright © 2007-2015 Ivan Enderlin.
  * @license    New BSD License
  */
-
-class InvalidMessage extends Exception { }
+class InvalidMessage extends Exception
+{
+}
