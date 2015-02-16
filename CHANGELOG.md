@@ -1,8 +1,3 @@
-# 2.15.02.16
-
-  * Fix documentation links (Ivan Enderlin, 2015-01-23T19:27:59+01:00)
-  * Happy new year! (Ivan Enderlin, 2015-01-05T14:57:10+01:00)
-
 # 2.14.12.10
 
   * Move to PSR-4. (Ivan Enderlin, 2014-12-09T18:52:41+01:00)
