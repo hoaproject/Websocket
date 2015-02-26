@@ -1,7 +1,7 @@
 # 2.15.02.16
 
-  * Add the CHANGELOG.md file. (Ivan Enderlin, 2015-02-16T14:25:21+01:00)
-  * Fix documentation links (Ivan Enderlin, 2015-01-23T19:27:59+01:00)
+  * Add the `CHANGELOG.md` file. (Ivan Enderlin, 2015-02-16T14:25:21+01:00)
+  * Fix documentation links. (Ivan Enderlin, 2015-01-23T19:27:59+01:00)
   * Happy new year! (Ivan Enderlin, 2015-01-05T14:57:10+01:00)
 
 # 2.14.12.10
@@ -14,7 +14,7 @@
 
 # 2.14.09.23
 
-  * Add `branch-alias` (Stéphane PY, 2014-09-23T11:56:24+02:00)
+  * Add `branch-alias`. (Stéphane PY, 2014-09-23T11:56:24+02:00)
 
 # 2.14.09.17
 
