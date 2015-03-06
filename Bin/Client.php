@@ -33,7 +33,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 namespace Hoa\Websocket\Bin;
 
 use Hoa\Console;
@@ -49,8 +48,8 @@ use Hoa\Websocket;
  * @copyright  Copyright © 2007-2015 Ivan Enderlin.
  * @license    New BSD License
  */
-
-class Client extends Console\Dispatcher\Kit {
+class Client extends Console\Dispatcher\Kit
+{
 
     /**
      * Options description.
@@ -60,55 +59,53 @@ class Client extends Console\Dispatcher\Kit {
     protected $options = [
         ['server', Console\GetOption::REQUIRED_ARGUMENT, 's'],
         ['help',   Console\GetOption::NO_ARGUMENT,       'h'],
-        ['help',   Console\GetOption::NO_ARGUMENT,       '?']
+        ['help',   Console\GetOption::NO_ARGUMENT,       '?'],
     ];
-
-
 
     /**
      * The entry method.
      *
      * @access  public
-     * @return  int
+     * @return int
      */
-    public function main ( ) {
-
+    public function main()
+    {
         $server = '127.0.0.1:8889';
 
-        while(false !== $c = $this->getOption($v)) switch($c) {
+        while (false !== $c = $this->getOption($v)) {
+            switch ($c) {
 
             case 's':
                 $server = $v;
-              break;
+                break;
 
             case 'h':
             case '?':
                 return $this->usage();
-              break;
+                break;
 
             case '__ambiguous':
                 $this->resolveOptionAmbiguity($v);
-              break;
+                break;
+            }
         }
-
 
         $readline = new Console\Readline();
         $client   = new Websocket\Client(
-            new Socket\Client('tcp://' . $server)
+            new Socket\Client('tcp://'.$server)
         );
         $client->setHost('localhost');
         $client->connect();
 
         do {
-
             $line = $readline->readLine('> ');
 
-            if(false === $line || 'quit' === $line)
+            if (false === $line || 'quit' === $line) {
                 break;
+            }
 
             $client->send($line);
-
-        } while(true);
+        } while (true);
 
         $client->close();
 
@@ -119,15 +116,15 @@ class Client extends Console\Dispatcher\Kit {
      * The command usage.
      *
      * @access  public
-     * @return  int
+     * @return int
      */
-    public function usage ( ) {
-
+    public function usage()
+    {
         echo 'Usage   : websocket:client <options>', "\n",
              'Options :', "\n",
              $this->makeUsageOptionsList([
                  's'    => 'Server URI (default: 127.0.0.1:8889).',
-                 'help' => 'This help.'
+                 'help' => 'This help.',
              ]), "\n";
 
         return;

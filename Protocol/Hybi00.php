@@ -33,7 +33,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 namespace Hoa\Websocket\Protocol;
 
 use Hoa\Http;
@@ -48,46 +47,47 @@ use Hoa\Websocket;
  * @copyright  Copyright © 2007-2015 Ivan Enderlin.
  * @license    New BSD License
  */
-
-class Hybi00 extends Generic {
+class Hybi00 extends Generic
+{
 
     /**
      * Do the handshake.
      *
      * @access  public
-     * @param   \Hoa\Http\Request  $request    Request.
-     * @return  void
+     * @param  \Hoa\Http\Request $request Request.
+     * @return void
      * @throw   \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake ( Http\Request $request ) {
-
+    public function doHandshake(Http\Request $request)
+    {
         $key1      = $request['sec-websocket-key1'];
         $key2      = $request['sec-websocket-key2'];
         $key3      = $request->getBody();
-        $location  = $request['host'] . $request->getUrl();
+        $location  = $request['host'].$request->getUrl();
         $keynumb1  = (float) preg_replace('#[^0-9]#', '', $key1);
         $keynumb2  = (float) preg_replace('#[^0-9]#', '', $key2);
 
         $spaces1   = substr_count($key1, ' ');
         $spaces2   = substr_count($key2, ' ');
 
-        if(0 === $spaces1 || 0 === $spaces2)
+        if (0 === $spaces1 || 0 === $spaces2) {
             throw new Websocket\Exception\BadProtocol(
                 'Header Sec-WebSocket-Key: %s is illegal.', 0);
+        }
 
         $part1     = pack('N', (int) ($keynumb1 / $spaces1));
         $part2     = pack('N', (int) ($keynumb2 / $spaces2));
-        $challenge = $part1 . $part2 . $key3;
+        $challenge = $part1.$part2.$key3;
         $response  = md5($challenge, true);
 
         $this->_connection->writeAll(
-            'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
-            'Upgrade: WebSocket' . "\r\n" .
-            'Connection: Upgrade' . "\r\n" .
-            'Sec-WebSocket-Origin: ' . $request['origin'] . "\r\n" .
-            'Sec-WebSocket-Location: ws://' . $location . "\r\n" .
-            "\r\n" .
-            $response . "\r\n"
+            'HTTP/1.1 101 WebSocket Protocol Handshake'."\r\n".
+            'Upgrade: WebSocket'."\r\n".
+            'Connection: Upgrade'."\r\n".
+            'Sec-WebSocket-Origin: '.$request['origin']."\r\n".
+            'Sec-WebSocket-Location: ws://'.$location."\r\n".
+            "\r\n".
+            $response."\r\n"
         );
         $this->_connection->getCurrentNode()->setHandshake(SUCCEED);
 
@@ -98,14 +98,14 @@ class Hybi00 extends Generic {
      * Read a frame.
      *
      * @access  public
-     * @return  array
+     * @return array
      */
-    public function readFrame ( ) {
-
+    public function readFrame()
+    {
         $buffer  = $this->_connection->read(2048);
         $length  = strlen($buffer) - 2;
 
-        if(empty($buffer))
+        if (empty($buffer)) {
             return [
                 'fin'     => 0x1,
                 'rsv1'    => 0x0,
@@ -114,8 +114,9 @@ class Hybi00 extends Generic {
                 'opcode'  => Websocket\Connection::OPCODE_CONNECTION_CLOSE,
                 'mask'    => 0x0,
                 'length'  => 0,
-                'message' => null
+                'message' => null,
             ];
+        }
 
         return [
             'fin'     => 0x1,
@@ -125,7 +126,7 @@ class Hybi00 extends Generic {
             'opcode'  => Websocket\Connection::OPCODE_TEXT_FRAME,
             'mask'    => 0x0,
             'length'  => $length,
-            'message' => substr($buffer, 1, $length)
+            'message' => substr($buffer, 1, $length),
         ];
     }
 
@@ -133,17 +134,17 @@ class Hybi00 extends Generic {
      * Write a frame.
      *
      * @access  public
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode (useless here).
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  int
+     * @param  string $message Message.
+     * @param  int    $opcode  Opcode (useless here).
+     * @param  bool   $end     Whether it is the last frame of the message.
+     * @param  bool   $mask    Whether the message will be masked or not.
+     * @return int
      */
-    public function writeFrame ( $message, $opcode = -1, $end = true,
-                                 $mask = false ) {
-
+    public function writeFrame($message, $opcode = -1, $end = true,
+                                 $mask = false)
+    {
         return $this->_connection->writeAll(
-            chr(0) . $message . chr(255)
+            chr(0).$message.chr(255)
         );
     }
 
@@ -151,14 +152,14 @@ class Hybi00 extends Generic {
      * Send a message to a node (if not specified, current node).
      *
      * @access  public
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  void
+     * @param  string $message Message.
+     * @param  int    $opcode  Opcode.
+     * @param  bool   $end     Whether it is the last frame of the message.
+     * @param  bool   $mask    Whether the message will be masked or not.
+     * @return void
      */
-    public function send ( $message, $opcode = -1, $end = true, $mask = false ) {
-
+    public function send($message, $opcode = -1, $end = true, $mask = false)
+    {
         $this->writeFrame($message);
 
         return;
@@ -168,17 +169,17 @@ class Hybi00 extends Generic {
      * Close a specific node/connection.
      *
      * @access  public
-     * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
-     *                             constants).
-     * @param   string  $reason    Reason.
-     * @param   bool    $mask      Whether the message will be masked or not.
-     * @return  void
+     * @param  int    $code   Code (please, see
+     *                        \Hoa\Websocket\Connection::CLOSE_*
+     *                        constants).
+     * @param  string $reason Reason.
+     * @param  bool   $mask   Whether the message will be masked or not.
+     * @return void
      */
-    public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
+    public function close($code   = Websocket\Connection::CLOSE_NORMAL,
                             $reason = null,
-                            $mask   = false ) {
-
+                            $mask   = false)
+    {
         return;
     }
 }

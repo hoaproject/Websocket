@@ -33,7 +33,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 namespace Hoa\Websocket\Exception;
 
 /**
@@ -45,8 +44,8 @@ namespace Hoa\Websocket\Exception;
  * @copyright  Copyright © 2007-2015 Ivan Enderlin.
  * @license    New BSD License
  */
-
-class CloseError extends Exception {
+class CloseError extends Exception
+{
 
     /**
      * Error code.
@@ -57,16 +56,15 @@ class CloseError extends Exception {
      */
     protected $_errorCode = null;
 
-
     /**
      * Set the error code.
      *
      * @access  public
-     * @param   int     $code    Code.
-     * @return  int
+     * @param  int $code Code.
+     * @return int
      */
-    public function setErrorCode ( $code ) {
-
+    public function setErrorCode($code)
+    {
         $old              = $this->_errorCode;
         $this->_errorCode = $code;
 
@@ -77,10 +75,10 @@ class CloseError extends Exception {
      * Get the error code.
      *
      * @access  public
-     * @return  int
+     * @return int
      */
-    public function getErrorCode ( ) {
-
+    public function getErrorCode()
+    {
         return $this->_errorCode;
     }
 }
