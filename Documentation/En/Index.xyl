@@ -50,7 +50,7 @@
   <p>Starting by an HTTP request is not anodyne. It allows the WebSocket
   protocol to use the same network path as HTTP requests, and so, for example,
   traverse proxys, firewalls etc. This also eases the deployment of this
-  protocol: no need to open a dedicated port, no need to have a specific
+  protocol: No need to open a dedicated port, no need to have a specific
   configuration on the server etc. Finally, it allows to use a
   <strong>secured</strong> connection thought TLS. In this case, we will use the
   <code>wss://</code> URI schema.</p>
@@ -58,9 +58,9 @@
   <h3 id="Frame_and_opcode" for="main-toc">Frame and opcode</h3>
 
   <p>Messages between the client and the server are not exchanged verbatim.
-  Actually, the message is <strong>formatted</strong> as a frame: a
+  Actually, the message is <strong>formatted</strong> as a frame: A
   <strong>packet</strong> of bits with a specific design. In this case, we will
-  find informations about the type of the message, its length, some
+  find information about the type of the message, its length, some
   verification codes etc. We will find an explanatory schema in the
   <a href="https://tools.ietf.org/html/rfc6455#section-5.2">section 5.2, Base
   Framing Protocol</a> from the protocol specification for the most curious of
@@ -73,7 +73,7 @@
 
   <h3 id="History" for="main-toc">History</h3>
 
-  <p>There is two versions of the WebSocket protocol in the nature: the standard
+  <p>There is two versions of the WebSocket protocol in the nature: The standard
   version and the non-standard version. The standard version is the one
   described in the RFC6455. The last non-standard version has the following
   nickname: <em>draft-ietf-hybi-thewebsocketprotocol-00</em> (or
@@ -273,12 +273,12 @@ $server->run();</code></pre>
   <code>Hoa\Websocket\Connection::close</code> method. This latter is very
   similar to <code>Hoa\Websocket\Connection::send</code>. Its arguments are:</p>
   <ul>
-    <li><code>code</code>: the closing <strong>code</strong>, see the
+    <li><code>code</code>: The closing <strong>code</strong>, see the
     <code>Hoa\Websocket\Connection::CLOSE_<em>*</em></code> constants
     (<code>CLOSE_NORMAL</code> by default),</li>
-    <li><code>reason</code>: a short message explaining the
+    <li><code>reason</code>: A short message explaining the
     <strong>reason</strong> of the closing (<code>null</code> by default),</li>
-    <li><code>node</code>: the <strong>node</strong> that will close the
+    <li><code>node</code>: The <strong>node</strong> that will close the
     connection (<code>null</code>, by default, indicates the current node).</li>
   </ul>
   <p>For example, when we will receive the message <code>I love you</code>, we
@@ -318,7 +318,7 @@ $server->run();</code></pre>
 
   <h2 id="Message" for="main-toc">Message</h2>
 
-  <p>There is two ways to send a message: either in one piece if we have the
+  <p>There is two ways to send a message: Either in one piece if we have the
   message <strong>entirely</strong>, or in <strong>several</strong> pieces. Our
   message can also contain other things than text, for example
   <strong>binary</strong> data. In this case, we speak about a binary
@@ -337,13 +337,13 @@ $server->run();</code></pre>
 });</code></pre>
   <p>In fact, this method has four arguments:</p>
   <ul>
-    <li><code>message</code>: the <strong>message</strong>,</li>
-    <li><code>node</code>: the <strong>node</strong> that will send the message
+    <li><code>message</code>: The <strong>message</strong>,</li>
+    <li><code>node</code>: The <strong>node</strong> that will send the message
     (<code>null</code>, by default, indicates the current node),</li>
-    <li><code>opcode</code>: the <strong>opcode</strong>, it means the type of
+    <li><code>opcode</code>: The <strong>opcode</strong>, it means the type of
     the frame (<code>Hoa\Websocket\Connection::OPCODE_TEXT_FRAME</code> by
     default),</li>
-    <li><code>fin</code>: indicates whether the message is <strong>over</strong>
+    <li><code>fin</code>: Indicates whether the message is <strong>over</strong>
     or not (<code>true</code> by default).</li>
   </ul>
   <p>We will use all these arguments by trying to send a
@@ -353,7 +353,7 @@ $server->run();</code></pre>
   method. However, it is possible that we have the message piece by piece, and
   then, we are unable to send it entirely. For example, if a message, with an
   <strong>undetermined</strong> length, is read on a stream, and we would
-  like to send it to a client, we won't wait to get the full message: we will
+  like to send it to a client, we won't wait to get the full message: We will
   send each piece directly to the client. In this case, we speak about
   fragmented messages.</p>
   <p>We will use the next opcodes: <code>OPCODE_TEXT_FRAME</code> for the
@@ -546,11 +546,11 @@ $client->connect();
   <h2 id="Customized_node" for="main-toc">Customized node</h2>
 
   <p>The <code>Hoa\Socket\Server</code> and <code>Hoa\Socket\Client</code>
-  classes work with <strong>nodes</strong>: objects representing an opened
+  classes work with <strong>nodes</strong>: Objects representing an opened
   <strong>connection</strong>. The main class representing a node is
   <code>Hoa\Socket\Node</code>. The <code>Hoa\Websocket</code> library provides
   its own node: <code>Hoa\Websocket\Node</code>. We can <strong>extend</strong>
-  this class in order to add and manipulate some <strong>informations</strong>
+  this class in order to add and manipulate some <strong>information</strong>
   about a connection.</p>
   <p>For example, in the case of an instant messaging, we could store the
   pseudo of the client:</p>
@@ -591,7 +591,7 @@ $server->getConnection()->setNodeName('ChatNode');</code></pre>
 });</code></pre>
   <p>If you set up a <strong>protocol</strong> by using WebSockets between
   your clients and your server, customized nodes will be very helpful to store
-  extra recurrent informations.</p>
+  extra recurrent information.</p>
 
   <h2 id="Conclusion" for="main-toc">Conclusion</h2>
 
