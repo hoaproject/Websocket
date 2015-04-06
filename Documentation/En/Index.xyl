@@ -23,7 +23,7 @@
   changes the classical Web approach with its HTTP protocol. The WebSocket
   protocol is also <strong>full-duplex</strong>, it means that data are
   exchanged <strong>simultaneously</strong> in <strong>both</strong> directions:
-  while a data is currently transiting from the server to the client, the latter
+  While a data is currently transiting from the server to the client, the latter
   is able to also send a message to the server. Consequently, the WebSocket
   protocol allows a high <strong>interactivity</strong> between both client and
   server. The client will often be a browser. It is important to notice that the
