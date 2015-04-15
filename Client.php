@@ -83,9 +83,11 @@ class Client extends Connection
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
-    public function __construct(Socket\Client $client, $endPoint = '/',
-                                Http\Response $response = null)
-    {
+    public function __construct(
+        Socket\Client $client,
+        $endPoint               = '/',
+        Http\Response $response = null
+    ) {
         parent::__construct($client);
         $this->setEndPoint($endPoint);
 

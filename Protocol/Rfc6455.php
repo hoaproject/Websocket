@@ -224,11 +224,12 @@ class Rfc6455 extends Generic
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
      */
-    public function writeFrame($message,
-                               $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                               $end    = true,
-                               $mask   = false)
-    {
+    public function writeFrame(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    ) {
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
         $rsv2   = 0x0;
@@ -290,11 +291,12 @@ class Rfc6455 extends Generic
      * @return  void
      * @throws  \Hoa\Websocket\Exception\InvalidMessage
      */
-    public function send($message,
-                           $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                           $end    = true,
-                           $mask   = false)
-    {
+    public function send(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    ) {
         if ((Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode ||
              Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode) &&
             false === (bool) preg_match('//u', $message)) {
@@ -322,10 +324,11 @@ class Rfc6455 extends Generic
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    public function close($code   = Websocket\Connection::CLOSE_NORMAL,
-                            $reason = null,
-                            $mask   = false)
-    {
+    public function close(
+        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $reason = null,
+        $mask   = false
+    ) {
         $this->writeFrame(
             pack('n', $code) . $reason,
             Websocket\Connection::OPCODE_CONNECTION_CLOSE,

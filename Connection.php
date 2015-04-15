@@ -524,9 +524,12 @@ abstract class Connection
      *                                        the message.
      * @return  void
      */
-    public function send($message, Socket\Node $node = null,
-                           $opcode = self::OPCODE_TEXT_FRAME, $end = true)
-    {
+    public function send(
+        $message,
+        Socket\Node $node = null,
+        $opcode           = self::OPCODE_TEXT_FRAME,
+        $end              = true
+    ) {
         $send = parent::send($message, $node);
 
         if (null === $send) {

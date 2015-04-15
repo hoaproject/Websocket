@@ -172,10 +172,11 @@ class Hybi00 extends Generic
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    public function close($code   = Websocket\Connection::CLOSE_NORMAL,
-                          $reason = null,
-                          $mask   = false)
-    {
+    public function close(
+        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $reason = null,
+        $mask   = false
+    ) {
         return;
     }
 }

@@ -100,10 +100,12 @@ abstract class Generic
      * @return  int
      * @throws  \Hoa\Websocket\Exception
      */
-    abstract public function writeFrame($message,
-                                        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                                        $end    = true,
-                                        $mask   = false);
+    abstract public function writeFrame(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    );
 
     /**
      * Send a message to a node (if not specified, current node).
@@ -114,10 +116,12 @@ abstract class Generic
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      */
-    abstract public function send($message,
-                                  $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                                  $end    = true,
-                                  $mask   = false);
+    abstract public function send(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    );
 
     /**
      * Close a specific node/connection.
@@ -129,7 +133,9 @@ abstract class Generic
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    abstract public function close($code   = Websocket\Connection::CLOSE_NORMAL,
-                                   $reason = null,
-                                   $mask   = false);
+    abstract public function close(
+        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $reason = null,
+        $mask   = false
+    );
 }

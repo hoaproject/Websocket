@@ -67,9 +67,10 @@ class Server extends Connection
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
-    public function __construct(Socket\Server $server,
-                                Http\Request  $request = null)
-    {
+    public function __construct(
+        Socket\Server $server,
+        Http\Request  $request = null
+    ) {
         parent::__construct($server);
 
         if (null === $request) {
