@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -44,15 +44,14 @@ use Hoa\Socket;
  *
  * A cross-protocol Websocket connection.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
 
 abstract class Connection
     extends    Socket\Connection\Handler
-    implements Core\Event\Listenable {
-
+    implements Core\Event\Listenable
+{
     /**
      * Opcode: continuation frame.
      *
@@ -183,7 +182,7 @@ abstract class Connection
     /**
      * Listeners.
      *
-     * @var \Hoa\Core\Event\Listener object
+     * @var \Hoa\Core\Event\Listener
      */
     protected $_on      = null;
 
@@ -194,23 +193,25 @@ abstract class Connection
      * 6 events can be listened: open, message, binary-message, ping, close and
      * error.
      *
-     * @access  public
      * @param   \Hoa\Socket\Connection  $connection    Connection.
      * @return  void
-     * @throw   \Hoa\Socket\Exception
+     * @throws  \Hoa\Socket\Exception
      */
-    public function __construct ( Socket\Connection $connection ) {
-
+    public function __construct(Socket\Connection $connection)
+    {
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
-        $this->_on = new Core\Event\Listener($this, [
-            'open',
-            'message',
-            'binary-message',
-            'ping',
-            'close',
-            'error'
-        ]);
+        $this->_on = new Core\Event\Listener(
+            $this,
+            [
+                'open',
+                'message',
+                'binary-message',
+                'ping',
+                'close',
+                'error'
+            ]
+        );
 
         return;
     }
@@ -218,14 +219,13 @@ abstract class Connection
     /**
      * Attach a callable to this listenable object.
      *
-     * @access  public
      * @param   string  $listenerId    Listener ID.
      * @param   mixed   $callable      Callable.
      * @return  \Hoa\Websocket\Server
-     * @throw   \Hoa\Core\Exception
+     * @throws  \Hoa\Core\Exception
      */
-    public function on ( $listenerId, $callable ) {
-
+    public function on($listenerId, $callable)
+    {
         $this->_on->attach($listenerId, $callable);
 
         return $this;
@@ -234,16 +234,13 @@ abstract class Connection
     /**
      * Run a node.
      *
-     * @access  protected
      * @param   \Hoa\Socket\Node  $node    Node.
      * @return  void
      */
-    protected function _run ( Socket\Node $node ) {
-
+    protected function _run(Socket\Node $node)
+    {
         try {
-
-            if(FAILED === $node->getHandshake()) {
-
+            if (FAILED === $node->getHandshake()) {
                 $this->doHandshake();
                 $this->_on->fire(
                     'open',
@@ -254,23 +251,20 @@ abstract class Connection
             }
 
             try {
-
                 $frame = $node->getProtocolImplementation()->readFrame();
-            }
-            catch ( Exception\CloseError $e ) {
-
+            } catch (Exception\CloseError $e) {
                 $this->close($e->getErrorCode(), $e->getMessage());
 
                 return;
             }
 
-            if(false === $frame)
+            if (false === $frame) {
                 return;
+            }
 
-            if(   $this instanceof Server
-               && isset($frame['mask'])
-               && 0x0 === $frame['mask']) {
-
+            if ($this instanceof Server &&
+                isset($frame['mask']) &&
+                0x0 === $frame['mask']) {
                 $this->close(
                     self::CLOSE_MESSAGE_ERROR,
                     'All messages from the client must be masked.'
@@ -282,23 +276,20 @@ abstract class Connection
             $fromText   = false;
             $fromBinary = false;
 
-            switch($frame['opcode']) {
+            switch ($frame['opcode']) {
 
                 case self::OPCODE_BINARY_FRAME:
                     $fromBinary = true;
 
                 case self::OPCODE_TEXT_FRAME:
-                    if(0x1 === $frame['fin']) {
-
-                        if(0 < $node->getNumberOfFragments()) {
-
+                    if (0x1 === $frame['fin']) {
+                        if (0 < $node->getNumberOfFragments()) {
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                             break;
                         }
 
-                        if(true === $fromBinary) {
-
+                        if (true === $fromBinary) {
                             $fromBinary = false;
                             $this->_on->fire(
                                 'binary-message',
@@ -310,8 +301,7 @@ abstract class Connection
                             break;
                         }
 
-                        if(false === (bool) preg_match('//u', $frame['message'])) {
-
+                        if (false === (bool) preg_match('//u', $frame['message'])) {
                             $this->close(self::CLOSE_MESSAGE_ERROR);
 
                             break;
@@ -325,28 +315,23 @@ abstract class Connection
                         );
 
                         break;
-                    }
-                    else
+                    } else {
                         $node->setComplete(false);
+                    }
 
                     $fromText = true;
 
                 case self::OPCODE_CONTINUATION_FRAME:
-                    if(false === $fromText) {
-
-                        if(0 === $node->getNumberOfFragments()) {
-
+                    if (false === $fromText) {
+                        if (0 === $node->getNumberOfFragments()) {
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                             break;
                         }
-                    }
-                    else {
-
+                    } else {
                         $fromText = false;
 
-                        if(true === $fromBinary) {
-
+                        if (true === $fromBinary) {
                             $node->setBinary(true);
                             $fromBinary = false;
                         }
@@ -354,14 +339,12 @@ abstract class Connection
 
                     $node->appendMessageFragment($frame['message']);
 
-                    if(0x1 === $frame['fin']) {
-
+                    if (0x1 === $frame['fin']) {
                         $message  = $node->getFragmentedMessage();
                         $isBinary = $node->isBinary();
                         $node->clearFragmentation();
 
-                        if(true === $isBinary) {
-
+                        if (true === $isBinary) {
                             $this->_on->fire(
                                 'binary-message',
                                 new Core\Event\Bucket([
@@ -372,8 +355,7 @@ abstract class Connection
                             break;
                         }
 
-                        if(false === (bool) preg_match('//u', $message)) {
-
+                        if (false === (bool) preg_match('//u', $message)) {
                             $this->close(self::CLOSE_MESSAGE_ERROR);
 
                             break;
@@ -385,28 +367,29 @@ abstract class Connection
                                 'message' => $message
                             ])
                         );
-                    }
-                    else
+                    } else {
                         $node->setComplete(false);
-                  break;
+                    }
+
+                    break;
 
                 case self::OPCODE_PING:
                     $message = &$frame['message'];
 
-                    if(   0x0  === $frame['fin']
-                       || 0x7d  <  $frame['length']) {
-
+                    if (0x0  === $frame['fin'] ||
+                        0x7d  <  $frame['length']) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
                     }
 
-                    $node->getProtocolImplementation()
-                         ->writeFrame(
-                             $message,
-                             self::OPCODE_PONG,
-                             true
-                         );
+                    $node
+                        ->getProtocolImplementation()
+                        ->writeFrame(
+                            $message,
+                            self::OPCODE_PONG,
+                            true
+                        );
 
                     $this->_on->fire(
                         'ping',
@@ -414,23 +397,23 @@ abstract class Connection
                             'message' => $message
                         ])
                     );
-                  break;
+
+                    break;
 
                 case self::OPCODE_PONG:
-                    if(0 === $frame['fin']) {
-
+                    if (0 === $frame['fin']) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
                     }
-                  break;
+
+                    break;
 
                 case self::OPCODE_CONNECTION_CLOSE:
                     $length = &$frame['length'];
 
-                    if(   1    === $length
-                       || 0x7d  <  $length) {
-
+                    if (1    === $length ||
+                        0x7d  <  $length) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
@@ -439,28 +422,24 @@ abstract class Connection
                     $code   = self::CLOSE_NORMAL;
                     $reason = null;
 
-                    if(0 < $length) {
-
+                    if (0 < $length) {
                         $message = &$frame['message'];
                         $_code   = unpack('nc', substr($message, 0, 2));
                         $code    = &$_code['c'];
 
-                        if(   1000  >  $code
-                           || (1004 <= $code && $code <= 1006)
-                           || (1012 <= $code && $code <= 1016)
-                           || 5000  <= $code) {
-
+                        if (1000  >  $code ||
+                           (1004 <= $code && $code <= 1006) ||
+                           (1012 <= $code && $code <= 1016) ||
+                            5000  <= $code) {
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                             break;
                         }
 
-                        if(2 < $length) {
-
+                        if (2 < $length) {
                             $reason = substr($message, 2);
 
-                            if(false === (bool) preg_match('//u', $reason)) {
-
+                            if (false === (bool) preg_match('//u', $reason)) {
                                 $this->close(self::CLOSE_MESSAGE_ERROR);
 
                                 break;
@@ -476,21 +455,18 @@ abstract class Connection
                             'reason' => $reason
                         ])
                     );
-                  break;
+
+                    break;
 
                 default:
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
+
             }
-        }
-        catch ( Core\Exception\Idle $e ) {
-
+        } catch (Core\Exception\Idle $e) {
             try {
-
                 $this->close(self::CLOSE_SERVER_ERROR);
                 $exception = $e;
-            }
-            catch ( Core\Exception\Idle $ee ) {
-
+            } catch (Core\Exception\Idle $ee) {
                 $this->getConnection()->disconnect();
                 $exception = new Core\Exception\Group(
                     'An exception has been thrown. We have tried to close ' .
@@ -514,35 +490,33 @@ abstract class Connection
     /**
      * Try the handshake by trying different protocol implementation.
      *
-     * @access  protected
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract protected function doHandshake ( );
+    abstract protected function doHandshake();
 
     /**
      * Send a message.
      *
-     * @access  protected
      * @param   string            $message    Message.
      * @param   \Hoa\Socket\Node  $node       Node.
      * @return  \Closure
      */
-    protected function _send ( $message, Socket\Node $node ) {
-
+    protected function _send($message, Socket\Node $node)
+    {
         $mustMask = $this instanceof Client;
 
-        return function ( $opcode, $end ) use ( &$message, $node, $mustMask ) {
-
-            return $node->getProtocolImplementation()
-                        ->send($message, $opcode, $end, $mustMask);
+        return function ($opcode, $end) use (&$message, $node, $mustMask) {
+            return
+                $node
+                    ->getProtocolImplementation()
+                    ->send($message, $opcode, $end, $mustMask);
         };
     }
 
     /**
      * Send a message to a specific node/connection.
      *
-     * @access  public
      * @param   string            $message    Message.
      * @param   \Hoa\Socket\Node  $node       Node (if null, current node).
      * @param   int               $opcode     Opcode.
@@ -550,13 +524,17 @@ abstract class Connection
      *                                        the message.
      * @return  void
      */
-    public function send ( $message, Socket\Node $node = null,
-                           $opcode = self::OPCODE_TEXT_FRAME, $end = true ) {
-
+    public function send(
+        $message,
+        Socket\Node $node = null,
+        $opcode           = self::OPCODE_TEXT_FRAME,
+        $end              = true
+    ) {
         $send = parent::send($message, $node);
 
-        if(null === $send)
+        if (null === $send) {
             return null;
+        }
 
         return $send($opcode, $end);
     }
@@ -565,19 +543,19 @@ abstract class Connection
      * Close a specific node/connection.
      * It is just a “inline” method, a shortcut.
      *
-     * @access  public
      * @param   int     $code      Code (please, see
      *                             self::CLOSE_* constants).
      * @param   string  $reason    Reason.
      * @return  void
      */
-    public function close ( $code = self::CLOSE_NORMAL, $reason = null ) {
-
+    public function close($code = self::CLOSE_NORMAL, $reason = null)
+    {
         $connection = $this->getConnection();
         $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
 
-        if(null !== $protocol)
+        if (null !== $protocol) {
             $protocol->close($code, $reason);
+        }
 
         return $connection->disconnect();
     }
