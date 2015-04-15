@@ -78,7 +78,7 @@ abstract class Generic
      *
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     abstract public function doHandshake(Http\Request $request);
 
@@ -86,7 +86,7 @@ abstract class Generic
      * Read a frame.
      *
      * @return  array
-     * @throw   \Hoa\Websocket\Exception
+     * @throws  \Hoa\Websocket\Exception
      */
     abstract public function readFrame();
 
@@ -98,7 +98,7 @@ abstract class Generic
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
-     * @throw   \Hoa\Websocket\Exception
+     * @throws  \Hoa\Websocket\Exception
      */
     abstract public function writeFrame($message,
                                         $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,

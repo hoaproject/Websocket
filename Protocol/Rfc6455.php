@@ -64,7 +64,7 @@ class Rfc6455 extends Generic
      *
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     public function doHandshake(Http\Request $request)
     {
@@ -111,7 +111,7 @@ class Rfc6455 extends Generic
      * Read a frame.
      *
      * @return  array
-     * @throw   \Hoa\Websocket\Exception\CloseError
+     * @throws  \Hoa\Websocket\Exception\CloseError
      */
     public function readFrame()
     {
@@ -119,10 +119,9 @@ class Rfc6455 extends Generic
         $read = $this->_connection->read(1);
 
         if (empty($read)) {
-
             $out['opcode'] = Websocket\Connection::OPCODE_CONNECTION_CLOSE;
-            return $out;
 
+            return $out;
         }
 
         $handle        = ord($read);
@@ -138,7 +137,6 @@ class Rfc6455 extends Generic
         $length        = &$out['length'];
 
         if (0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
-
             $exception = new Websocket\Exception\CloseError(
                 'Get rsv1: %s, rsv2: %s, rsv3: %s, they all must be equal to 0.',
                 2,
@@ -149,26 +147,20 @@ class Rfc6455 extends Generic
             );
 
             throw $exception;
-
         }
 
         if (0 === $length) {
-
             $out['message'] = '';
+
             return $out;
-
         } elseif (0x7e === $length) {
-
             $handle = unpack('nl', $this->_connection->read(2));
             $length = $handle['l'];
-
         } elseif (0x7f === $length) {
-
             $handle = unpack('N*l', $this->_connection->read(8));
             $length = $handle['l2'];
 
             if ($length > 0x7fffffffffffffff) {
-
                 $exception = new Websocket\Exception\CloseError(
                     'Message is too long.',
                     3
@@ -179,21 +171,18 @@ class Rfc6455 extends Generic
 
                 throw $exception;
             }
-
         }
 
         if (0x0 === $out['mask']) {
-
             $out['message'] = $this->_connection->read($length);
-            return $out;
 
+            return $out;
         }
 
         $maskN = array_map('ord', str_split($this->_connection->read(4)));
         $maskC = 0;
 
         if (4 !== count($maskN)) {
-
             $exception = new Websocket\Exception\CloseError(
                 'Mask is not well-formed (too short).',
                 4
@@ -203,7 +192,6 @@ class Rfc6455 extends Generic
             );
 
             throw $exception;
-
         }
 
         $buffer       = 0;
@@ -211,19 +199,15 @@ class Rfc6455 extends Generic
         $message      = null;
 
         for ($i = 0; $i < $length; $i += $bufferLength) {
-
             $buffer = min($bufferLength, $length - $i);
             $handle = $this->_connection->read($buffer);
 
             for ($j = 0, $_length = strlen($handle); $j < $_length; ++$j) {
-
                 $handle[$j] = chr(ord($handle[$j]) ^ $maskN[$maskC]);
                 $maskC      = ($maskC + 1) % 4;
-
             }
 
             $message .= $handle;
-
         }
 
         $out['message'] = $message;
@@ -270,7 +254,6 @@ class Rfc6455 extends Generic
         if (0x0 === $mask) {
             $out .= $message;
         } else {
-
             $maskingKey = [];
 
             if (function_exists('openssl_random_pseudo_bytes')) {
@@ -291,7 +274,6 @@ class Rfc6455 extends Generic
             }
 
             $out .= implode('', array_map('chr', $maskingKey)) . $message;
-
         }
 
         return $this->_connection->writeAll($out);
@@ -306,7 +288,7 @@ class Rfc6455 extends Generic
      *                              the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\InvalidMessage
+     * @throws  \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send($message,
                            $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,

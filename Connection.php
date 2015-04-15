@@ -195,7 +195,7 @@ abstract class Connection
      *
      * @param   \Hoa\Socket\Connection  $connection    Connection.
      * @return  void
-     * @throw   \Hoa\Socket\Exception
+     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(Socket\Connection $connection)
     {
@@ -222,7 +222,7 @@ abstract class Connection
      * @param   string  $listenerId    Listener ID.
      * @param   mixed   $callable      Callable.
      * @return  \Hoa\Websocket\Server
-     * @throw   \Hoa\Core\Exception
+     * @throws  \Hoa\Core\Exception
      */
     public function on($listenerId, $callable)
     {
@@ -240,9 +240,7 @@ abstract class Connection
     protected function _run(Socket\Node $node)
     {
         try {
-
             if (FAILED === $node->getHandshake()) {
-
                 $this->doHandshake();
                 $this->_on->fire(
                     'open',
@@ -250,16 +248,14 @@ abstract class Connection
                 );
 
                 return;
-
             }
 
             try {
                 $frame = $node->getProtocolImplementation()->readFrame();
             } catch (Exception\CloseError $e) {
-
                 $this->close($e->getErrorCode(), $e->getMessage());
-                return;
 
+                return;
             }
 
             if (false === $frame) {
@@ -269,13 +265,12 @@ abstract class Connection
             if ($this instanceof Server &&
                 isset($frame['mask']) &&
                 0x0 === $frame['mask']) {
-
                 $this->close(
                     self::CLOSE_MESSAGE_ERROR,
                     'All messages from the client must be masked.'
                 );
-                return;
 
+                return;
             }
 
             $fromText   = false;
@@ -288,16 +283,13 @@ abstract class Connection
 
                 case self::OPCODE_TEXT_FRAME:
                     if (0x1 === $frame['fin']) {
-
                         if (0 < $node->getNumberOfFragments()) {
-
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
-                            break;
 
+                            break;
                         }
 
                         if (true === $fromBinary) {
-
                             $fromBinary = false;
                             $this->_on->fire(
                                 'binary-message',
@@ -307,14 +299,12 @@ abstract class Connection
                             );
 
                             break;
-
                         }
 
                         if (false === (bool) preg_match('//u', $frame['message'])) {
-
                             $this->close(self::CLOSE_MESSAGE_ERROR);
-                            break;
 
+                            break;
                         }
 
                         $this->_on->fire(
@@ -325,7 +315,6 @@ abstract class Connection
                         );
 
                         break;
-
                     } else {
                         $node->setComplete(false);
                     }
@@ -334,52 +323,42 @@ abstract class Connection
 
                 case self::OPCODE_CONTINUATION_FRAME:
                     if (false === $fromText) {
-
                         if (0 === $node->getNumberOfFragments()) {
-
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
+
                             break;
-
                         }
-
                     } else {
-
                         $fromText = false;
 
                         if (true === $fromBinary) {
-
                             $node->setBinary(true);
                             $fromBinary = false;
-
                         }
-
                     }
 
                     $node->appendMessageFragment($frame['message']);
 
                     if (0x1 === $frame['fin']) {
-
                         $message  = $node->getFragmentedMessage();
                         $isBinary = $node->isBinary();
                         $node->clearFragmentation();
 
                         if (true === $isBinary) {
-
                             $this->_on->fire(
                                 'binary-message',
                                 new Core\Event\Bucket([
                                     'message' => $message
                                 ])
                             );
-                            break;
 
+                            break;
                         }
 
                         if (false === (bool) preg_match('//u', $message)) {
-
                             $this->close(self::CLOSE_MESSAGE_ERROR);
-                            break;
 
+                            break;
                         }
 
                         $this->_on->fire(
@@ -388,7 +367,6 @@ abstract class Connection
                                 'message' => $message
                             ])
                         );
-
                     } else {
                         $node->setComplete(false);
                     }
@@ -400,10 +378,9 @@ abstract class Connection
 
                     if (0x0  === $frame['fin'] ||
                         0x7d  <  $frame['length']) {
-
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
-                        break;
 
+                        break;
                     }
 
                     $node
@@ -425,10 +402,9 @@ abstract class Connection
 
                 case self::OPCODE_PONG:
                     if (0 === $frame['fin']) {
-
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
-                        break;
 
+                        break;
                     }
 
                     break;
@@ -438,17 +414,15 @@ abstract class Connection
 
                     if (1    === $length ||
                         0x7d  <  $length) {
-
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
-                        break;
 
+                        break;
                     }
 
                     $code   = self::CLOSE_NORMAL;
                     $reason = null;
 
                     if (0 < $length) {
-
                         $message = &$frame['message'];
                         $_code   = unpack('nc', substr($message, 0, 2));
                         $code    = &$_code['c'];
@@ -457,25 +431,20 @@ abstract class Connection
                            (1004 <= $code && $code <= 1006) ||
                            (1012 <= $code && $code <= 1016) ||
                             5000  <= $code) {
-
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
-                            break;
 
+                            break;
                         }
 
                         if (2 < $length) {
-
                             $reason = substr($message, 2);
 
                             if (false === (bool) preg_match('//u', $reason)) {
-
                                 $this->close(self::CLOSE_MESSAGE_ERROR);
+
                                 break;
-
                             }
-
                         }
-
                     }
 
                     $this->close(self::CLOSE_NORMAL);
@@ -493,16 +462,11 @@ abstract class Connection
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
 
             }
-
         } catch (Core\Exception\Idle $e) {
-
             try {
-
                 $this->close(self::CLOSE_SERVER_ERROR);
                 $exception = $e;
-
             } catch (Core\Exception\Idle $ee) {
-
                 $this->getConnection()->disconnect();
                 $exception = new Core\Exception\Group(
                     'An exception has been thrown. We have tried to close ' .
@@ -510,7 +474,6 @@ abstract class Connection
                 );
                 $exception[] = $e;
                 $exception[] = $ee;
-
             }
 
             $this->_on->fire(
@@ -528,7 +491,7 @@ abstract class Connection
      * Try the handshake by trying different protocol implementation.
      *
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     abstract protected function doHandshake();
 

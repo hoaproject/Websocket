@@ -78,15 +78,16 @@ class Client extends Console\Dispatcher\Kit
 
                 case 's':
                     $server = $v;
+
                     break;
 
                 case 'h':
                 case '?':
                     return $this->usage();
-                    break;
 
                 case '__ambiguous':
                     $this->resolveOptionAmbiguity($v);
+
                     break;
 
             }
@@ -101,7 +102,6 @@ class Client extends Console\Dispatcher\Kit
         $client->connect();
 
         do {
-
             $line = $readline->readLine('> ');
 
             if (false === $line || 'quit' === $line) {
@@ -109,7 +109,6 @@ class Client extends Console\Dispatcher\Kit
             }
 
             $client->send($line);
-
         } while (true);
 
         $client->close();

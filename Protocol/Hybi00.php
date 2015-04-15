@@ -55,7 +55,7 @@ class Hybi00 extends Generic
      *
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     public function doHandshake(Http\Request $request)
     {
@@ -158,6 +158,7 @@ class Hybi00 extends Generic
     public function send($message, $opcode = -1, $end = true, $mask = false)
     {
         $this->writeFrame($message);
+
         return;
     }
 

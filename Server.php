@@ -65,7 +65,7 @@ class Server extends Connection
      * @param   \Hoa\Socket\Server  $server    Server.
      * @param   \Hoa\Http\Request   $request   Request parser.
      * @return  void
-     * @throw   \Hoa\Socket\Exception
+     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(Socket\Server $server,
                                 Http\Request  $request = null)
@@ -85,7 +85,7 @@ class Server extends Connection
      * Try the handshake by trying different protocol implementation.
      *
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     protected function doHandshake()
     {
@@ -96,24 +96,18 @@ class Server extends Connection
 
         // Rfc6455.
         try {
-
             $rfc6455 = new Protocol\Rfc6455($connection);
             $rfc6455->doHandshake($request);
             $connection->getCurrentNode()->setProtocolImplementation($rfc6455);
-
         } catch (Exception\BadProtocol $e) {
-
             unset($rfc6455);
 
             // Hybi00.
             try {
-
                 $hybi00 = new Protocol\Hybi00($connection);
                 $hybi00->doHandshake($request);
                 $connection->getCurrentNode()->setProtocolImplementation($hybi00);
-
             } catch (Exception\BadProtocol $e) {
-
                 unset($hybi00);
                 $connection->disconnect();
 
@@ -121,7 +115,6 @@ class Server extends Connection
                     'All protocol failed.',
                     1
                 );
-
             }
         }
 

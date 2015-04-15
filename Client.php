@@ -81,7 +81,7 @@ class Client extends Connection
      * @param   string              $endPoint    End-point.
      * @param   \Hoa\Http\Response  $request     Response parser.
      * @return  void
-     * @throw   \Hoa\Socket\Exception
+     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(Socket\Client $client, $endPoint = '/',
                                 Http\Response $response = null)
@@ -140,8 +140,8 @@ class Client extends Connection
      * Try the handshake by trying different protocol implementation.
      *
      * @return  void
-     * @throw   \Hoa\Websocket\Exception
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
     protected function doHandshake()
     {
