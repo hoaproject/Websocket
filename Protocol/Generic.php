@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -45,17 +45,15 @@ use Hoa\Websocket;
  *
  * An abstract protocol implementation.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-abstract class Generic {
-
+abstract class Generic
+{
     /**
      * Connection.
      *
-     * @var \Hoa\Socket\Connection object
+     * @var \Hoa\Socket\Connection
      */
     protected $_connection = null;
 
@@ -64,12 +62,11 @@ abstract class Generic {
     /**
      * Construct the protocol implementation.
      *
-     * @access  public
      * @param   \Hoa\Socket\Connection  $connection    Connection.
      * @return  void
      */
-    public function __construct ( Socket\Connection $connection ) {
-
+    public function __construct(Socket\Connection $connection)
+    {
         $this->_connection = $connection;
 
         return;
@@ -78,57 +75,56 @@ abstract class Generic {
     /**
      * Do the handshake.
      *
-     * @access  public
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract public function doHandshake ( Http\Request $request );
+    abstract public function doHandshake(Http\Request $request);
 
     /**
      * Read a frame.
      *
-     * @access  public
      * @return  array
-     * @throw   \Hoa\Websocket\Exception
+     * @throws  \Hoa\Websocket\Exception
      */
-    abstract public function readFrame ( );
+    abstract public function readFrame();
 
     /**
      * Write a frame.
      *
-     * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
-     * @throw   \Hoa\Websocket\Exception
+     * @throws  \Hoa\Websocket\Exception
      */
-    abstract public function writeFrame ( $message,
-                                          $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                                          $end    = true,
-                                          $mask   = false );
+    abstract public function writeFrame(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    );
 
     /**
      * Send a message to a node (if not specified, current node).
      *
-     * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      */
-    abstract public function send ( $message,
-                                    $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-                                    $end    = true,
-                                    $mask   = false );
+    abstract public function send(
+        $message,
+        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $end    = true,
+        $mask   = false
+    );
 
     /**
      * Close a specific node/connection.
      *
-     * @access  public
      * @param   int     $code      Code (please, see
      *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
@@ -136,7 +132,9 @@ abstract class Generic {
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    abstract public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
-                                     $reason = null,
-                                     $mask   = false );
+    abstract public function close(
+        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $reason = null,
+        $mask   = false
+    );
 }

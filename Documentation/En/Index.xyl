@@ -144,8 +144,7 @@
   <code>Hoa\Websocket\Connection::send</code> method. Once our listener is
   registered, we can start the server thanks to the
   <code>Hoa\Websocket\Connection::run</code> method. Thus:</p>
-  <pre data-line="6"><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -156,7 +155,7 @@
 
 $server->run();</code></pre>
   <p>Now, let's test our server by creating a very simple HTML client:</p>
-  <pre data-line="6,45"><code class="language-markup">&amp;lt;input type="text" id="input" placeholder="Message…" />
+  <pre data-line="6,39"><code class="language-markup">&amp;lt;input type="text" id="input" placeholder="Message…" />
 &amp;lt;hr />
 &amp;lt;pre id="output">&amp;lt;/pre>
 
@@ -165,8 +164,7 @@ $server->run();</code></pre>
   var socket = null;
   var input  = document.getElementById('input');
   var output = document.getElementById('output');
-  var print  = function ( message ) {
-
+  var print  = function (message) {
       var samp       = document.createElement('samp');
       samp.innerHTML = message + '\n';
       output.appendChild(samp);
@@ -174,23 +172,19 @@ $server->run();</code></pre>
       return;
   };
 
-  input.addEventListener('keyup', function ( evt ) {
-
-      if(13 === evt.keyCode) {
-
+  input.addEventListener('keyup', function (evt) {
+      if (13 === evt.keyCode) {
           var msg = input.value;
 
-          if(!msg)
+          if (!msg) {
               return;
+          }
 
           try {
-
               socket.send(msg);
               input.value = '';
               input.focus();
-          }
-          catch ( e ) {
-
+          } catch (e) {
               console.log(e);
           }
 
@@ -199,30 +193,24 @@ $server->run();</code></pre>
   });
 
   try {
-
       socket = new WebSocket(host);
-      socket.onopen = function ( ) {
-
+      socket.onopen = function () {
           print('connection is opened');
           input.focus();
 
           return;
       };
-      socket.onmessage = function ( msg ) {
-
+      socket.onmessage = function (msg) {
           print(msg.data);
 
           return;
       };
-      socket.onclose = function ( ) {
-
+      socket.onclose = function () {
           print('connection is closed');
 
           return;
       };
-  }
-  catch ( e ) {
-
+  } catch (e) {
       console.log(e);
   }
 &amp;lt;/script></code></pre>
@@ -243,8 +231,7 @@ $server->run();</code></pre>
   memory. We are able to <strong>broadcast</strong> a message to all connected
   clients. So, we will use the <code>Hoa\Websocket\Connection::broadcast</code>
   method that will send a message to all other connected clients. Thus:</p>
-  <pre data-line="6"><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -284,12 +271,10 @@ $server->run();</code></pre>
   <p>For example, when we will receive the message <code>I love you</code>, we
   will close the connection by explaining why, else we will only do an echo of
   the message:</p>
-  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
-    if('I love you' === $data['message']) {
-
+    if ('I love you' === $data['message']) {
         $bucket->getSource()->close(
             Hoa\Websocket\Connection::CLOSE_NORMAL,
             'Thank you but my heart is already taken, bye bye!'
@@ -304,8 +289,7 @@ $server->run();</code></pre>
 });</code></pre>
   <p>We can modify our client in order to show the code and the reason of the
   closing:</p>
-  <pre><code class="language-javascript">      socket.onclose = function ( e ) {
-
+  <pre><code class="language-javascript">      socket.onclose = function (e) {
           print(
               'connection is closed (' + e.code + ' ' +
               (e.reason || '—no reason—') + ')'
@@ -329,8 +313,7 @@ $server->run();</code></pre>
   <p>To send a message in one block, we use the
   <code>Hoa\Websocket\Connection::send</code> method as seen in previous
   sections:</p>
-  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $bucket->getSource()->send('foobar');
 
     return;
@@ -374,8 +357,7 @@ $server->run();</code></pre>
   <p>Let's see an example. We will send the <code>foobarbaz</code> fragmented
   message in three pieces. We can imagine we read these data on a socket for
   example, and that the data are coming as soon as they are available. Thus:</p>
-  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $self = $bucket->getSource();
 
     $self->send(
@@ -436,8 +418,7 @@ $server->run();</code></pre>
   <code>binary-message</code> listener, it means in a “binary communication”
   between the client and the server. We can imagine the client sending
   coordinates and the server giving others (for example for a board game):</p>
-  <pre><code class="language-php">$server->on('binary-message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre><code class="language-php">$server->on('binary-message', function (Hoa\Core\Event\Bucket $bucket) {
     $data                          = $bucket->getData();
     $message                       = $data['message'];
     $point                         = [];
@@ -487,8 +468,7 @@ $server->run();</code></pre>
   <pre><code class="language-php">$client = new Hoa\Websocket\Client(
     new Hoa\Socket\Client('tcp://127.0.0.1:8889')
 );
-$client->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+$client->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $data = $bucket->getData();
     echo 'received message: ', $data['message'], "\n";
 
@@ -554,21 +534,20 @@ $client->connect();
   about a connection.</p>
   <p>For example, in the case of an instant messaging, we could store the
   pseudo of the client:</p>
-  <pre><code class="language-php">class ChatNode extends Hoa\Websocket\Node {
-
+  <pre><code class="language-php">class ChatNode extends Hoa\Websocket\Node
+{
     protected $_pseudo = null;
 
-
-    public function setPseudo ( $pseudo ) {
-
+    public function setPseudo ($pseudo)
+    {
         $old           = $this->_pseudo;
         $this->_pseudo = $pseudo;
 
         return $old;
     }
 
-    public function getPseudo ( ) {
-
+    public function getPseudo()
+    {
         return $this->_pseudo;
     }
 }</code></pre>
@@ -581,8 +560,7 @@ $client->connect();
 $server->getConnection()->setNodeName('ChatNode');</code></pre>
   <p>Next, in our listeners for example, we will be able to use our
   <code>getPseudo</code> method:</p>
-  <pre><code class="language-php">$server->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $node = $bucket->getSource()->getConnection()->getCurrentNode();
 
     var_dump($node->getPseudo());

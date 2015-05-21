@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -43,38 +43,36 @@ use Hoa\Socket;
  *
  * Describe a websocket node.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-class Node extends Socket\Node {
-
+class Node extends Socket\Node
+{
     /**
      * Protocol implementation.
      *
-     * @var \Hoa\Websocket\Protocol\Generic object
+     * @var \Hoa\Websocket\Protocol\Generic
      */
     protected $_protocol          = null;
 
     /**
      * Whether the handshake succeed.
      *
-     * @var \Hoa\Websocket\Node bool
+     * @var bool
      */
     protected $_handshake         = false;
 
     /**
      * Fragments of message.
      *
-     * @var \Hoa\Websocket\Node string
+     * @var string
      */
     protected $_messageFragments  = null;
 
     /**
      * Number of fragments.
      *
-     * @var \Hoa\Websocket\Node int
+     * @var int
      */
     protected $_numberOfFragments = 0;
 
@@ -86,7 +84,7 @@ class Node extends Socket\Node {
     /**
      * Whether the message is binary or not.
      *
-     * @var \Hoa\Websocket\Node bool
+     * @var bool
      */
     protected $_isBinary          = false;
 
@@ -95,12 +93,11 @@ class Node extends Socket\Node {
     /**
      * Set protocol implementation.
      *
-     * @access  public
      * @param   \Hoa\Websocket\Protocol\Generic  $protocol    Protocol.
      * @return  \Hoa\Websocket\Protocol\Generic
      */
-    public function setProtocolImplementation ( Protocol\Generic $protocol ) {
-
+    public function setProtocolImplementation(Protocol\Generic $protocol)
+    {
         $old             = $this->_protocol;
         $this->_protocol = $protocol;
 
@@ -110,23 +107,21 @@ class Node extends Socket\Node {
     /**
      * Get protocol implementation.
      *
-     * @access  public
      * @return  \Hoa\Websocket\Protocol\Generic
      */
-    public function getProtocolImplementation ( ) {
-
+    public function getProtocolImplementation()
+    {
         return $this->_protocol;
     }
 
     /**
      * Set handshake success.
      *
-     * @access  public
      * @param   bool    $handshake    Handshake.
      * @return  bool
      */
-    public function setHandshake ( $handshake ) {
-
+    public function setHandshake($handshake)
+    {
         $old              = $this->_handshake;
         $this->_handshake = $handshake;
 
@@ -136,23 +131,21 @@ class Node extends Socket\Node {
     /**
      * Whether the handshake succeed.
      *
-     * @access  public
      * @return  bool
      */
-    public function getHandshake ( ) {
-
+    public function getHandshake()
+    {
         return $this->_handshake;
     }
 
     /**
      * Append a fragment to a message (if we have fragmentation).
      *
-     * @access  public
      * @param   string  $fragment    Fragment.
      * @return  string
      */
-    public function appendMessageFragment ( $fragment ) {
-
+    public function appendMessageFragment($fragment)
+    {
         ++$this->_numberOfFragments;
 
         return $this->_messageFragments .= $fragment;
@@ -161,34 +154,31 @@ class Node extends Socket\Node {
     /**
      * Get the fragmented message.
      *
-     * @access  public
      * @return  string
      */
-    public function getFragmentedMessage ( ) {
-
+    public function getFragmentedMessage()
+    {
         return $this->_messageFragments;
     }
 
     /**
      * Get number of fragments.
      *
-     * @access  public
      * @return  int
      */
-    public function getNumberOfFragments ( ) {
-
+    public function getNumberOfFragments()
+    {
         return $this->_numberOfFragments;
     }
 
     /**
      * Set whether the message is complete or not.
      *
-     * @access  public
      * @param   bool  $complete    Is it complete?
      * @return  bool
      */
-    public function setComplete ( $complete ) {
-
+    public function setComplete($complete)
+    {
         $old             = $this->_complete;
         $this->_complete = $complete;
 
@@ -198,23 +188,21 @@ class Node extends Socket\Node {
     /**
      * Check if the message is complete or not.
      *
-     * @access  public
      * @return  bool
      */
-    public function isMessageComplete ( ) {
-
+    public function isMessageComplete()
+    {
         return $this->_complete;
     }
 
     /**
      * Whether the message is binary or not.
      *
-     * @access  public
      * @param   bool  $binary    Binary.
      * @return  bool
      */
-    public function setBinary ( $binary ) {
-
+    public function setBinary($binary)
+    {
         $old             = $this->_isBinary;
         $this->_isBinary = $binary;
 
@@ -224,22 +212,20 @@ class Node extends Socket\Node {
     /**
      * Check if the message is binary or not.
      *
-     * @access  public
      * @return  bool
      */
-    public function isBinary ( ) {
-
+    public function isBinary()
+    {
         return $this->_isBinary;
     }
 
     /**
      * Clear the fragmentation.
      *
-     * @access  public
      * @return  string
      */
-    public function clearFragmentation ( ) {
-
+    public function clearFragmentation()
+    {
         unset($this->_messageFragments);
         $this->_numberOfFragments = 0;
         $this->_isBinary          = false;

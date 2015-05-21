@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -45,17 +45,15 @@ use Hoa\Websocket;
  *
  * Basic WebSocket client.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-class Client extends Console\Dispatcher\Kit {
-
+class Client extends Console\Dispatcher\Kit
+{
     /**
      * Options description.
      *
-     * @var \Hoa\Websocket\Bin\Client array
+     * @var array
      */
     protected $options = [
         ['server', Console\GetOption::REQUIRED_ARGUMENT, 's'],
@@ -68,27 +66,28 @@ class Client extends Console\Dispatcher\Kit {
     /**
      * The entry method.
      *
-     * @access  public
      * @return  int
      */
-    public function main ( ) {
-
+    public function main()
+    {
         $server = '127.0.0.1:8889';
 
-        while(false !== $c = $this->getOption($v)) switch($c) {
+        while (false !== $c = $this->getOption($v)) {
+            switch ($c) {
+                case 's':
+                    $server = $v;
 
-            case 's':
-                $server = $v;
-              break;
+                    break;
 
-            case 'h':
-            case '?':
-                return $this->usage();
-              break;
+                case 'h':
+                case '?':
+                    return $this->usage();
 
-            case '__ambiguous':
-                $this->resolveOptionAmbiguity($v);
-              break;
+                case '__ambiguous':
+                    $this->resolveOptionAmbiguity($v);
+
+                    break;
+            }
         }
 
 
@@ -100,15 +99,14 @@ class Client extends Console\Dispatcher\Kit {
         $client->connect();
 
         do {
-
             $line = $readline->readLine('> ');
 
-            if(false === $line || 'quit' === $line)
+            if (false === $line || 'quit' === $line) {
                 break;
+            }
 
             $client->send($line);
-
-        } while(true);
+        } while (true);
 
         $client->close();
 
@@ -118,17 +116,17 @@ class Client extends Console\Dispatcher\Kit {
     /**
      * The command usage.
      *
-     * @access  public
      * @return  int
      */
-    public function usage ( ) {
-
-        echo 'Usage   : websocket:client <options>', "\n",
-             'Options :', "\n",
-             $this->makeUsageOptionsList([
-                 's'    => 'Server URI (default: 127.0.0.1:8889).',
-                 'help' => 'This help.'
-             ]), "\n";
+    public function usage()
+    {
+        echo
+            'Usage   : websocket:client <options>', "\n",
+            'Options :', "\n",
+            $this->makeUsageOptionsList([
+                's'    => 'Server URI (default: 127.0.0.1:8889).',
+                'help' => 'This help.'
+            ]), "\n";
 
         return;
     }

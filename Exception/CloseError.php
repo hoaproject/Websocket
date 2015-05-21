@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -41,19 +41,17 @@ namespace Hoa\Websocket\Exception;
  *
  * Extending the \Hoa\Websocket\Exception class.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-class CloseError extends Exception {
-
+class CloseError extends Exception
+{
     /**
      * Error code.
      *
      * One of the \Hoa\Websocket\Connection::CLOSE_* constants.
      *
-     * @var \Hoa\Websocket\Exception\ClodeError int
+     * @var int
      */
     protected $_errorCode = null;
 
@@ -61,12 +59,11 @@ class CloseError extends Exception {
     /**
      * Set the error code.
      *
-     * @access  public
      * @param   int     $code    Code.
      * @return  int
      */
-    public function setErrorCode ( $code ) {
-
+    public function setErrorCode($code)
+    {
         $old              = $this->_errorCode;
         $this->_errorCode = $code;
 
@@ -76,11 +73,10 @@ class CloseError extends Exception {
     /**
      * Get the error code.
      *
-     * @access  public
      * @return  int
      */
-    public function getErrorCode ( ) {
-
+    public function getErrorCode()
+    {
         return $this->_errorCode;
     }
 }

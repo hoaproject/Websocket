@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -44,17 +44,15 @@ use Hoa\Socket;
  *
  * A cross-protocol Websocket server.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-class Server extends Connection {
-
+class Server extends Connection
+{
     /**
      * Request (mainly parser).
      *
-     * @var \Hoa\Http\Request object
+     * @var \Hoa\Http\Request
      */
     protected $_request = null;
 
@@ -63,19 +61,20 @@ class Server extends Connection {
     /**
      * Create a Websocket server.
      *
-     * @access  public
      * @param   \Hoa\Socket\Server  $server    Server.
      * @param   \Hoa\Http\Request   $request   Request parser.
      * @return  void
-     * @throw   \Hoa\Socket\Exception
+     * @throws  \Hoa\Socket\Exception
      */
-    public function __construct ( Socket\Server $server,
-                                  Http\Request  $request = null ) {
-
+    public function __construct(
+        Socket\Server $server,
+        Http\Request  $request = null
+    ) {
         parent::__construct($server);
 
-        if(null === $request)
+        if (null === $request) {
             $request = new Http\Request();
+        }
 
         $this->setRequest($request);
 
@@ -85,12 +84,11 @@ class Server extends Connection {
     /**
      * Try the handshake by trying different protocol implementation.
      *
-     * @access  protected
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    protected function doHandshake ( ) {
-
+    protected function doHandshake()
+    {
         $connection = $this->getConnection();
         $buffer     = $connection->read(2048);
         $request    = $this->getRequest();
@@ -98,29 +96,22 @@ class Server extends Connection {
 
         // Rfc6455.
         try {
-
             $rfc6455 = new Protocol\Rfc6455($connection);
             $rfc6455->doHandshake($request);
             $connection->getCurrentNode()->setProtocolImplementation($rfc6455);
-        }
-        catch ( Exception\BadProtocol $e ) {
-
+        } catch (Exception\BadProtocol $e) {
             unset($rfc6455);
 
             // Hybi00.
             try {
-
                 $hybi00 = new Protocol\Hybi00($connection);
                 $hybi00->doHandshake($request);
                 $connection->getCurrentNode()->setProtocolImplementation($hybi00);
-            }
-            catch ( Exception\BadProtocol $e ) {
-
+            } catch (Exception\BadProtocol $e) {
                 unset($hybi00);
                 $connection->disconnect();
 
-                throw new Exception\BadProtocol(
-                    'All protocol failed.', 1);
+                throw new Exception\BadProtocol('All protocol failed.', 1);
             }
         }
 
@@ -130,12 +121,11 @@ class Server extends Connection {
     /**
      * Set request (mainly parser).
      *
-     * @access  public
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  \Hoa\Http\Request
      */
-    public function setRequest ( Http\Request $request ) {
-
+    public function setRequest(Http\Request $request)
+    {
         $old            = $this->_request;
         $this->_request = $request;
 
@@ -145,11 +135,10 @@ class Server extends Connection {
     /**
      * Get request.
      *
-     * @access  public
      * @return  \Hoa\Http\Request
      */
-    public function getRequest ( ) {
-
+    public function getRequest()
+    {
         return $this->_request;
     }
 }

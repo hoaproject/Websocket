@@ -38,14 +38,12 @@ The class `Hoa\Websocket\Server` proposes six listeners: `open`, `message`,
 $websocket = new Hoa\Websocket\Server(
     new Hoa\Socket\Server('tcp://127.0.0.1:8889')
 );
-$websocket->on('open', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+$websocket->on('open', function (Hoa\Core\Event\Bucket $bucket) {
     echo 'new connection', "\n";
 
     return;
 });
-$websocket->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+$websocket->on('message', function (Hoa\Core\Event\Bucket $bucket) {
     $data = $bucket->getData();
     echo '> message ', $data['message'], "\n";
     $bucket->getSource()->send($data['message']);
@@ -53,8 +51,7 @@ $websocket->on('message', function ( Hoa\Core\Event\Bucket $bucket ) {
 
     return;
 });
-$websocket->on('close', function ( Hoa\Core\Event\Bucket $bucket ) {
-
+$websocket->on('close', function (Hoa\Core\Event\Bucket $bucket) {
     echo 'connection closed', "\n";
 
     return;
@@ -74,8 +71,7 @@ Finally, we have to write a client in HTML and Javascript:
   var socket = null;
   var input  = document.getElementById('input');
   var output = document.getElementById('output');
-  var print  = function ( message ) {
-
+  var print  = function (message) {
       var samp       = document.createElement('samp');
       samp.innerHTML = message + '\n';
       output.appendChild(samp);
@@ -83,23 +79,19 @@ Finally, we have to write a client in HTML and Javascript:
       return;
   };
 
-  input.addEventListener('keyup', function ( evt ) {
-
-      if(13 === evt.keyCode) {
-
+  input.addEventListener('keyup', function (evt) {
+      if (13 === evt.keyCode) {
           var msg = input.value;
 
-          if(!msg)
+          if (!msg) {
               return;
+          }
 
           try {
-
               socket.send(msg);
               input.value = '';
               input.focus();
-          }
-          catch ( e ) {
-
+          } catch (e) {
               console.log(e);
           }
 
@@ -108,30 +100,24 @@ Finally, we have to write a client in HTML and Javascript:
   });
 
   try {
-
       socket = new WebSocket(host);
-      socket.onopen = function ( ) {
-
+      socket.onopen = function () {
           print('connection is opened');
           input.focus();
 
           return;
       };
-      socket.onmessage = function ( msg ) {
-
+      socket.onmessage = function (msg) {
           print(msg.data);
 
           return;
       };
-      socket.onclose = function ( ) {
-
+      socket.onclose = function () {
           print('connection is closed');
 
           return;
       };
-  }
-  catch ( e ) {
-
+  } catch (e) {
       console.log(e);
   }
 </script>

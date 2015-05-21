@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Ivan Enderlin. All rights reserved.
+ * Copyright © 2007-2015, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -44,23 +44,20 @@ use Hoa\Websocket;
  *
  * Protocol implementation: draft-ietf-hybi-thewebsocketprotocol-00.
  *
- * @author     Ivan Enderlin <ivan.enderlin@hoa-project.net>
- * @copyright  Copyright © 2007-2015 Ivan Enderlin.
+ * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-
-class Hybi00 extends Generic {
-
+class Hybi00 extends Generic
+{
     /**
      * Do the handshake.
      *
-     * @access  public
      * @param   \Hoa\Http\Request  $request    Request.
      * @return  void
-     * @throw   \Hoa\Websocket\Exception\BadProtocol
+     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake ( Http\Request $request ) {
-
+    public function doHandshake(Http\Request $request)
+    {
         $key1      = $request['sec-websocket-key1'];
         $key2      = $request['sec-websocket-key2'];
         $key3      = $request->getBody();
@@ -71,9 +68,12 @@ class Hybi00 extends Generic {
         $spaces1   = substr_count($key1, ' ');
         $spaces2   = substr_count($key2, ' ');
 
-        if(0 === $spaces1 || 0 === $spaces2)
+        if (0 === $spaces1 || 0 === $spaces2) {
             throw new Websocket\Exception\BadProtocol(
-                'Header Sec-WebSocket-Key: %s is illegal.', 0);
+                'Header Sec-WebSocket-Key: %s is illegal.',
+                0
+            );
+        }
 
         $part1     = pack('N', (int) ($keynumb1 / $spaces1));
         $part2     = pack('N', (int) ($keynumb2 / $spaces2));
@@ -97,15 +97,14 @@ class Hybi00 extends Generic {
     /**
      * Read a frame.
      *
-     * @access  public
      * @return  array
      */
-    public function readFrame ( ) {
-
+    public function readFrame()
+    {
         $buffer  = $this->_connection->read(2048);
         $length  = strlen($buffer) - 2;
 
-        if(empty($buffer))
+        if (empty($buffer)) {
             return [
                 'fin'     => 0x1,
                 'rsv1'    => 0x0,
@@ -116,6 +115,7 @@ class Hybi00 extends Generic {
                 'length'  => 0,
                 'message' => null
             ];
+        }
 
         return [
             'fin'     => 0x1,
@@ -132,16 +132,18 @@ class Hybi00 extends Generic {
     /**
      * Write a frame.
      *
-     * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode (useless here).
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  int
      */
-    public function writeFrame ( $message, $opcode = -1, $end = true,
-                                 $mask = false ) {
-
+    public function writeFrame(
+        $message,
+        $opcode = -1,
+        $end    = true,
+        $mask   = false
+    ) {
         return $this->_connection->writeAll(
             chr(0) . $message . chr(255)
         );
@@ -150,15 +152,14 @@ class Hybi00 extends Generic {
     /**
      * Send a message to a node (if not specified, current node).
      *
-     * @access  public
      * @param   string  $message    Message.
      * @param   int     $opcode     Opcode.
      * @param   bool    $end        Whether it is the last frame of the message.
      * @param   bool    $mask       Whether the message will be masked or not.
      * @return  void
      */
-    public function send ( $message, $opcode = -1, $end = true, $mask = false ) {
-
+    public function send($message, $opcode = -1, $end = true, $mask = false)
+    {
         $this->writeFrame($message);
 
         return;
@@ -167,7 +168,6 @@ class Hybi00 extends Generic {
     /**
      * Close a specific node/connection.
      *
-     * @access  public
      * @param   int     $code      Code (please, see
      *                             \Hoa\Websocket\Connection::CLOSE_*
      *                             constants).
@@ -175,10 +175,11 @@ class Hybi00 extends Generic {
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
-    public function close ( $code   = Websocket\Connection::CLOSE_NORMAL,
-                            $reason = null,
-                            $mask   = false ) {
-
+    public function close(
+        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $reason = null,
+        $mask   = false
+    ) {
         return;
     }
 }
