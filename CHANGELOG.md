@@ -1,3 +1,10 @@
+# 2.15.05.29
+
+  * Move to PSR-1 and PSR-2. (Ivan Enderlin, 2015-05-21T10:05:40+02:00)
+  * Fix a typo. (Ivan Enderlin, 2015-04-06T12:34:42+02:00)
+  * Fix typos. (Ivan Enderlin, 2015-04-06T08:39:39+02:00)
+  * Fix some typos. (Ivan Enderlin, 2015-02-26T08:38:24+01:00)
+
 # 2.15.02.16
 
   * Add the `CHANGELOG.md` file. (Ivan Enderlin, 2015-02-16T14:25:21+01:00)
