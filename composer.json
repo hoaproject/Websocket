@@ -3,7 +3,7 @@
     "description": "The Hoa\\Websocket library.",
     "type"       : "library",
     "keywords"   : ["library", "websocket", "server", "client", "realtime",
-                    "socket", "rfc6455", "hybi"],
+                    "socket", "rfc6455", "rfc3986", "rfc3629", "hybi"],
     "homepage"   : "http://hoa-project.net/",
     "license"    : "BSD-3-Clause",
     "authors"    : [
