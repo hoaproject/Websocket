@@ -34,49 +34,79 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket\Exception;
+namespace Hoa\Websocket;
+
+use Hoa\Core;
+use Hoa\Socket as BaseSocket;
 
 /**
- * Class \Hoa\Websocket\Exception\CloseError.
+ * Class \Hoa\Websocket\Socket.
  *
- * Extending the \Hoa\Websocket\Exception class.
+ * Socket analyzer.
  *
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class CloseError extends Exception
+class Socket extends BaseSocket
 {
     /**
-     * Error code.
+     * Address.
      *
-     * One of the \Hoa\Websocket\Connection\Handler::CLOSE_* constants.
-     *
-     * @var int
+     * @var string
      */
-    protected $_errorCode = null;
-
+    protected $_secured     = false;
 
     /**
-     * Set the error code.
+     * Constructor.
      *
-     * @param   int     $code    Code.
-     * @return  int
+     * @param   string  $uri    URI.
+     * @return  void
      */
-    public function setErrorCode($code)
+    public function __construct($uri)
     {
-        $old              = $this->_errorCode;
-        $this->_errorCode = $code;
+        if( false === $parts = parse_url($uri) ) {
+            throw new Exception(
+                'URI "%s" can\'t be parsed.',
+                3,
+                $uri
+            );
+        }
+
+        switch( $parts['scheme'] ) {
+            case 'ws':
+                $uri = 'tcp://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:':80');
+                break;
+            case 'wss':
+                $uri = 'tcp://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:':443');
+                $this->_secured = true;
+                break;
+        }
+
+        parent::__construct($uri);
+    }
+
+    /**
+     * Set secured mode on the current socket.
+     *
+     * @param   boolean  $secured    Node name.
+     * @return  boolean
+     */
+    public function setSecured($secured)
+    {
+        $old            = $this->_secured;
+        $this->_secured = $secured;
 
         return $old;
     }
 
+
     /**
-     * Get the error code.
+     * Check if the current socket is secured or not
      *
-     * @return  int
+     * @return boolean
      */
-    public function getErrorCode()
+    public function isSecured()
     {
-        return $this->_errorCode;
+        return $this->_secured;
     }
 }

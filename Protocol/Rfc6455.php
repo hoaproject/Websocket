@@ -118,7 +118,7 @@ class Rfc6455 extends Generic
         $read = $this->_connection->read(1);
 
         if (empty($read)) {
-            $out['opcode'] = Websocket\Connection::OPCODE_CONNECTION_CLOSE;
+            $out['opcode'] = Websocket\Connection\Handler::OPCODE_CONNECTION_CLOSE;
 
             return $out;
         }
@@ -142,7 +142,7 @@ class Rfc6455 extends Generic
                 [$out['rsv1'], $out['rsv2'], $out['rsv3']]
             );
             $exception->setErrorCode(
-                Websocket\Connection::CLOSE_PROTOCOL_ERROR
+                Websocket\Connection\Handler::CLOSE_PROTOCOL_ERROR
             );
 
             throw $exception;
@@ -165,7 +165,7 @@ class Rfc6455 extends Generic
                     3
                 );
                 $exception->setErrorCode(
-                    Websocket\Connection::CLOSE_MESSAGE_TOO_BIG
+                    Websocket\Connection\Handler::CLOSE_MESSAGE_TOO_BIG
                 );
 
                 throw $exception;
@@ -187,7 +187,7 @@ class Rfc6455 extends Generic
                 4
             );
             $exception->setErrorCode(
-                Websocket\Connection::CLOSE_PROTOCOL_ERROR
+                Websocket\Connection\Handler::CLOSE_PROTOCOL_ERROR
             );
 
             throw $exception;
@@ -225,7 +225,7 @@ class Rfc6455 extends Generic
      */
     public function writeFrame(
         $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $opcode = Websocket\Connection\Handler::OPCODE_TEXT_FRAME,
         $end    = true,
         $mask   = false
     ) {
@@ -293,12 +293,12 @@ class Rfc6455 extends Generic
      */
     public function send(
         $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $opcode = Websocket\Connection\Handler::OPCODE_TEXT_FRAME,
         $end    = true,
         $mask   = false
     ) {
-        if ((Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode ||
-             Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode) &&
+        if ((Websocket\Connection\Handler::OPCODE_TEXT_FRAME         === $opcode ||
+             Websocket\Connection\Handler::OPCODE_CONTINUATION_FRAME === $opcode) &&
             false === (bool) preg_match('//u', $message)) {
             throw new Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
@@ -318,20 +318,20 @@ class Rfc6455 extends Generic
      * Close a connection.
      *
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
+     *                             \Hoa\Websocket\Connection\Handler::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
     public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $code   = Websocket\Connection\Handler::CLOSE_NORMAL,
         $reason = null,
         $mask   = false
     ) {
         $this->writeFrame(
             pack('n', $code) . $reason,
-            Websocket\Connection::OPCODE_CONNECTION_CLOSE,
+            Websocket\Connection\Handler::OPCODE_CONNECTION_CLOSE,
             true,
             $mask
         );

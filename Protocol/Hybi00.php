@@ -110,7 +110,7 @@ class Hybi00 extends Generic
                 'rsv1'    => 0x0,
                 'rsv2'    => 0x0,
                 'rsv3'    => 0x0,
-                'opcode'  => Websocket\Connection::OPCODE_CONNECTION_CLOSE,
+                'opcode'  => Websocket\Connection\Handler::OPCODE_CONNECTION_CLOSE,
                 'mask'    => 0x0,
                 'length'  => 0,
                 'message' => null
@@ -122,7 +122,7 @@ class Hybi00 extends Generic
             'rsv1'    => 0x0,
             'rsv2'    => 0x0,
             'rsv3'    => 0x0,
-            'opcode'  => Websocket\Connection::OPCODE_TEXT_FRAME,
+            'opcode'  => Websocket\Connection\Handler::OPCODE_TEXT_FRAME,
             'mask'    => 0x0,
             'length'  => $length,
             'message' => substr($buffer, 1, $length)
@@ -169,14 +169,14 @@ class Hybi00 extends Generic
      * Close a specific node/connection.
      *
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
+     *                             \Hoa\Websocket\Connection\Handler::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
     public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $code   = Websocket\Connection\Handler::CLOSE_NORMAL,
         $reason = null,
         $mask   = false
     ) {

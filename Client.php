@@ -38,7 +38,7 @@ namespace Hoa\Websocket;
 
 use Hoa\Core;
 use Hoa\Http;
-use Hoa\Socket;
+use Hoa\Socket as BaseSocket;
 
 /**
  * Class \Hoa\Websocket\Client.
@@ -48,7 +48,7 @@ use Hoa\Socket;
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class Client extends Connection
+class Client extends Connection\Handler
 {
     /**
      * Endpoint.
@@ -83,7 +83,7 @@ class Client extends Connection
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Client $client,
+        BaseSocket\Client $client,
         $endPoint               = '/',
         Http\Response $response = null
     ) {
@@ -152,6 +152,12 @@ class Client extends Connection
 
         $connection = $this->getConnection();
         $connection->connect();
+
+        if( $connection->getSocket() instanceof Hoa\Websocket\Socket &&
+            $connection->getSocket()->isSecured() ) {
+            $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
+        }
+
         $connection->setStreamBlocking(true);
 
         $key =

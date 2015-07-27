@@ -34,49 +34,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket\Exception;
+namespace Hoa\Websocket\Connection;
+
+use Hoa\Websocket\Socket;
+use Hoa\Socket\Client;
+use Hoa\Core;
 
 /**
- * Class \Hoa\Websocket\Exception\CloseError.
+ * Class \Hoa\Socket\Connection.
  *
- * Extending the \Hoa\Websocket\Exception class.
+ * Abstract connection, useful for client and server.
  *
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class CloseError extends Exception
+class Connection extends Client
 {
     /**
-     * Error code.
+     * Set socket.
      *
-     * One of the \Hoa\Websocket\Connection\Handler::CLOSE_* constants.
-     *
-     * @var int
+     * @param   string  $socket    Socket URI.
+     * @return  \Hoa\Socket
      */
-    protected $_errorCode = null;
-
-
-    /**
-     * Set the error code.
-     *
-     * @param   int     $code    Code.
-     * @return  int
-     */
-    public function setErrorCode($code)
+    protected function setSocket($socket)
     {
-        $old              = $this->_errorCode;
-        $this->_errorCode = $code;
+        $old           = $this->_socket;
+        $this->_socket = new Socket($socket);
 
         return $old;
     }
-
-    /**
-     * Get the error code.
-     *
-     * @return  int
-     */
-    public function getErrorCode()
-    {
-        return $this->_errorCode;
-    }
 }
+
+/**
+ * Flex entity.
+ */
+Core\Consistency::flexEntity('Hoa\Websocket\Connection\Connection');

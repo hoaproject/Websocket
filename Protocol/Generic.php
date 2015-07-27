@@ -101,7 +101,7 @@ abstract class Generic
      */
     abstract public function writeFrame(
         $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $opcode = Websocket\Connection\Handler::OPCODE_TEXT_FRAME,
         $end    = true,
         $mask   = false
     );
@@ -117,7 +117,7 @@ abstract class Generic
      */
     abstract public function send(
         $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        $opcode = Websocket\Connection\Handler::OPCODE_TEXT_FRAME,
         $end    = true,
         $mask   = false
     );
@@ -126,14 +126,14 @@ abstract class Generic
      * Close a specific node/connection.
      *
      * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
+     *                             \Hoa\Websocket\Connection\Handler::CLOSE_*
      *                             constants).
      * @param   string  $reason    Reason.
      * @param   bool    $mask      Whether the message will be masked or not.
      * @return  void
      */
     abstract public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
+        $code   = Websocket\Connection\Handler::CLOSE_NORMAL,
         $reason = null,
         $mask   = false
     );

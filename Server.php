@@ -47,7 +47,7 @@ use Hoa\Socket;
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class Server extends Connection
+class Server extends Connection\Handler
 {
     /**
      * Request (mainly parser).

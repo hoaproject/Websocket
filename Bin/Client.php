@@ -37,7 +37,6 @@
 namespace Hoa\Websocket\Bin;
 
 use Hoa\Console;
-use Hoa\Socket;
 use Hoa\Websocket;
 
 /**
@@ -93,7 +92,7 @@ class Client extends Console\Dispatcher\Kit
 
         $readline = new Console\Readline();
         $client   = new Websocket\Client(
-            new Socket\Client('tcp://' . $server)
+            new Websocket\Connection('tcp://' . $server)
         );
         $client->setHost('localhost');
         $client->connect();
