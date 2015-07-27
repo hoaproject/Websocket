@@ -38,7 +38,7 @@ namespace Hoa\Websocket;
 
 use Hoa\Core;
 use Hoa\Http;
-use Hoa\Socket;
+use Hoa\Socket as BaseSocket;
 
 /**
  * Class \Hoa\Websocket\Client.
@@ -83,7 +83,7 @@ class Client extends Connection\Handler
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Client $client,
+        BaseSocket\Client $client,
         $endPoint               = '/',
         Http\Response $response = null
     ) {

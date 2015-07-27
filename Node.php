@@ -36,7 +36,7 @@
 
 namespace Hoa\Websocket;
 
-use Hoa\Socket;
+use Hoa\Socket as BaseSocket;
 
 /**
  * Class \Hoa\Websocket\Node.
@@ -46,7 +46,7 @@ use Hoa\Socket;
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class Node extends Socket\Node
+class Node extends BaseSocket\Node
 {
     /**
      * Protocol implementation.
