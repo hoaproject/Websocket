@@ -152,6 +152,11 @@ class Client extends Connection
 
         $connection = $this->getConnection();
         $connection->connect();
+
+        if( $connection->getSocket()->isSecured() ) {
+            $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
+        }
+
         $connection->setStreamBlocking(true);
 
         $key =
