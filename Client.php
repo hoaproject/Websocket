@@ -48,7 +48,7 @@ use Hoa\Socket;
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-class Client extends Connection
+class Client extends Connection\Handler
 {
     /**
      * Endpoint.

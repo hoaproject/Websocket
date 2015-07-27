@@ -49,7 +49,7 @@ class CloseError extends Exception
     /**
      * Error code.
      *
-     * One of the \Hoa\Websocket\Connection::CLOSE_* constants.
+     * One of the \Hoa\Websocket\Connection\Handler::CLOSE_* constants.
      *
      * @var int
      */

@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Websocket;
+namespace Hoa\Websocket\Connection;
 
 use Hoa\Core;
 use Hoa\Socket;
@@ -47,7 +47,7 @@ use Hoa\Socket;
  * @copyright  Copyright © 2007-2015 Hoa community
  * @license    New BSD License
  */
-abstract class Connection
+abstract class Handler
     extends    Socket\Connection\Handler
     implements Core\Event\Listenable
 {
@@ -196,7 +196,7 @@ abstract class Connection
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
-    public function __construct(Socket\Connection $connection)
+    public function __construct(Connection $connection)
     {
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
