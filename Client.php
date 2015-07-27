@@ -153,7 +153,8 @@ class Client extends Connection\Handler
         $connection = $this->getConnection();
         $connection->connect();
 
-        if( $connection->getSocket()->isSecured() ) {
+        if( $connection->getSocket() instanceof Hoa\Websocket\Socket &&
+            $connection->getSocket()->isSecured() ) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 

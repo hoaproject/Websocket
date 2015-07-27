@@ -196,7 +196,7 @@ abstract class Handler
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
-    public function __construct(Connection $connection)
+    public function __construct(Socket\Connection $connection)
     {
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
