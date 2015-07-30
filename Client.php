@@ -39,7 +39,7 @@ namespace Hoa\Websocket;
 use Hoa\Consistency;
 use Hoa\Event;
 use Hoa\Http;
-use Hoa\Socket;
+use Hoa\Socket as HoaSocket;
 
 /**
  * Class \Hoa\Websocket\Client.
@@ -84,7 +84,7 @@ class Client extends Connection
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Client $client,
+        HoaSocket\Client $client,
         $endPoint               = '/',
         Http\Response $response = null
     ) {
@@ -153,6 +153,12 @@ class Client extends Connection
 
         $connection = $this->getConnection();
         $connection->connect();
+
+        if( $connection->getSocket() instanceof Socket &&
+            $connection->getSocket()->isSecure()) {
+            $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
+        }
+
         $connection->setStreamBlocking(true);
 
         $key =

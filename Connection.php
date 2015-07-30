@@ -38,7 +38,7 @@ namespace Hoa\Websocket;
 
 use Hoa\Event;
 use Hoa\Exception as HoaException;
-use Hoa\Socket;
+use Hoa\Socket as HoaSocket;
 
 /**
  * Class \Hoa\Websocket\Connection.
@@ -49,7 +49,7 @@ use Hoa\Socket;
  * @license    New BSD License
  */
 abstract class Connection
-    extends    Socket\Connection\Handler
+    extends    HoaSocket\Connection\Handler
     implements Event\Listenable
 {
     use Event\Listens;
@@ -191,7 +191,7 @@ abstract class Connection
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
-    public function __construct(Socket\Connection $connection)
+    public function __construct(HoaSocket\Connection $connection)
     {
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
@@ -218,7 +218,7 @@ abstract class Connection
      * @param   \Hoa\Socket\Node  $node    Node.
      * @return  void
      */
-    protected function _run(Socket\Node $node)
+    protected function _run(HoaSocket\Node $node)
     {
         try {
             if (FAILED === $node->getHandshake()) {
@@ -482,7 +482,7 @@ abstract class Connection
      * @param   \Hoa\Socket\Node  $node       Node.
      * @return  \Closure
      */
-    protected function _send($message, Socket\Node $node)
+    protected function _send($message, HoaSocket\Node $node)
     {
         $mustMask = $this instanceof Client;
 
@@ -506,7 +506,7 @@ abstract class Connection
      */
     public function send(
         $message,
-        Socket\Node $node = null,
+        HoaSocket\Node $node = null,
         $opcode = self::OPCODE_TEXT_FRAME,
         $end = true
     ) {
