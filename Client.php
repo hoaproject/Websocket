@@ -85,10 +85,19 @@ class Client extends Connection
      */
     public function __construct(
         HoaSocket\Client $client,
-        $endPoint               = '/',
+        $endPoint               = null,
         Http\Response $response = null
     ) {
         parent::__construct($client);
+
+        if (null === $endPoint) {
+            $endPoint = '/';
+
+            if ($client->getSocket() instanceof Socket) {
+                $endPoint = $client->getSocket()->getEndPoint();
+            }
+
+        }
         $this->setEndPoint($endPoint);
 
         if (null === $response) {
@@ -154,8 +163,7 @@ class Client extends Connection
         $connection = $this->getConnection();
         $connection->connect();
 
-        if( $connection->getSocket() instanceof Socket &&
-            $connection->getSocket()->isSecure()) {
+        if ($connection->getSocket()->isSecured()) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 

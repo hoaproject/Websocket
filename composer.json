@@ -34,7 +34,8 @@
     "autoload": {
         "psr-4": {
             "Hoa\\Websocket\\": "."
-        }
+        },
+        "files": [ "Socket.php" ]
     },
     "extra": {
         "branch-alias": {

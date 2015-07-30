@@ -36,7 +36,6 @@
 
 namespace Hoa\Websocket;
 
-use Hoa\Core;
 use Hoa\Socket as HoaSocket;
 
 /**
@@ -50,13 +49,6 @@ use Hoa\Socket as HoaSocket;
 class Socket extends HoaSocket
 {
     /**
-     * Secured ?
-     *
-     * @var boolean
-     */
-    protected $_secure   = false;
-
-    /**
      * Endpoint.
      *
      * @var string
@@ -67,27 +59,17 @@ class Socket extends HoaSocket
      * Constructor
      *
      * @param string  $uri      Socket URI
-     * @param boolean $secure   Secure mode
+     * @param boolean $secured  Secure mode
      * @param string  $endPoint Websocket endpoint
      */
-    public function __construct($uri, $secure = false, $endPoint = '/')
+    public function __construct($uri, $secured = false, $endPoint = '/')
     {
         parent::__construct($uri);
 
-        $this->_secure = $secure;
+        $this->_secured  = $secured;
         $this->_endPoint = $endPoint;
 
         return;
-    }
-
-    /**
-     * Check if the socket is secured
-     *
-     * @return boolean
-     */
-    public function isSecure()
-    {
-        return $this->_secure;
     }
 
     /**
@@ -99,4 +81,43 @@ class Socket extends HoaSocket
     {
         return $this->_endPoint;
     }
+
+    /**
+     * Factory to create a valid instance from URI
+     * @param string $socketUri
+     * @return void
+     */
+    public static function createFromUri($socketUri)
+    {
+        $parsed = parse_url($socketUri);
+        if( false === $parsed ) {
+            throw new Exception(
+                'URI %s is not recognized.',
+                0,
+                $socketUri
+            );
+        }
+
+        $secure = isset($parsed['scheme'])?
+            'wss' === $parsed['scheme']:
+            false;
+
+        if (isset($parsed['port'])) {
+            $port = $parsed['port'];
+        } else {
+            $port = true === $secure ? 443 : 80;
+        }
+
+        return new static(
+            'tcp://' . $parsed['host'] . ':' . $port,
+            $secure,
+            isset($parsed['path'])?$parsed['path']:'/'
+        );
+    }
 }
+
+/**
+ * Register socket wrappers
+ */
+HoaSocket\Transport::register('ws',  ['Hoa\Websocket\Socket', 'transportFactory']);
+HoaSocket\Transport::register('wss', ['Hoa\Websocket\Socket', 'transportFactory']);
