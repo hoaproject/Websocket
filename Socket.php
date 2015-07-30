@@ -99,4 +99,37 @@ class Socket extends HoaSocket
     {
         return $this->_endPoint;
     }
+
+    /**
+     * Factory to create a valid instance from URI
+     * @param string $socketUri
+     * @return void
+     */
+    public static function createFromUri($socketUri)
+    {
+        $parsed = parse_url($socketUri);
+        if( false === $parsed ) {
+            throw new Exception(
+                'URI %s is not recognized.',
+                0,
+                $socketUri
+            );
+        }
+
+        $secure = isset($parsed['scheme'])?
+            'wss' === $parsed['scheme']:
+            false;
+
+        if (isset($parsed['port'])) {
+            $port = $parsed['port'];
+        } else {
+            $port = true === $secure ? 443 : 80;
+        }
+
+        return new static(
+            'tcp://' . $parsed['host'] . ':' . $port,
+            $secure,
+            isset($parsed['path'])?$parsed['path']:'/'
+        );
+    }
 }
