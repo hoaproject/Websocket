@@ -78,6 +78,8 @@ class Node extends Socket\Node
 
     /**
      * Whether the message is complete or not.
+     *
+     * @var bool
      */
     protected $_complete          = true;
 
@@ -222,11 +224,11 @@ class Node extends Socket\Node
     /**
      * Clear the fragmentation.
      *
-     * @return  string
+     * @return  void
      */
     public function clearFragmentation()
     {
-        unset($this->_messageFragments);
+        $this->_messageFragments  = null;
         $this->_numberOfFragments = 0;
         $this->_isBinary          = false;
         $this->_complete          = true;
