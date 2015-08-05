@@ -1,3 +1,9 @@
+# 2.15.08.05
+
+  * Fix notice on PHP5.5+. (Metalaka, 2015-08-04T22:59:15+02:00)
+  * Add `.gitignore` file. (Stéphane HULARD, 2015-08-03T11:06:58+02:00)
+  * Add RFC references. (Ivan Enderlin, 2015-07-22T09:42:39+02:00)
+
 # 2.15.05.29
 
   * Move to PSR-1 and PSR-2. (Ivan Enderlin, 2015-05-21T10:05:40+02:00)
