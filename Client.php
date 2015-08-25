@@ -77,17 +77,26 @@ class Client extends Connection
     /**
      * Create a Websocket client.
      *
-     * @param   \Hoa\Socket\Client  $client      Client.
-     * @param   string              $endPoint    End-point.
-     * @param   \Hoa\Http\Response  $request     Response parser.
+     * @param   string|\Hoa\Socket\Client   $client      Client.
+     * @param   string                      $endPoint    End-point.
+     * @param   \Hoa\Http\Response          $request     Response parser.
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Client $client,
+        $client,
         $endPoint               = '/',
         Http\Response $response = null
     ) {
+        if (is_string($client)) {
+            $client = new Socket\Client($client);
+        } elseif (!($client instanceof Socket\Client)) {
+            throw new Exception(
+                'Client must be a valid Hoa\Socket\Client instance'
+            );
+        }
+
+
         parent::__construct($client);
         $this->setEndPoint($endPoint);
 

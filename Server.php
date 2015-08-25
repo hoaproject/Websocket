@@ -61,15 +61,23 @@ class Server extends Connection
     /**
      * Create a Websocket server.
      *
-     * @param   \Hoa\Socket\Server  $server    Server.
-     * @param   \Hoa\Http\Request   $request   Request parser.
+     * @param   string|\Hoa\Socket\Server   $server    Server.
+     * @param   \Hoa\Http\Request           $request   Request parser.
      * @return  void
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Server $server,
+        $server,
         Http\Request  $request = null
     ) {
+        if (is_string($server)) {
+            $server = new Socket\Server($server);
+        } elseif (!($server instanceof Socket\Server)) {
+            throw new Exception(
+                'Server must be a valid Hoa\Socket\Server instance'
+            );
+        }
+
         parent::__construct($server);
 
         if (null === $request) {
