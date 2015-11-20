@@ -37,6 +37,7 @@
 namespace Hoa\Websocket;
 
 use Hoa\Core;
+use Hoa\Exception as HoaException;
 use Hoa\Socket;
 
 /**
@@ -456,13 +457,13 @@ abstract class Connection
                 default:
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
             }
-        } catch (Core\Exception\Idle $e) {
+        } catch (HoaException\Idle $e) {
             try {
                 $this->close(self::CLOSE_SERVER_ERROR);
                 $exception = $e;
-            } catch (Core\Exception\Idle $ee) {
+            } catch (HoaException\Idle $ee) {
                 $this->getConnection()->disconnect();
-                $exception = new Core\Exception\Group(
+                $exception = new HoaException\Group(
                     'An exception has been thrown. We have tried to close ' .
                     'the connection but another exception has been thrown.',
                     42
