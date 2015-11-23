@@ -37,6 +37,7 @@
 namespace Hoa\Websocket;
 
 use Hoa\Core;
+use Hoa\Event;
 use Hoa\Http;
 use Hoa\Socket;
 
@@ -206,9 +207,9 @@ class Client extends Connection
         $currentNode->setHandshake(SUCCEED);
         $currentNode->setProtocolImplementation(new Protocol\Rfc6455($connection));
 
-        $this->_on->fire(
+        $this->getListener()->fire(
             'open',
-            new Core\Event\Bucket()
+            new Event\Bucket()
         );
 
         return;

@@ -36,7 +36,7 @@
 
 namespace Hoa\Websocket;
 
-use Hoa\Core;
+use Hoa\Event;
 use Hoa\Exception as HoaException;
 use Hoa\Socket;
 
@@ -50,8 +50,10 @@ use Hoa\Socket;
  */
 abstract class Connection
     extends    Socket\Connection\Handler
-    implements Core\Event\Listenable
+    implements Event\Listenable
 {
+    use Event\Listens;
+
     /**
      * Opcode: continuation frame.
      *
@@ -179,14 +181,6 @@ abstract class Connection
     const CLOSE_TLS                 = 1015;
 
 
-    /**
-     * Listeners.
-     *
-     * @var \Hoa\Core\Event\Listener
-     */
-    protected $_on      = null;
-
-
 
     /**
      * Create a websocket connection.
@@ -201,31 +195,21 @@ abstract class Connection
     {
         parent::__construct($connection);
         $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
-        $this->_on = new Core\Event\Listener($this, [
-            'open',
-            'message',
-            'binary-message',
-            'ping',
-            'close',
-            'error'
-        ]);
+        $this->setListener(
+            new Event\Listener(
+                $this,
+                [
+                    'open',
+                    'message',
+                    'binary-message',
+                    'ping',
+                    'close',
+                    'error'
+                ]
+            )
+        );
 
         return;
-    }
-
-    /**
-     * Attach a callable to this listenable object.
-     *
-     * @param   string  $listenerId    Listener ID.
-     * @param   mixed   $callable      Callable.
-     * @return  \Hoa\Websocket\Server
-     * @throws  \Hoa\Core\Exception
-     */
-    public function on($listenerId, $callable)
-    {
-        $this->_on->attach($listenerId, $callable);
-
-        return $this;
     }
 
     /**
@@ -239,9 +223,9 @@ abstract class Connection
         try {
             if (FAILED === $node->getHandshake()) {
                 $this->doHandshake();
-                $this->_on->fire(
+                $this->getListener()->fire(
                     'open',
-                    new Core\Event\Bucket()
+                    new Event\Bucket()
                 );
 
                 return;
@@ -287,9 +271,9 @@ abstract class Connection
 
                         if (true === $fromBinary) {
                             $fromBinary = false;
-                            $this->_on->fire(
+                            $this->getListener()->fire(
                                 'binary-message',
-                                new Core\Event\Bucket([
+                                new Event\Bucket([
                                     'message' => $frame['message']
                                 ])
                             );
@@ -303,9 +287,9 @@ abstract class Connection
                             break;
                         }
 
-                        $this->_on->fire(
+                        $this->getListener()->fire(
                             'message',
-                            new Core\Event\Bucket([
+                            new Event\Bucket([
                                 'message' => $frame['message']
                             ])
                         );
@@ -341,9 +325,9 @@ abstract class Connection
                         $node->clearFragmentation();
 
                         if (true === $isBinary) {
-                            $this->_on->fire(
+                            $this->getListener()->fire(
                                 'binary-message',
-                                new Core\Event\Bucket([
+                                new Event\Bucket([
                                     'message' => $message
                                 ])
                             );
@@ -357,9 +341,9 @@ abstract class Connection
                             break;
                         }
 
-                        $this->_on->fire(
+                        $this->getListener()->fire(
                             'message',
-                            new Core\Event\Bucket([
+                            new Event\Bucket([
                                 'message' => $message
                             ])
                         );
@@ -387,9 +371,9 @@ abstract class Connection
                             true
                         );
 
-                    $this->_on->fire(
+                    $this->getListener()->fire(
                         'ping',
-                        new Core\Event\Bucket([
+                        new Event\Bucket([
                             'message' => $message
                         ])
                     );
@@ -444,9 +428,9 @@ abstract class Connection
                     }
 
                     $this->close(self::CLOSE_NORMAL);
-                    $this->_on->fire(
+                    $this->getListener()->fire(
                         'close',
-                        new Core\Event\Bucket([
+                        new Event\Bucket([
                             'code'   => $code,
                             'reason' => $reason
                         ])
@@ -472,9 +456,9 @@ abstract class Connection
                 $exception[] = $ee;
             }
 
-            $this->_on->fire(
+            $this->getListener()->fire(
                 'error',
-                new Core\Event\Bucket([
+                new Event\Bucket([
                     'exception' => $exception
                 ])
             );
