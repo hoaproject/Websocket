@@ -85,10 +85,19 @@ class Client extends Connection
      */
     public function __construct(
         HoaSocket\Client $client,
-        $endPoint               = '/',
+        $endPoint               = null,
         Http\Response $response = null
     ) {
         parent::__construct($client);
+
+        if (null === $endPoint) {
+            $endPoint = '/';
+
+            if ($client->getSocket() instanceof Socket) {
+                $endPoint = $client->getSocket()->getEndPoint();
+            }
+
+        }
         $this->setEndPoint($endPoint);
 
         if (null === $response) {
