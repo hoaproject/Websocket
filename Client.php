@@ -96,8 +96,8 @@ class Client extends Connection
             if ($client->getSocket() instanceof Socket) {
                 $endPoint = $client->getSocket()->getEndPoint();
             }
-
         }
+
         $this->setEndPoint($endPoint);
 
         if (null === $response) {

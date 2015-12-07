@@ -83,16 +83,17 @@ class Socket extends HoaSocket
     }
 
     /**
-     * Factory to create a valid instance from URI
-     * @param string $socketUri
+     * Factory to create a valid instance from the given URI
+     *
+     * @param string $socketUri URI of the socket to connect to.
      * @return void
      */
-    public static function createFromUri($socketUri)
+    public static function transportFactory($socketUri)
     {
         $parsed = parse_url($socketUri);
-        if( false === $parsed ) {
+        if (false === $parsed) {
             throw new Exception(
-                'URI %s is not recognized.',
+                'URI "%s" can\'t be parsed with `parse_url`.',
                 0,
                 $socketUri
             );

@@ -68,7 +68,7 @@ class Server extends Connection
      */
     public function __construct(
         HoaSocket\Server $server,
-        Http\Request  $request = null
+        Http\Request     $request = null
     ) {
         parent::__construct($server);
 
