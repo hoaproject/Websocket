@@ -36,7 +36,6 @@
 
 namespace Hoa\Websocket;
 
-use Hoa\Core;
 use Hoa\Socket as HoaSocket;
 
 /**
@@ -50,13 +49,6 @@ use Hoa\Socket as HoaSocket;
 class Socket extends HoaSocket
 {
     /**
-     * Secured ?
-     *
-     * @var boolean
-     */
-    protected $_secure   = false;
-
-    /**
      * Endpoint.
      *
      * @var string
@@ -67,27 +59,17 @@ class Socket extends HoaSocket
      * Constructor
      *
      * @param string  $uri      Socket URI
-     * @param boolean $secure   Secure mode
+     * @param boolean $secured  Secure mode
      * @param string  $endPoint Websocket endpoint
      */
-    public function __construct($uri, $secure = false, $endPoint = '/')
+    public function __construct($uri, $secured = false, $endPoint = '/')
     {
         parent::__construct($uri);
 
-        $this->_secure = $secure;
+        $this->_secured  = $secured;
         $this->_endPoint = $endPoint;
 
         return;
-    }
-
-    /**
-     * Check if the socket is secured
-     *
-     * @return boolean
-     */
-    public function isSecure()
-    {
-        return $this->_secure;
     }
 
     /**

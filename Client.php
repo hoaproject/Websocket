@@ -163,8 +163,7 @@ class Client extends Connection
         $connection = $this->getConnection();
         $connection->connect();
 
-        if( $connection->getSocket() instanceof Socket &&
-            $connection->getSocket()->isSecure()) {
+        if ($connection->getSocket()->isSecured()) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 
