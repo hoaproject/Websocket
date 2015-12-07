@@ -35,7 +35,7 @@
         "psr-4": {
             "Hoa\\Websocket\\": "."
         },
-        "files": [ "Connection.php" ]
+        "files": [ "Socket.php" ]
     },
     "extra": {
         "branch-alias": {

@@ -540,9 +540,3 @@ abstract class Connection
         return $connection->disconnect();
     }
 }
-
-/**
- * Register socket wrappers
- */
-HoaSocket\Transport::registerWrapper('ws', ['Hoa\Websocket\Socket', 'createFromUri']);
-HoaSocket\Transport::registerWrapper('wss', ['Hoa\Websocket\Socket', 'createFromUri']);

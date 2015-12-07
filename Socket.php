@@ -133,3 +133,9 @@ class Socket extends HoaSocket
         );
     }
 }
+
+/**
+ * Register socket wrappers
+ */
+HoaSocket\Transport::register('ws',  ['Hoa\Websocket\Socket', 'transportFactory']);
+HoaSocket\Transport::register('wss', ['Hoa\Websocket\Socket', 'transportFactory']);
