@@ -184,7 +184,7 @@ abstract class Connection
 
     /**
      * Create a websocket connection.
-     * 6 events can be listened: open, message, binary-message, ping, close and
+     * 6 events can be listened: open, message, binary-message, ping, close and
      * error.
      *
      * @param   \Hoa\Socket\Connection  $connection    Connection.
@@ -507,8 +507,8 @@ abstract class Connection
     public function send(
         $message,
         HoaSocket\Node $node = null,
-        $opcode = self::OPCODE_TEXT_FRAME,
-        $end = true
+        $opcode              = self::OPCODE_TEXT_FRAME,
+        $end                 = true
     ) {
         $send = parent::send($message, $node);
 

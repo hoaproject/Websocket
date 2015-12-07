@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2015, Hoa community. All rights reserved.
+ * Copyright © 2007-2016, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -41,9 +41,9 @@ use Hoa\Socket as HoaSocket;
 /**
  * Class \Hoa\Websocket\Socket.
  *
- * Websocket specific socket extension.
+ * WebSocket specific socket and transports.
  *
- * @copyright  Copyright © 2007-2015 Hoa community
+ * @copyright  Copyright © 2007-2016 Hoa community
  * @license    New BSD License
  */
 class Socket extends HoaSocket
@@ -55,12 +55,15 @@ class Socket extends HoaSocket
      */
     protected $_endPoint = '/';
 
+
+
     /**
      * Constructor
      *
-     * @param string  $uri      Socket URI
-     * @param boolean $secured  Secure mode
-     * @param string  $endPoint Websocket endpoint
+     * @param   string   $uri         Socket URI.
+     * @param   boolean  $secured     Whether the connection is secured.
+     * @param   string   $endPoint    Endpoint.
+     * @return  void
      */
     public function __construct($uri, $secured = false, $endPoint = '/')
     {
@@ -75,7 +78,7 @@ class Socket extends HoaSocket
     /**
      * Retrieve the websocket endpoint
      *
-     * @return string
+     * @return  string
      */
     public function getEndPoint()
     {
@@ -83,41 +86,45 @@ class Socket extends HoaSocket
     }
 
     /**
-     * Factory to create a valid instance from URI
-     * @param string $socketUri
-     * @return void
+     * Factory to create a valid `Hoa\Socket\Socket` object.
+     *
+     * @param   string  $socketUri    URI of the socket to connect to.
+     * @return  void
      */
-    public static function createFromUri($socketUri)
+    public static function transportFactory($socketUri)
     {
         $parsed = parse_url($socketUri);
-        if( false === $parsed ) {
+
+        if (false === $parsed) {
             throw new Exception(
-                'URI %s is not recognized.',
+                'URI %s seems invalid, cannot parse it.',
                 0,
                 $socketUri
             );
         }
 
-        $secure = isset($parsed['scheme'])?
-            'wss' === $parsed['scheme']:
-            false;
+        $secure =
+            isset($parsed['scheme'])
+                ? 'wss' === $parsed['scheme']
+                : false;
 
-        if (isset($parsed['port'])) {
-            $port = $parsed['port'];
-        } else {
-            $port = true === $secure ? 443 : 80;
-        }
+        $port =
+            isset($parsed['port'])
+                ? $parsed['port']
+                : (true === $secure
+                    ? 443
+                    : 80);
 
         return new static(
             'tcp://' . $parsed['host'] . ':' . $port,
             $secure,
-            isset($parsed['path'])?$parsed['path']:'/'
+            isset($parsed['path']) ? $parsed['path'] : '/'
         );
     }
 }
 
 /**
- * Register socket wrappers
+ * Register `ws://` and `wss://` transports.
  */
 HoaSocket\Transport::register('ws',  ['Hoa\Websocket\Socket', 'transportFactory']);
 HoaSocket\Transport::register('wss', ['Hoa\Websocket\Socket', 'transportFactory']);

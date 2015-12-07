@@ -41,7 +41,7 @@ use Hoa\Socket as HoaSocket;
 /**
  * Class \Hoa\Websocket\Node.
  *
- * Describe a websocket node.
+ * Describe a WebSocket node.
  *
  * @copyright  Copyright © 2007-2016 Hoa community
  * @license    New BSD License

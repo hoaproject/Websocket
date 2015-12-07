@@ -92,12 +92,13 @@ class Client extends Connection
 
         if (null === $endPoint) {
             $endPoint = '/';
+            $socket   = $client->getSocket();
 
-            if ($client->getSocket() instanceof Socket) {
-                $endPoint = $client->getSocket()->getEndPoint();
+            if ($socket instanceof Socket) {
+                $endPoint = $socket->getEndPoint();
             }
-
         }
+
         $this->setEndPoint($endPoint);
 
         if (null === $response) {
@@ -163,7 +164,7 @@ class Client extends Connection
         $connection = $this->getConnection();
         $connection->connect();
 
-        if ($connection->getSocket()->isSecured()) {
+        if (true === $connection->getSocket()->isSecured()) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 
