@@ -36,7 +36,7 @@
 
 namespace Hoa\Websocket;
 
-use Hoa\Core;
+use Hoa\Consistency;
 use Hoa\Event;
 use Hoa\Http;
 use Hoa\Socket;
@@ -156,7 +156,7 @@ class Client extends Connection
         $connection->setStreamBlocking(true);
 
         $key =
-            substr(base64_encode(Core::uuid()), 0, 21) .
+            substr(base64_encode(Consistency::uuid()), 0, 21) .
             $_tail[mt_rand(0, 3)] . '==';
 
         $expected = base64_encode(sha1($key . Protocol\Rfc6455::GUID, true));
