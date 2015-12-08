@@ -144,7 +144,7 @@
   <code>Hoa\Websocket\Connection::send</code> method. Once our listener is
   registered, we can start the server thanks to the
   <code>Hoa\Websocket\Connection::run</code> method. Thus:</p>
-  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -231,7 +231,7 @@ $server->run();</code></pre>
   memory. We are able to <strong>broadcast</strong> a message to all connected
   clients. So, we will use the <code>Hoa\Websocket\Connection::broadcast</code>
   method that will send a message to all other connected clients. Thus:</p>
-  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -271,7 +271,7 @@ $server->run();</code></pre>
   <p>For example, when we will receive the message <code>I love you</code>, we
   will close the connection by explaining why, else we will only do an echo of
   the message:</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     if ('I love you' === $data['message']) {
@@ -313,7 +313,7 @@ $server->run();</code></pre>
   <p>To send a message in one block, we use the
   <code>Hoa\Websocket\Connection::send</code> method as seen in previous
   sections:</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $bucket->getSource()->send('foobar');
 
     return;
@@ -357,7 +357,7 @@ $server->run();</code></pre>
   <p>Let's see an example. We will send the <code>foobarbaz</code> fragmented
   message in three pieces. We can imagine we read these data on a socket for
   example, and that the data are coming as soon as they are available. Thus:</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $self = $bucket->getSource();
 
     $self->send(
@@ -418,7 +418,7 @@ $server->run();</code></pre>
   <code>binary-message</code> listener, it means in a “binary communication”
   between the client and the server. We can imagine the client sending
   coordinates and the server giving others (for example for a board game):</p>
-  <pre><code class="language-php">$server->on('binary-message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('binary-message', function (Hoa\Event\Bucket $bucket) {
     $data                          = $bucket->getData();
     $message                       = $data['message'];
     $point                         = [];
@@ -468,7 +468,7 @@ $server->run();</code></pre>
   <pre><code class="language-php">$client = new Hoa\Websocket\Client(
     new Hoa\Socket\Client('tcp://127.0.0.1:8889')
 );
-$client->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+$client->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
     echo 'received message: ', $data['message'], "\n";
 
@@ -560,7 +560,7 @@ $client->connect();
 $server->getConnection()->setNodeName('ChatNode');</code></pre>
   <p>Next, in our listeners for example, we will be able to use our
   <code>getPseudo</code> method:</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $node = $bucket->getSource()->getConnection()->getCurrentNode();
 
     var_dump($node->getPseudo());

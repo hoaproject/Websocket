@@ -156,7 +156,7 @@
   méthode <code>Hoa\Websocket\Connection::send</code>. Une fois que notre
   écouteur est positionné, nous pouvons démarrer le serveur à l'aide de la
   méthode <code>Hoa\Websocket\Connection::run</code>. Ainsi :</p>
-  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -246,7 +246,7 @@ $server->run();</code></pre>
   nous allons utiliser la méthode
   <code>Hoa\Websocket\Connection::broadcast</code> qui va envoyer un message à
   tous les autres clients connectés, ainsi :</p>
-  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre data-line="5"><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     echo 'message: ', $data['message'], "\n";
@@ -289,7 +289,7 @@ $server->run();</code></pre>
   <p>Par exemple, quand nous recevons le message <code>I love you</code>, nous
   fermerons la connexion en expliquant pourquoi, sinon nous faisons un simple
   écho du message :</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
 
     if ('I love you' === $data['message']) {
@@ -332,7 +332,7 @@ $server->run();</code></pre>
   <p>Pour envoyer un message en un seul bloc, nous utilisons la méthode
   <code>Hoa\Websocket\Connection::send</code> comme nous l'avons vu dans les
   sections précédentes :</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $bucket->getSource()->send('foobar');
 
     return;
@@ -379,7 +379,7 @@ $server->run();</code></pre>
   fragmenté en trois parties. Nous pouvons imaginer que nous lisons ces données
   sur une socket par exemple, et que les données viennent au fur et à mesure.
   Ainsi :</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $self = $bucket->getSource();
 
     $self->send(
@@ -443,7 +443,7 @@ $server->run();</code></pre>
   le client et le serveur. Nous pouvons imaginer le client qui envoie des
   coordonnées et le serveur qui lui en redonne d'autres (échange fort probable
   pour un jeu de plateau par exemple) :</p>
-  <pre><code class="language-php">$server->on('binary-message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('binary-message', function (Hoa\Event\Bucket $bucket) {
     $data                          = $bucket->getData();
     $message                       = $data['message'];
     $point                         = [];
@@ -495,7 +495,7 @@ $server->run();</code></pre>
   <pre><code class="language-php">$client = new Hoa\Websocket\Client(
     new Hoa\Socket\Client('tcp://127.0.0.1:8889')
 );
-$client->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+$client->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
     echo 'received message: ', $data['message'], "\n";
 
@@ -592,7 +592,7 @@ $client->connect();
 $server->getConnection()->setNodeName('ChatNode');</code></pre>
   <p>Et après, dans nos écouteurs, nous pourrons utiliser notre méthode
   <code>getPseudo</code> par exemple :</p>
-  <pre><code class="language-php">$server->on('message', function (Hoa\Core\Event\Bucket $bucket) {
+  <pre><code class="language-php">$server->on('message', function (Hoa\Event\Bucket $bucket) {
     $node = $bucket->getSource()->getConnection()->getCurrentNode();
 
     var_dump($node->getPseudo());
