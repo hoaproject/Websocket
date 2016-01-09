@@ -23,7 +23,6 @@
     },
     "require": {
         "hoa/consistency": "~0.0",
-        "hoa/core"       : "~2.0",
         "hoa/event"      : "~0.0",
         "hoa/exception"  : "~0.0",
         "hoa/socket"     : "~0.0",
