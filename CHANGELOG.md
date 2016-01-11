@@ -1,3 +1,13 @@
+# 3.16.01.11
+
+  * Quality: Drop PHP5.4. (Ivan Enderlin, 2016-01-11T09:15:27+01:00)
+  * Quality: Run devtools:cs. (Ivan Enderlin, 2016-01-09T09:11:24+01:00)
+  * Core: Remove `Hoa\Core`. (Ivan Enderlin, 2016-01-09T08:28:37+01:00)
+  * Consistency: Update `uuid` call. (Ivan Enderlin, 2015-12-08T23:48:52+01:00)
+  * Consistency: Use `Hoa\Consistency`. (Ivan Enderlin, 2015-12-08T22:16:18+01:00)
+  * Event: Use `Hoa\Event`. (Ivan Enderlin, 2015-11-23T22:26:40+01:00)
+  * Exception: Use `Hoa\Exception`. (Ivan Enderlin, 2015-11-20T20:23:26+01:00)
+
 # 2.15.08.05
 
   * Fix notice on PHP5.5+. (Metalaka, 2015-08-04T22:59:15+02:00)
