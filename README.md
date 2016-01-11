@@ -20,7 +20,7 @@ dependencies, you need to require
 ```json
 {
     "require": {
-        "hoa/websocket": "~2.0"
+        "hoa/websocket": "~3.0"
     }
 }
 ```

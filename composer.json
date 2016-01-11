@@ -22,9 +22,9 @@
         "source": "http://git.hoa-project.net/"
     },
     "require": {
-        "hoa/consistency": "~0.0",
-        "hoa/event"      : "~0.0",
-        "hoa/exception"  : "~0.0",
+        "hoa/consistency": "~1.0",
+        "hoa/event"      : "~1.0",
+        "hoa/exception"  : "~1.0",
         "hoa/socket"     : "~0.0",
         "hoa/http"       : "~0.0"
     },
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "3.x-dev"
         }
     }
 }
