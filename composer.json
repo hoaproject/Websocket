@@ -25,8 +25,8 @@
         "hoa/consistency": "~1.0",
         "hoa/event"      : "~1.0",
         "hoa/exception"  : "~1.0",
-        "hoa/socket"     : "~0.0",
-        "hoa/http"       : "~0.0"
+        "hoa/socket"     : "~1.0",
+        "hoa/http"       : "~1.0"
     },
     "suggest": {
         "ext-openssl": "To get a better security when exchanging messages."
