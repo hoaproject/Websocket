@@ -1,4 +1,7 @@
+# 3.16.01.14
+
   * Composer: New stable libraries. (Ivan Enderlin, 2016-01-14T22:20:21+01:00)
+
 # 3.16.01.11
 
   * Quality: Drop PHP5.4. (Ivan Enderlin, 2016-01-11T09:15:27+01:00)
