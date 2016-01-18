@@ -37,7 +37,7 @@
 namespace Hoa\Websocket;
 
 use Hoa\Http;
-use Hoa\Socket;
+use Hoa\Socket as HoaSocket;
 
 /**
  * Class \Hoa\Websocket\Server.
@@ -67,8 +67,8 @@ class Server extends Connection
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
-        Socket\Server $server,
-        Http\Request  $request = null
+        HoaSocket\Server $server,
+        Http\Request     $request = null
     ) {
         parent::__construct($server);
 
