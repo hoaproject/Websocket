@@ -99,6 +99,10 @@
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
     new Hoa\Socket\Server('tcp://127.0.0.1:8889')
 );</code></pre>
+  <p>It's also possible to build the WebSocket server directly from socket URI:</p>
+  <pre><code class="language-php">$server = new Hoa\Websocket\Server(
+    'tcp://127.0.0.1:8889'
+);</code></pre>
   <p>Now, let's see how to <strong>interact</strong> with this server.</p>
 
   <h3 id="Listeners" for="main-toc">Listeners</h3>
@@ -474,6 +478,11 @@ $client->on('message', function (Hoa\Event\Bucket $bucket) {
 
     return;
 });</code></pre>
+  <p>It's also possible to build the WebSocket client instance directly from the
+    socket URI. So we can write:</p>
+  <pre><code class="language-php">$client = new Hoa\Websocket\Client(
+    'tcp://127.0.0.1:8889'
+);</code></pre>
   <p>The client can work in loop mode, like the server, with the
   <code>run</code> method. In this case, we will write:</p>
   <pre><code class="language-php">$client->run();</code></pre>
@@ -555,7 +564,7 @@ $client->connect();
   <code>Hoa\Socket\Client::setNodeName</code> methods allow to specify what
   node class the server or the client will <strong>use</strong>:</p>
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
-    new Hoa\Socket\Server('tcp://127.0.0.1:8889')
+    'tcp://127.0.0.1:8889'
 );
 $server->getConnection()->setNodeName('ChatNode');</code></pre>
   <p>Next, in our listeners for example, we will be able to use our
