@@ -95,7 +95,7 @@ class Socket extends HoaSocket
     {
         $parsed = parse_url($socketUri);
 
-        if (false === $parsed) {
+        if (false === $parsed || !isset($parsed['host'])) {
             throw new Exception(
                 'URI %s seems invalid, cannot parse it.',
                 0,
