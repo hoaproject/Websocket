@@ -99,6 +99,17 @@
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
     new Hoa\Socket\Server('tcp://127.0.0.1:8889')
 );</code></pre>
+  <p>However, we can use the <code>ws://127.0.0.1:8889</code> URI directly
+  instead of <code>tcp://127.0.0.1:8889</code>. This is an advantage when we
+  use <code>wss://</code> for a secured connection because
+  <code>Hoa\Websocket</code> will know that the connection will need to be
+  secured and everything will be done for you automatically. Manipulating TLS,
+  enabling encryption for certain connections etc. will not be required.
+  Thus:</p>
+  <pre><code class="language-php">$server = new Hoa\Websocket\Server(
+    new Hoa\Socket\Server('ws://127.0.0.1:8889')
+);</code></pre>
+
   <p>Now, let's see how to <strong>interact</strong> with this server.</p>
 
   <h3 id="Listeners" for="main-toc">Listeners</h3>
@@ -466,7 +477,7 @@ $server->run();</code></pre>
   client.</p>
   <p>Thus, to start a client, we will write:</p>
   <pre><code class="language-php">$client = new Hoa\Websocket\Client(
-    new Hoa\Socket\Client('tcp://127.0.0.1:8889')
+    new Hoa\Socket\Client('ws://127.0.0.1:8889')
 );
 $client->on('message', function (Hoa\Event\Bucket $bucket) {
     $data = $bucket->getData();
@@ -555,7 +566,7 @@ $client->connect();
   <code>Hoa\Socket\Client::setNodeName</code> methods allow to specify what
   node class the server or the client will <strong>use</strong>:</p>
   <pre><code class="language-php">$server = new Hoa\Websocket\Server(
-    new Hoa\Socket\Server('tcp://127.0.0.1:8889')
+    new Hoa\Socket\Server('ws://127.0.0.1:8889')
 );
 $server->getConnection()->setNodeName('ChatNode');</code></pre>
   <p>Next, in our listeners for example, we will be able to use our
