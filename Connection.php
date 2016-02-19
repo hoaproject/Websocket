@@ -502,7 +502,7 @@ abstract class Connection
         $mustMask = $this instanceof Client;
 
         return function ($opcode, $end) use (&$message, $node, $mustMask) {
-            if ( ! $node->getHandshake()) {
+            if (false === $node->getHandshake()) {
                 return;
             }
 
