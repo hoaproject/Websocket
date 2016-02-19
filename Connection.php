@@ -487,6 +487,10 @@ abstract class Connection
         $mustMask = $this instanceof Client;
 
         return function ($opcode, $end) use (&$message, $node, $mustMask) {
+            if (false === $node->getHandshake()) {
+                return;
+            }
+
             return
                 $node
                     ->getProtocolImplementation()
