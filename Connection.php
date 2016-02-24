@@ -287,12 +287,21 @@ abstract class Connection
                             break;
                         }
 
-                        $this->getListener()->fire(
-                            'message',
-                            new Event\Bucket([
-                                'message' => $frame['message']
-                            ])
-                        );
+                        try {
+                            $this->getListener()->fire(
+                                'message',
+                                new Event\Bucket([
+                                    'message' => $frame['message']
+                                ])
+                            );
+                        } catch (HoaException\Group $e) {
+                            $this->getListener()->fire(
+                                'error',
+                                new Event\Bucket([
+                                    'exception' => $e
+                                ])
+                            );
+                        }
 
                         break;
                     } else {
