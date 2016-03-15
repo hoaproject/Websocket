@@ -1,3 +1,16 @@
+# 3.16.03.15
+
+  * Connection: Catch disconnection of a node earlier. (Ivan Enderlin, 2016-02-24T07:51:18+01:00)
+  * Connection: Ensure handshake before sending. (Ivan Enderlin, 2016-02-19T07:59:37+01:00)
+  * Documentation: Introduce `ws://` and `wss://`. (Ivan Enderlin, 2016-02-15T08:11:28+01:00)
+  * Test: Write test suite of `Hoa\Websocket\Socket`. (Ivan Enderlin, 2016-02-10T08:22:57+01:00)
+  * Socket: Detect invalid URI in transport factory. (Ivan Enderlin, 2016-02-10T08:20:45+01:00)
+  * Composer: Require `hoa/test`. (Ivan Enderlin, 2016-02-09T17:06:15+01:00)
+  * Quality: Fix CS. (Stéphane HULARD, 2015-12-07T14:10:41+01:00)
+  * Socket: Introduce `ws://` and `wss://` transports. (Stéphane HULARD, 2015-07-30T12:05:54+02:00)
+  * Socket: Introduce the `Socket` class. (Stéphane HULARD, 2015-07-30T11:37:27+02:00)
+  * CHANGELOG: Fix format. (Ivan Enderlin, 2016-01-14T22:23:09+01:00)
+
 # 3.16.01.14
 
   * Composer: New stable libraries. (Ivan Enderlin, 2016-01-14T22:20:21+01:00)
