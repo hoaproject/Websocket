@@ -464,11 +464,6 @@ abstract class Connection
                     }
 
                     try {
-                        $this->close(self::CLOSE_NORMAL);
-                    } catch (HoaException\Idle $e) {
-                        // Cannot properly close the connection because the
-                        // client might already be disconnected.
-                    } finally {
                         $this->getListener()->fire(
                             'close',
                             new Event\Bucket([
@@ -476,11 +471,22 @@ abstract class Connection
                                 'reason' => $reason
                             ])
                         );
+                        $this->close(self::CLOSE_NORMAL);
+                    } catch (HoaException\Idle $e) {
+                        // Cannot properly close the connection because the
+                        // client might already be disconnected.
                     }
 
                     break;
 
                 default:
+                    $this->getListener()->fire(
+                        'close',
+                        new Event\Bucket([
+                            'code'   =>self::CLOSE_PROTOCOL_ERROR,
+                            'reason' => null
+                        ])
+                    );
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
             }
         } catch (HoaException\Idle $e) {
