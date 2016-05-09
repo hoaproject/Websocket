@@ -1,3 +1,8 @@
+# 3.16.05.09
+
+  * Test: Add a test case to `Socket` for query strs. (Ivan Enderlin, 2016-05-09T13:41:13+02:00)
+  * Socket: Compile query strings. (Ivan Enderlin, 2016-05-09T13:40:10+02:00)
+
 # 3.16.03.15
 
   * Connection: Catch disconnection of a node earlier. (Ivan Enderlin, 2016-02-24T07:51:18+01:00)
