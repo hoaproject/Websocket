@@ -211,6 +211,20 @@ class Socket extends Test\Unit\Suite
         );
     }
 
+    public function case_transport_query_strings_in_the_endpoint()
+    {
+        $this->_case_transport_factory(
+            'wss://hoa-project.net:8889/hello/world?foo=bar&baz=qux',
+            [
+                'type'     => SUT::ADDRESS_DOMAIN,
+                'address'  => 'hoa-project.net',
+                'port'     => 8889,
+                'endPoint' => '/hello/world?foo=bar&baz=qux',
+                'secured'  => true
+            ]
+        );
+    }
+
     protected function _case_transport_factory($uri, array $expect)
     {
         return
