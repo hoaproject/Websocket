@@ -118,7 +118,8 @@ class Socket extends HoaSocket
         return new static(
             'tcp://' . $parsed['host'] . ':' . $port,
             $secure,
-            isset($parsed['path']) ? $parsed['path'] : '/'
+            (isset($parsed['path']) ? $parsed['path'] : '/') .
+            (isset($parsed['query']) ? '?' . $parsed['query'] : '')
         );
     }
 }
