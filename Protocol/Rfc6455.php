@@ -94,14 +94,15 @@ class Rfc6455 extends Generic
          *   • Sec-WebSocket-Extensions.
          */
 
-        $this->_connection->writeAll(
+        $connection = $this->getConnection();
+        $connection->writeAll(
             'HTTP/1.1 101 Switching Protocols' . "\r\n" .
             'Upgrade: websocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
             'Sec-WebSocket-Accept: ' . $response . "\r\n" .
             'Sec-WebSocket-Version: 13' . "\r\n\r\n"
         );
-        $this->_connection->getCurrentNode()->setHandshake(SUCCEED);
+        $connection->getCurrentNode()->setHandshake(SUCCEED);
 
         return;
     }
@@ -114,8 +115,9 @@ class Rfc6455 extends Generic
      */
     public function readFrame()
     {
-        $out  = [];
-        $read = $this->_connection->read(1);
+        $connection = $this->getConnection();
+        $out        = [];
+        $read       = $connection->read(1);
 
         if (empty($read)) {
             $out['opcode'] = Websocket\Connection::OPCODE_CONNECTION_CLOSE;
@@ -130,7 +132,7 @@ class Rfc6455 extends Generic
         $out['rsv3']   = ($handle >> 4) & 0x1;
         $out['opcode'] =  $handle       & 0xf;
 
-        $handle        = ord($this->_connection->read(1));
+        $handle        = ord($connection->read(1));
         $out['mask']   = ($handle >> 7) & 0x1;
         $out['length'] =  $handle       & 0x7f;
         $length        = &$out['length'];
@@ -153,10 +155,10 @@ class Rfc6455 extends Generic
 
             return $out;
         } elseif (0x7e === $length) {
-            $handle = unpack('nl', $this->_connection->read(2));
+            $handle = unpack('nl', $connection->read(2));
             $length = $handle['l'];
         } elseif (0x7f === $length) {
-            $handle = unpack('N*l', $this->_connection->read(8));
+            $handle = unpack('N*l', $connection->read(8));
             $length = $handle['l2'];
 
             if ($length > 0x7fffffffffffffff) {
@@ -173,12 +175,12 @@ class Rfc6455 extends Generic
         }
 
         if (0x0 === $out['mask']) {
-            $out['message'] = $this->_connection->read($length);
+            $out['message'] = $connection->read($length);
 
             return $out;
         }
 
-        $maskN = array_map('ord', str_split($this->_connection->read(4)));
+        $maskN = array_map('ord', str_split($connection->read(4)));
         $maskC = 0;
 
         if (4 !== count($maskN)) {
@@ -199,7 +201,7 @@ class Rfc6455 extends Generic
 
         for ($i = 0; $i < $length; $i += $bufferLength) {
             $buffer = min($bufferLength, $length - $i);
-            $handle = $this->_connection->read($buffer);
+            $handle = $connection->read($buffer);
 
             for ($j = 0, $_length = strlen($handle); $j < $_length; ++$j) {
                 $handle[$j] = chr(ord($handle[$j]) ^ $maskN[$maskC]);
@@ -277,7 +279,7 @@ class Rfc6455 extends Generic
                     $message;
         }
 
-        return $this->_connection->writeAll($out);
+        return $this->getConnection()->writeAll($out);
     }
 
     /**
