@@ -137,4 +137,14 @@ abstract class Generic
         $reason = null,
         $mask   = false
     );
+
+    /**
+     * Get the socket connection.
+     *
+     * @return \Hoa\Socket\Connection
+     */
+    protected function getConnection()
+    {
+        return $this->_connection;
+    }
 }
