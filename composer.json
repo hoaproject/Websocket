@@ -29,7 +29,8 @@
         "hoa/http"       : "~1.0"
     },
     "require-dev": {
-        "hoa/test": "~2.0"
+        "ext-iconv": "*",
+        "hoa/test" : "~2.0"
     },
     "suggest": {
         "ext-openssl": "To get a better security when exchanging messages."

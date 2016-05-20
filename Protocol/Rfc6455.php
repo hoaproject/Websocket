@@ -275,8 +275,9 @@ class Rfc6455 extends Generic
                 $message[$i] = chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
             }
 
-            $out .= implode('', array_map('chr', $maskingKey)) .
-                    $message;
+            $out .=
+                implode('', array_map('chr', $maskingKey)) .
+                $message;
         }
 
         return $this->getConnection()->writeAll($out);
