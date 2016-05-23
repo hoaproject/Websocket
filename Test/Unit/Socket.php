@@ -43,7 +43,7 @@ use Hoa\Websocket\Socket as SUT;
 /**
  * Class \Hoa\Websocket\Test\Unit\Socket.
  *
- * Test suite for the socket object.
+ * Test suite for the socket class.
  *
  * @copyright  Copyright © 2007-2016 Hoa community
  * @license    New BSD License
