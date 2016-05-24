@@ -256,20 +256,7 @@ class Rfc6455 extends Generic
         if (0x0 === $mask) {
             $out .= $message;
         } else {
-            $maskingKey = [];
-
-            if (function_exists('openssl_random_pseudo_bytes')) {
-                $maskingKey = array_map(
-                    'ord',
-                    str_split(
-                        openssl_random_pseudo_bytes(4)
-                    )
-                );
-            } else {
-                for ($i = 0; $i < 4; ++$i) {
-                    $maskingKey[] = mt_rand(1, 255);
-                }
-            }
+            $maskingKey = $this->getMaskingKey();
 
             for ($i = 0, $max = strlen($message); $i < $max; ++$i) {
                 $message[$i] = chr(ord($message[$i]) ^ $maskingKey[$i % 4]);
@@ -281,6 +268,31 @@ class Rfc6455 extends Generic
         }
 
         return $this->getConnection()->writeAll($out);
+    }
+
+    /**
+     * Get a random masking key.
+     *
+     * @return array
+     */
+    public function getMaskingKey()
+    {
+        if (true === function_exists('openssl_random_pseudo_bytes')) {
+            $maskingKey = array_map(
+                'ord',
+                str_split(
+                    openssl_random_pseudo_bytes(4)
+                )
+            );
+        } else {
+            $maskingKey = [];
+
+            for ($i = 0; $i < 4; ++$i) {
+                $maskingKey[] = mt_rand(1, 255);
+            }
+        }
+
+        return $maskingKey;
     }
 
     /**
