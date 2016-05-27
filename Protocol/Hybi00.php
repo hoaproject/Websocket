@@ -70,8 +70,10 @@ class Hybi00 extends Generic
 
         if (0 === $spaces1 || 0 === $spaces2) {
             throw new Websocket\Exception\BadProtocol(
-                'Header Sec-WebSocket-Key: %s is illegal.',
-                0
+                'Header Sec-WebSocket-Key1: %s or ' .
+                'Sec-WebSocket-Key2: %s is illegal.',
+                0,
+                [$key1, $key2]
             );
         }
 
