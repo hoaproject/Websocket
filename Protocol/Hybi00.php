@@ -82,7 +82,8 @@ class Hybi00 extends Generic
         $challenge = $part1 . $part2 . $key3;
         $response  = md5($challenge, true);
 
-        $this->_connection->writeAll(
+        $connection = $this->getConnection();
+        $connection->writeAll(
             'HTTP/1.1 101 WebSocket Protocol Handshake' . "\r\n" .
             'Upgrade: WebSocket' . "\r\n" .
             'Connection: Upgrade' . "\r\n" .
@@ -91,7 +92,7 @@ class Hybi00 extends Generic
             "\r\n" .
             $response . "\r\n"
         );
-        $this->_connection->getCurrentNode()->setHandshake(SUCCEED);
+        $connection->getCurrentNode()->setHandshake(SUCCEED);
 
         return;
     }
@@ -103,7 +104,7 @@ class Hybi00 extends Generic
      */
     public function readFrame()
     {
-        $buffer  = $this->_connection->read(2048);
+        $buffer  = $this->getConnection()->read(2048);
         $length  = strlen($buffer) - 2;
 
         if (empty($buffer)) {
@@ -146,7 +147,7 @@ class Hybi00 extends Generic
         $end    = true,
         $mask   = false
     ) {
-        return $this->_connection->writeAll(
+        return $this->getConnection()->writeAll(
             chr(0) . $message . chr(255)
         );
     }
