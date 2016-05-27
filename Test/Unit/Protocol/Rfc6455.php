@@ -61,14 +61,14 @@ class Rfc6455 extends Test\Unit\Suite
                     ->isEqualTo('258EAFA5-E914-47DA-95CA-C5AB0DC85B11');
     }
 
-    public function case_constructor()
+    public function case_extends_generic()
     {
         $this
             ->given($socket = new Socket\Server('tcp://*:1234'))
             ->when($result = new SUT($socket))
             ->then
-                ->object($this->invoke($result)->getConnection())
-                    ->isIdenticalTo($socket);
+                ->object($result)
+                    ->isInstanceOf(Websocket\Protocol\Generic::class);
     }
 
     public function case_do_handshake_missing_sec_websocket_key_header()
