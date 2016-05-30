@@ -142,11 +142,11 @@ class Rfc6455 extends Test\Unit\Suite
 
                     return;
                 },
-                $this->calling($socket)->writeAll = function ($data) use (&$calledB, $self, $challenge) {
+                $this->calling($socket)->writeAll = function ($_data) use (&$calledB, $self, $challenge) {
                     $calledB = true;
 
                     $self
-                        ->string($data)
+                        ->string($_data)
                             ->isEqualTo(
                                 'HTTP/1.1 101 Switching Protocols' . CRLF .
                                 'Upgrade: websocket' . CRLF .
