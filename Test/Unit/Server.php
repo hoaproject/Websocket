@@ -255,6 +255,8 @@ class Server extends Test\Unit\Suite
             ->when($result = $server->getRequest())
             ->then
                 ->object($result)
-                    ->isIdenticalTo($requestB);
+                    ->isIdenticalTo($requestB)
+                ->boolean($socket->isDisconnected())
+                    ->isTrue();
     }
 }
