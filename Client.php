@@ -159,8 +159,6 @@ class Client extends Connection
      */
     protected function doHandshake()
     {
-        static $_tail = ['A', 'Q', 'g', 'w'];
-
         $connection = $this->getConnection();
         $connection->connect();
 
@@ -170,10 +168,7 @@ class Client extends Connection
 
         $connection->setStreamBlocking(true);
 
-        $key =
-            substr(base64_encode(Consistency::uuid()), 0, 21) .
-            $_tail[mt_rand(0, 3)] . '==';
-
+        $key      = $this->getNewChallenge();
         $expected = base64_encode(sha1($key . Protocol\Rfc6455::GUID, true));
 
         if (null === $host = $this->getHost()) {
@@ -228,6 +223,20 @@ class Client extends Connection
         );
 
         return;
+    }
+
+    /**
+     * Generate a challenge.
+     *
+     * @return  string
+     */
+    public function getNewChallenge()
+    {
+        static $_tail = ['A', 'Q', 'g', 'w'];
+
+        return
+            substr(base64_encode(Consistency::uuid()), 0, 21) .
+            $_tail[mt_rand(0, 3)] . '==';
     }
 
     /**
