@@ -194,7 +194,7 @@ abstract class Connection
     public function __construct(HoaSocket\Connection $connection)
     {
         parent::__construct($connection);
-        $this->getConnection()->setNodeName('\Hoa\Websocket\Node');
+        $this->getConnection()->setNodeName(Node::class);
         $this->setListener(
             new Event\Listener(
                 $this,
