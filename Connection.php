@@ -271,12 +271,22 @@ abstract class Connection
 
                         if (true === $fromBinary) {
                             $fromBinary = false;
-                            $this->getListener()->fire(
-                                'binary-message',
-                                new Event\Bucket([
-                                    'message' => $frame['message']
-                                ])
-                            );
+
+                            try {
+                                $this->getListener()->fire(
+                                    'binary-message',
+                                    new Event\Bucket([
+                                        'message' => $frame['message']
+                                    ])
+                                );
+                            } catch (\Exception $e) {
+                                $this->getListener()->fire(
+                                    'error',
+                                    new Event\Bucket([
+                                        'exception' => $e
+                                    ])
+                                );
+                            }
 
                             break;
                         }
