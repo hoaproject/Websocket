@@ -294,7 +294,7 @@ abstract class Connection
                                     'message' => $frame['message']
                                 ])
                             );
-                        } catch (HoaException\Group $e) {
+                        } catch (\Exception $e) {
                             $this->getListener()->fire(
                                 'error',
                                 new Event\Bucket([
