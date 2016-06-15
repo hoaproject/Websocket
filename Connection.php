@@ -390,18 +390,18 @@ abstract class Connection
                     break;
 
                 case self::OPCODE_PONG:
-                    if (0 === $frame['fin']) {
+                    if (0x0 === $frame['fin']) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
                     }
 
-                  break;
+                    break;
 
                 case self::OPCODE_CONNECTION_CLOSE:
                     $length = &$frame['length'];
 
-                    if (1    === $length ||
+                    if (0x1  === $length ||
                         0x7d  <  $length) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
