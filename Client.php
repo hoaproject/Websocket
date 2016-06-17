@@ -80,7 +80,6 @@ class Client extends Connection
      * @param   \Hoa\Socket\Client  $client      Client.
      * @param   string              $endPoint    End-point.
      * @param   \Hoa\Http\Response  $request     Response parser.
-     * @return  void
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(

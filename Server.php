@@ -63,7 +63,6 @@ class Server extends Connection
      *
      * @param   \Hoa\Socket\Server  $server    Server.
      * @param   \Hoa\Http\Request   $request   Request parser.
-     * @return  void
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(

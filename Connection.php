@@ -188,7 +188,6 @@ abstract class Connection
      * error.
      *
      * @param   \Hoa\Socket\Connection  $connection    Connection.
-     * @return  void
      * @throws  \Hoa\Socket\Exception
      */
     public function __construct(HoaSocket\Connection $connection)

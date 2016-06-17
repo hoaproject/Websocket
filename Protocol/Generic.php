@@ -63,7 +63,6 @@ abstract class Generic
      * Construct the protocol implementation.
      *
      * @param   \Hoa\Socket\Connection  $connection    Connection.
-     * @return  void
      */
     public function __construct(Socket\Connection $connection)
     {

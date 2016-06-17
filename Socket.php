@@ -63,7 +63,6 @@ class Socket extends HoaSocket
      * @param   string   $uri         Socket URI.
      * @param   boolean  $secured     Whether the connection is secured.
      * @param   string   $endPoint    Endpoint.
-     * @return  void
      */
     public function __construct($uri, $secured = false, $endPoint = '/')
     {
