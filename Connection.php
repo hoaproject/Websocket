@@ -344,12 +344,21 @@ abstract class Connection
                         $node->clearFragmentation();
 
                         if (true === $isBinary) {
-                            $this->getListener()->fire(
-                                'binary-message',
-                                new Event\Bucket([
-                                    'message' => $message
-                                ])
-                            );
+                            try {
+                                $this->getListener()->fire(
+                                    'binary-message',
+                                    new Event\Bucket([
+                                        'message' => $message
+                                    ])
+                                );
+                            } catch (\Exception $e) {
+                                $this->getListener()->fire(
+                                    'error',
+                                    new Event\Bucket([
+                                        'exception' => $e
+                                    ])
+                                );
+                            }
 
                             break;
                         }
@@ -360,12 +369,21 @@ abstract class Connection
                             break;
                         }
 
-                        $this->getListener()->fire(
-                            'message',
-                            new Event\Bucket([
-                                'message' => $message
-                            ])
-                        );
+                        try {
+                            $this->getListener()->fire(
+                                'message',
+                                new Event\Bucket([
+                                    'message' => $message
+                                ])
+                            );
+                        } catch (\Exception $e) {
+                            $this->getListener()->fire(
+                                'error',
+                                new Event\Bucket([
+                                    'exception' => $e
+                                ])
+                            );
+                        }
                     } else {
                         $node->setComplete(false);
                     }
