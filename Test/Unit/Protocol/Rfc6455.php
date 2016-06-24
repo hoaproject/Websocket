@@ -457,7 +457,8 @@ class Rfc6455 extends Test\Unit\Suite
                     chr(
                         ($mask << 7)
                       | $length
-                    )
+                    ),
+                $this->calling($socket)->read[3] = 'keyy'
             )
             ->when($result = $protocol->readFrame())
             ->then
