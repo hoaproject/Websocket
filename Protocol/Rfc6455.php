@@ -153,6 +153,11 @@ class Rfc6455 extends Generic
         if (0 === $length) {
             $out['message'] = '';
 
+            // Consume the whole frame.
+            if (0x1 === $out['mask']) {
+                $connection->read(4);
+            }
+
             return $out;
         } elseif (0x7e === $length) {
             $handle = unpack('nl', $connection->read(2));
