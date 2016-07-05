@@ -317,8 +317,8 @@ class Rfc6455 extends Generic
         $end    = true,
         $mask   = false
     ) {
-        if ((Websocket\Connection::OPCODE_TEXT_FRAME         === $opcode ||
-             Websocket\Connection::OPCODE_CONTINUATION_FRAME === $opcode) &&
+        if (Websocket\Connection::OPCODE_TEXT_FRAME === $opcode &&
+            true  === $end &&
             false === (bool) preg_match('//u', $message)) {
             throw new Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
