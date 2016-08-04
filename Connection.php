@@ -463,14 +463,20 @@ abstract class Connection
                         }
                     }
 
-                    $this->close(self::CLOSE_NORMAL);
-                    $this->getListener()->fire(
-                        'close',
-                        new Event\Bucket([
-                            'code'   => $code,
-                            'reason' => $reason
-                        ])
-                    );
+                    try {
+                        $this->close(self::CLOSE_NORMAL);
+                    } catch (HoaException\Idle $e) {
+                        // Cannot properly close the connection because the
+                        // client might already be disconnected.
+                    } finally {
+                        $this->getListener()->fire(
+                            'close',
+                            new Event\Bucket([
+                                'code'   => $code,
+                                'reason' => $reason
+                            ])
+                        );
+                    }
 
                     break;
 
