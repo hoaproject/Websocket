@@ -573,10 +573,14 @@ abstract class Connection
         $connection = $this->getConnection();
         $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
 
-        if (null !== $protocol) {
-            $protocol->close($code, $reason);
+        try {
+            if (null !== $protocol) {
+                $protocol->close($code, $reason);
+            }
+        } finally {
+            $out = $connection->disconnect();
         }
 
-        return $connection->disconnect();
+        return $out;
     }
 }
