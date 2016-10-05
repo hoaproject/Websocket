@@ -89,6 +89,11 @@ class Server extends Connection
     protected function doHandshake()
     {
         $connection = $this->getConnection();
+
+        if (true === $connection->getSocket()->isSecured()) {
+            $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
+        }
+
         $buffer     = $connection->read(2048);
         $request    = $this->getRequest();
         $request->parse($buffer);
