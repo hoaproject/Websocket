@@ -4,7 +4,7 @@
     "type"       : "library",
     "keywords"   : ["library", "websocket", "server", "client", "realtime",
                     "socket", "rfc6455", "rfc3986", "rfc3629", "hybi"],
-    "homepage"   : "http://hoa-project.net/",
+    "homepage"   : "https://hoa-project.net/",
     "license"    : "BSD-3-Clause",
     "authors"    : [
         {
@@ -13,13 +13,15 @@
         },
         {
             "name"    : "Hoa community",
-            "homepage": "http://hoa-project.net/"
+            "homepage": "https://hoa-project.net/"
         }
     ],
     "support": {
-        "email" : "support@lists.hoa-project.net",
-        "irc"   : "irc://irc.freenode.org/hoaproject",
-        "source": "http://git.hoa-project.net/"
+        "email" : "support@hoa-project.net",
+        "irc"   : "irc://chat.freenode.net/hoaproject",
+        "forum" : "https://users.hoa-project.net/",
+        "docs"  : "https://central.hoa-project.net/Documentation/Library/Websocket",
+        "source": "https://central.hoa-project.net/Resource/Library/Websocket"
     },
     "require": {
         "hoa/consistency": "~1.0",
