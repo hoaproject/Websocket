@@ -90,9 +90,8 @@ class Server extends Connection
     {
         $connection = $this->getConnection();
 
-        if (true === $connection->getSocket()->isSecured()
-            && false === $connection->isEncrypted()
-        ) {
+        if (true  === $connection->getSocket()->isSecured() &&
+            false === $connection->isEncrypted()) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 
