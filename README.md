@@ -38,7 +38,7 @@ your dependencies, you need to
 require [`hoa/websocket`](https://packagist.org/packages/hoa/websocket):
 
 ```sh
-$ composer require hoa/websocket '~2.0'
+$ composer require hoa/websocket '~3.0'
 ```
 
 For more installation procedures, please read [the Source
