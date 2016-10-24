@@ -1,7 +1,10 @@
+# 3.16.10.24
+
   * Documentation: Update Composer instructions. (Ivan Enderlin, 2016-10-14T23:51:25+02:00)
   * Documentation: New `README.md` file. (Ivan Enderlin, 2016-10-14T23:47:22+02:00)
   * Connection: Start TLS encryption on handshake. (Ivan Enderlin, 2016-10-11T09:20:45+02:00)
   * Documentation: Update `support` properties. (Ivan Enderlin, 2016-10-11T08:51:04+02:00)
+
 # 3.16.07.05
 
   * Test: Write integration test suite. (Ivan Enderlin, 2016-06-20T09:43:20+02:00)
