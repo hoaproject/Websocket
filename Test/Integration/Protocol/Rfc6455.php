@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Webocket\Test\Integration;
+namespace Hoa\Websocket\Test\Integration\Protocol;
 
 use Hoa\Event;
 use Hoa\Socket;

@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Webocket\Test\Unit\Protocol;
+namespace Hoa\Websocket\Test\Unit\Protocol;
 
 use Hoa\Test;
 use Hoa\Websocket;
