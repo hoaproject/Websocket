@@ -1,3 +1,9 @@
+# 3.17.01.09
+
+  * Quality: Happy new year! (Ivan Enderlin, 2017-01-09T14:50:50+01:00)
+  * Test: Fix namespace. (Ivan Enderlin, 2016-10-25T08:01:35+02:00)
+  * Quality: Fix `CHANGELOG.md`. (Ivan Enderlin, 2016-10-24T15:58:06+02:00)
+
 # 3.16.10.24
 
   * Documentation: Update Composer instructions. (Ivan Enderlin, 2016-10-14T23:51:25+02:00)
