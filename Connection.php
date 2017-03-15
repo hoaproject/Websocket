@@ -463,7 +463,7 @@ abstract class Connection
                         }
                     }
 
-                    $this->close(self::CLOSE_NORMAL);
+                    
                     $this->getListener()->fire(
                         'close',
                         new Event\Bucket([
@@ -471,10 +471,17 @@ abstract class Connection
                             'reason' => $reason
                         ])
                     );
-
+                    $this->close(self::CLOSE_NORMAL);
                     break;
 
                 default:
+                    $this->getListener()->fire(
+                        'close',
+                        new Event\Bucket([
+                            'code'   =>self::CLOSE_PROTOCOL_ERROR,
+                            'reason' => null
+                        ])
+                    );
                     $this->close(self::CLOSE_PROTOCOL_ERROR);
             }
         } catch (HoaException\Idle $e) {
