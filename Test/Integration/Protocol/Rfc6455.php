@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2016, Hoa community. All rights reserved.
+ * Copyright © 2007-2017, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Webocket\Test\Integration;
+namespace Hoa\Websocket\Test\Integration\Protocol;
 
 use Hoa\Event;
 use Hoa\Socket;
@@ -46,7 +46,7 @@ use Hoa\Websocket;
  *
  * Test suite of the RFC6455 protocol.
  *
- * @copyright  Copyright © 2007-2016 Hoa community
+ * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Rfc6455 extends Test\Integration\Suite
@@ -586,7 +586,7 @@ class Rfc6455 extends Test\Integration\Suite
  *
  * An exception that is thrown to stop the server and exits gently.
  *
- * @copyright  Copyright © 2007-2016 Hoa community
+ * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class StopServerException extends \RuntimeException

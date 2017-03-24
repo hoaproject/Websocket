@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2016, Hoa community. All rights reserved.
+ * Copyright © 2007-2017, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Hoa\Webocket\Test\Unit\Protocol;
+namespace Hoa\Websocket\Test\Unit\Protocol;
 
 use Hoa\Test;
 use Hoa\Websocket;
@@ -47,7 +47,7 @@ use Mock\Hoa\Websocket\Protocol\Hybi00 as SUT;
  *
  * Test suite for the Hybi00 protocol implementation.
  *
- * @copyright  Copyright © 2007-2016 Hoa community
+ * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Hybi00 extends Test\Unit\Suite

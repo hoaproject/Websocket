@@ -8,7 +8,7 @@
  *
  * New BSD License
  *
- * Copyright © 2007-2016, Hoa community. All rights reserved.
+ * Copyright © 2007-2017, Hoa community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -44,7 +44,7 @@ use Hoa\Socket as HoaSocket;
  *
  * A cross-protocol Websocket server.
  *
- * @copyright  Copyright © 2007-2016 Hoa community
+ * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Server extends Connection
@@ -89,6 +89,12 @@ class Server extends Connection
     protected function doHandshake()
     {
         $connection = $this->getConnection();
+
+        if (true  === $connection->getSocket()->isSecured() &&
+            false === $connection->isEncrypted()) {
+            $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
+        }
+
         $buffer     = $connection->read(2048);
         $request    = $this->getRequest();
         $request->parse($buffer);
