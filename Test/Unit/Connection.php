@@ -121,6 +121,8 @@ class Connection extends Test\Unit\Suite
                     ->isTrue()
                 ->boolean($listener->listenerExists('ping'))
                     ->isTrue()
+                ->boolean($listener->listenerExists('close-before'))
+                    ->isTrue()
                 ->boolean($listener->listenerExists('close'))
                     ->isTrue()
                 ->boolean($listener->listenerExists('error'))
