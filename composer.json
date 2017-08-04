@@ -24,6 +24,7 @@
         "source": "https://central.hoa-project.net/Resource/Library/Websocket"
     },
     "require": {
+        "php"            : ">=5.5.0",
         "hoa/consistency": "~1.0",
         "hoa/event"      : "~1.0",
         "hoa/exception"  : "~1.0",
