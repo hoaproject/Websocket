@@ -56,8 +56,6 @@ class Server extends Connection
      */
     protected $_request = null;
 
-
-
     /**
      * Create a Websocket server.
      *
@@ -95,8 +93,8 @@ class Server extends Connection
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
 
-        $buffer     = $connection->read(2048);
-        $request    = $this->getRequest();
+        $buffer = $connection->read(4096);
+        $request = $this->getRequest();
         $request->parse($buffer);
 
         // Rfc6455.
