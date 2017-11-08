@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -40,9 +42,6 @@ namespace Hoa\Websocket\Exception;
  * Class \Hoa\Websocket\Exception\BadProtocol.
  *
  * Extending the \Hoa\Websocket\Exception class.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class BadProtocol extends Exception
 {

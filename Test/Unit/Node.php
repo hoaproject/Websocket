@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -45,12 +47,11 @@ use Mock\Hoa\Websocket\Node as SUT;
  *
  * Test suite for the node class.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Node extends Test\Unit\Suite
 {
-    public function case_is_a_node()
+    public function case_is_a_node(): void
     {
         $this
             ->given($this->mockGenerator->orphanize('__construct'))
@@ -60,7 +61,7 @@ class Node extends Test\Unit\Suite
                     ->isInstanceOf(HoaSocket\Node::class);
     }
 
-    public function case_set_protocol_implementation()
+    public function case_set_protocol_implementation(): void
     {
         $this
             ->given(
@@ -84,7 +85,7 @@ class Node extends Test\Unit\Suite
                     ->isIdenticalTo($protocolA);
     }
 
-    public function case_get_protocol_implementation()
+    public function case_get_protocol_implementation(): void
     {
         $this
             ->given(
@@ -100,7 +101,7 @@ class Node extends Test\Unit\Suite
                     ->isIdenticalTo($protocol);
     }
 
-    public function case_set_handshake()
+    public function case_set_handshake(): void
     {
         $this
             ->given(
@@ -118,7 +119,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_get_handshake()
+    public function case_get_handshake(): void
     {
         $this
             ->given(
@@ -132,7 +133,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_append_message_fragment()
+    public function case_append_message_fragment(): void
     {
         $this
             ->given(
@@ -145,7 +146,7 @@ class Node extends Test\Unit\Suite
                     ->isEqualTo('foo');
     }
 
-    public function case_append_many_message_fragments()
+    public function case_append_many_message_fragments(): void
     {
         $this
             ->given(
@@ -171,7 +172,7 @@ class Node extends Test\Unit\Suite
                     ->isEqualTo($fragmentA . $fragmentB . $fragmentC);
     }
 
-    public function case_get_fragmented_message()
+    public function case_get_fragmented_message(): void
     {
         $this
             ->given(
@@ -190,7 +191,7 @@ class Node extends Test\Unit\Suite
                     ->isEqualTo($fragmentA . $fragmentB . $fragmentC);
     }
 
-    public function case_get_number_of_fragments_for_an_message()
+    public function case_get_number_of_fragments_for_an_message(): void
     {
         $this
             ->given(
@@ -203,7 +204,7 @@ class Node extends Test\Unit\Suite
                     ->isEqualTo(0);
     }
 
-    public function case_get_number_of_fragments()
+    public function case_get_number_of_fragments(): void
     {
         $this
             ->given(
@@ -222,7 +223,7 @@ class Node extends Test\Unit\Suite
                     ->isEqualTo(3);
     }
 
-    public function case_set_complete()
+    public function case_set_complete(): void
     {
         $this
             ->given(
@@ -240,7 +241,7 @@ class Node extends Test\Unit\Suite
                     ->isFalse();
     }
 
-    public function case_is_message_complete()
+    public function case_is_message_complete(): void
     {
         $this
             ->given(
@@ -254,7 +255,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_is_message_not_complete()
+    public function case_is_message_not_complete(): void
     {
         $this
             ->given(
@@ -268,7 +269,7 @@ class Node extends Test\Unit\Suite
                     ->isFalse();
     }
 
-    public function case_message_is_complete_by_default()
+    public function case_message_is_complete_by_default(): void
     {
         $this
             ->given(
@@ -281,7 +282,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_set_binary()
+    public function case_set_binary(): void
     {
         $this
             ->given(
@@ -299,7 +300,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_is_binary()
+    public function case_is_binary(): void
     {
         $this
             ->given(
@@ -313,7 +314,7 @@ class Node extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_is_not_binary()
+    public function case_is_not_binary(): void
     {
         $this
             ->given(
@@ -327,7 +328,7 @@ class Node extends Test\Unit\Suite
                     ->isFalse();
     }
 
-    public function case_not_binary_by_default()
+    public function case_not_binary_by_default(): void
     {
         $this
             ->given(
@@ -340,7 +341,7 @@ class Node extends Test\Unit\Suite
                     ->isFalse();
     }
 
-    public function case_clear_fragmentation()
+    public function case_clear_fragmentation(): void
     {
         $this
             ->given(

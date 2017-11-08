@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -47,12 +49,11 @@ use Mock\Hoa\Socket;
  *
  * Test suite for the WebSocket server class.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Server extends Test\Unit\Suite
 {
-    public function case_is_a_connection()
+    public function case_is_a_connection(): void
     {
         $this
             ->given($this->mockGenerator->orphanize('__construct'))
@@ -62,7 +63,7 @@ class Server extends Test\Unit\Suite
                     ->isInstanceOf(Websocket\Connection::class);
     }
 
-    public function case_constructor()
+    public function case_constructor(): void
     {
         $this
             ->given(
@@ -77,7 +78,7 @@ class Server extends Test\Unit\Suite
                     ->isIdenticalTo($request);
     }
 
-    public function case_constructor_with_an_undefined_request()
+    public function case_constructor_with_an_undefined_request(): void
     {
         $this
             ->given($socket = new Socket\Server('tcp://*:1234'))
@@ -89,7 +90,7 @@ class Server extends Test\Unit\Suite
                     ->isInstanceOf(Http\Request::class);
     }
 
-    public function case_do_handshake_rfc6455()
+    public function case_do_handshake_rfc6455(): void
     {
         $self = $this;
 
@@ -142,7 +143,7 @@ class Server extends Test\Unit\Suite
                     ]);
     }
 
-    public function case_do_handshake_hybi00()
+    public function case_do_handshake_hybi00(): void
     {
         $self = $this;
 
@@ -202,7 +203,7 @@ class Server extends Test\Unit\Suite
                     ]);
     }
 
-    public function case_do_handshake_undefined_protocol()
+    public function case_do_handshake_undefined_protocol(): void
     {
         $this
             ->given(
@@ -221,13 +222,13 @@ class Server extends Test\Unit\Suite
                 },
                 $this->calling($socket)->getCurrentNode = $node
             )
-            ->exception(function () use ($server) {
+            ->exception(function () use ($server): void {
                 $this->invoke($server)->doHandshake();
             })
                 ->isInstanceOf(Websocket\Exception\BadProtocol::class);
     }
 
-    public function case_set_request()
+    public function case_set_request(): void
     {
         $this
             ->given(
@@ -242,7 +243,7 @@ class Server extends Test\Unit\Suite
                     ->isIdenticalTo($requestA);
     }
 
-    public function case_get_request()
+    public function case_get_request(): void
     {
         $this
             ->given(

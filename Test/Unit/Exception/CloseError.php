@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -45,12 +47,11 @@ use Hoa\Websocket\Exception\CloseError as SUT;
  *
  * Test suite of the close error exception.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class CloseError extends Test\Unit\Suite
 {
-    public function case_hoa_websocket_exception()
+    public function case_hoa_websocket_exception(): void
     {
         $this
             ->when($result = new SUT('foo', 0))
@@ -59,7 +60,7 @@ class CloseError extends Test\Unit\Suite
                     ->isInstanceOf(Websocket\Exception::class);
     }
 
-    public function case_set_error_code()
+    public function case_set_error_code(): void
     {
         $this
             ->given($exception = new SUT('foo', 0))
@@ -69,7 +70,7 @@ class CloseError extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_get_error_code()
+    public function case_get_error_code(): void
     {
         $this
             ->given(

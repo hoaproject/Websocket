@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -42,51 +44,36 @@ use Hoa\Socket as HoaSocket;
  * Class \Hoa\Websocket\Node.
  *
  * Describe a WebSocket node.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Node extends HoaSocket\Node
 {
     /**
      * Protocol implementation.
-     *
-     * @var \Hoa\Websocket\Protocol\Generic
      */
     protected $_protocol          = null;
 
     /**
      * Whether the handshake succeed.
-     *
-     * @var bool
      */
     protected $_handshake         = false;
 
     /**
      * Fragments of message.
-     *
-     * @var string
      */
     protected $_messageFragments  = null;
 
     /**
      * Number of fragments.
-     *
-     * @var int
      */
     protected $_numberOfFragments = 0;
 
     /**
      * Whether the message is complete or not.
-     *
-     * @var bool
      */
     protected $_complete          = true;
 
     /**
      * Whether the message is binary or not.
-     *
-     * @var bool
      */
     protected $_isBinary          = false;
 
@@ -94,11 +81,8 @@ class Node extends HoaSocket\Node
 
     /**
      * Set protocol implementation.
-     *
-     * @param   \Hoa\Websocket\Protocol\Generic  $protocol    Protocol.
-     * @return  \Hoa\Websocket\Protocol\Generic
      */
-    public function setProtocolImplementation(Protocol\Generic $protocol)
+    public function setProtocolImplementation(Protocol\Generic $protocol): ?Protocol\Generic
     {
         $old             = $this->_protocol;
         $this->_protocol = $protocol;
@@ -108,21 +92,16 @@ class Node extends HoaSocket\Node
 
     /**
      * Get protocol implementation.
-     *
-     * @return  \Hoa\Websocket\Protocol\Generic
      */
-    public function getProtocolImplementation()
+    public function getProtocolImplementation(): ?Protocol\Generic
     {
         return $this->_protocol;
     }
 
     /**
      * Set handshake success.
-     *
-     * @param   bool    $handshake    Handshake.
-     * @return  bool
      */
-    public function setHandshake($handshake)
+    public function setHandshake(bool $handshake): bool
     {
         $old              = $this->_handshake;
         $this->_handshake = $handshake;
@@ -132,21 +111,16 @@ class Node extends HoaSocket\Node
 
     /**
      * Whether the handshake succeed.
-     *
-     * @return  bool
      */
-    public function getHandshake()
+    public function getHandshake(): bool
     {
         return $this->_handshake;
     }
 
     /**
      * Append a fragment to a message (if we have fragmentation).
-     *
-     * @param   string  $fragment    Fragment.
-     * @return  string
      */
-    public function appendMessageFragment($fragment)
+    public function appendMessageFragment(string $fragment): string
     {
         ++$this->_numberOfFragments;
 
@@ -155,31 +129,24 @@ class Node extends HoaSocket\Node
 
     /**
      * Get the fragmented message.
-     *
-     * @return  string
      */
-    public function getFragmentedMessage()
+    public function getFragmentedMessage(): ?string
     {
         return $this->_messageFragments;
     }
 
     /**
      * Get number of fragments.
-     *
-     * @return  int
      */
-    public function getNumberOfFragments()
+    public function getNumberOfFragments(): int
     {
         return $this->_numberOfFragments;
     }
 
     /**
      * Set whether the message is complete or not.
-     *
-     * @param   bool  $complete    Is it complete?
-     * @return  bool
      */
-    public function setComplete($complete)
+    public function setComplete(bool $complete): bool
     {
         $old             = $this->_complete;
         $this->_complete = $complete;
@@ -189,21 +156,16 @@ class Node extends HoaSocket\Node
 
     /**
      * Check if the message is complete or not.
-     *
-     * @return  bool
      */
-    public function isMessageComplete()
+    public function isMessageComplete(): bool
     {
         return $this->_complete;
     }
 
     /**
      * Whether the message is binary or not.
-     *
-     * @param   bool  $binary    Binary.
-     * @return  bool
      */
-    public function setBinary($binary)
+    public function setBinary(bool $binary): bool
     {
         $old             = $this->_isBinary;
         $this->_isBinary = $binary;
@@ -213,26 +175,20 @@ class Node extends HoaSocket\Node
 
     /**
      * Check if the message is binary or not.
-     *
-     * @return  bool
      */
-    public function isBinary()
+    public function isBinary(): bool
     {
         return $this->_isBinary;
     }
 
     /**
      * Clear the fragmentation.
-     *
-     * @return  void
      */
-    public function clearFragmentation()
+    public function clearFragmentation(): void
     {
         $this->_messageFragments  = null;
         $this->_numberOfFragments = 0;
         $this->_isBinary          = false;
         $this->_complete          = true;
-
-        return;
     }
 }

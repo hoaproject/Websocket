@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -44,16 +46,11 @@ use Hoa\Websocket;
  * Class \Hoa\Websocket\Protocol\Generic.
  *
  * An abstract protocol implementation.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 abstract class Generic
 {
     /**
      * Connection.
-     *
-     * @var \Hoa\Socket\Connection
      */
     protected $_connection = null;
 
@@ -61,8 +58,6 @@ abstract class Generic
 
     /**
      * Construct the protocol implementation.
-     *
-     * @param   \Hoa\Socket\Connection  $connection    Connection.
      */
     public function __construct(Socket\Connection $connection)
     {
@@ -73,76 +68,47 @@ abstract class Generic
 
     /**
      * Do the handshake.
-     *
-     * @param   \Hoa\Http\Request  $request    Request.
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract public function doHandshake(Http\Request $request);
+    abstract public function doHandshake(Http\Request $request): void;
 
     /**
      * Read a frame.
-     *
-     * @return  array
-     * @throws  \Hoa\Websocket\Exception
      */
-    abstract public function readFrame();
+    abstract public function readFrame(): array;
 
     /**
      * Write a frame.
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  int
-     * @throws  \Hoa\Websocket\Exception
      */
     abstract public function writeFrame(
-        $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-        $end    = true,
-        $mask   = false
-    );
+        string $message,
+        int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        bool $end   = true,
+        bool $mask  = false
+    ): int;
 
     /**
      * Send a message to a node (if not specified, current node).
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  void
      */
     abstract public function send(
-        $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-        $end    = true,
-        $mask   = false
-    );
+        string $message,
+        int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        bool $end   = true,
+        bool $mask  = false
+    ): void;
 
     /**
      * Close a specific node/connection.
-     *
-     * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
-     *                             constants).
-     * @param   string  $reason    Reason.
-     * @param   bool    $mask      Whether the message will be masked or not.
-     * @return  void
      */
     abstract public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
-        $reason = null,
-        $mask   = false
-    );
+        int $code      = Websocket\Connection::CLOSE_NORMAL,
+        string $reason = null,
+        bool $mask     = false
+    ): void;
 
     /**
      * Get the socket connection.
-     *
-     * @return \Hoa\Socket\Connection
      */
-    protected function getConnection()
+    protected function getConnection(): Socket\Connection
     {
         return $this->_connection;
     }

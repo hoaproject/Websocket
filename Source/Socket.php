@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -42,29 +44,20 @@ use Hoa\Socket as HoaSocket;
  * Class \Hoa\Websocket\Socket.
  *
  * WebSocket specific socket and transports.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Socket extends HoaSocket
 {
     /**
      * Endpoint.
-     *
-     * @var string
      */
-    protected $_endPoint = '/';
+    protected $_endPoint = null;
 
 
 
     /**
      * Constructor
-     *
-     * @param   string   $uri         Socket URI.
-     * @param   boolean  $secured     Whether the connection is secured.
-     * @param   string   $endPoint    Endpoint.
      */
-    public function __construct($uri, $secured = false, $endPoint = '/')
+    public function __construct(string $uri, bool $secured = false, string $endPoint = '/')
     {
         parent::__construct($uri);
 
@@ -76,21 +69,16 @@ class Socket extends HoaSocket
 
     /**
      * Retrieve the websocket endpoint
-     *
-     * @return  string
      */
-    public function getEndPoint()
+    public function getEndPoint(): string
     {
         return $this->_endPoint;
     }
 
     /**
      * Factory to create a valid `Hoa\Socket\Socket` object.
-     *
-     * @param   string  $socketUri    URI of the socket to connect to.
-     * @return  void
      */
-    public static function transportFactory($socketUri)
+    public static function transportFactory(string $socketUri): self
     {
         $parsed = parse_url($socketUri);
 
@@ -108,16 +96,15 @@ class Socket extends HoaSocket
                 : false;
 
         $port =
-            isset($parsed['port'])
-                ? $parsed['port']
-                : (true === $secure
+            $parsed['port']
+                ?? (true === $secure
                     ? 443
                     : 80);
 
         return new static(
             'tcp://' . $parsed['host'] . ':' . $port,
             $secure,
-            (isset($parsed['path']) ? $parsed['path'] : '/') .
+            ($parsed['path'] ?? '/') .
             (isset($parsed['query']) ? '?' . $parsed['query'] : '')
         );
     }
@@ -126,5 +113,5 @@ class Socket extends HoaSocket
 /**
  * Register `ws://` and `wss://` transports.
  */
-HoaSocket\Transport::register('ws',  ['Hoa\Websocket\Socket', 'transportFactory']);
-HoaSocket\Transport::register('wss', ['Hoa\Websocket\Socket', 'transportFactory']);
+HoaSocket\Transport::register('ws', [Socket::class, 'transportFactory']);
+HoaSocket\Transport::register('wss', [Socket::class, 'transportFactory']);

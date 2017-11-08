@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -44,141 +46,100 @@ use Hoa\Socket as HoaSocket;
  * Class \Hoa\Websocket\Connection.
  *
  * A cross-protocol Websocket connection.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
-abstract class Connection
-    extends    HoaSocket\Connection\Handler
-    implements Event\Listenable
+abstract class Connection extends HoaSocket\Connection\Handler implements Event\Listenable
 {
     use Event\Listens;
 
     /**
      * Opcode: continuation frame.
-     *
-     * @const int
      */
-    const OPCODE_CONTINUATION_FRAME = 0x0;
+    public const OPCODE_CONTINUATION_FRAME = 0x0;
 
     /**
      * Opcode: text frame.
-     *
-     * @const int
      */
-    const OPCODE_TEXT_FRAME         = 0x1;
+    public const OPCODE_TEXT_FRAME         = 0x1;
 
     /**
      * Opcode: binary frame.
-     *
-     * @const int
      */
-    const OPCODE_BINARY_FRAME       = 0x2;
+    public const OPCODE_BINARY_FRAME       = 0x2;
 
     /**
      * Opcode: connection close.
-     *
-     * @const int
      */
-    const OPCODE_CONNECTION_CLOSE   = 0x8;
+    public const OPCODE_CONNECTION_CLOSE   = 0x8;
 
     /**
      * Opcode: ping.
-     *
-     * @const int
      */
-    const OPCODE_PING               = 0x9;
+    public const OPCODE_PING               = 0x9;
 
     /**
      * Opcode: pong.
-     *
-     * @const int
      */
-    const OPCODE_PONG               = 0xa;
+    public const OPCODE_PONG               = 0xa;
 
     /**
      * Close: normal.
-     *
-     * @const int
      */
-    const CLOSE_NORMAL              = 1000;
+    public const CLOSE_NORMAL              = 1000;
 
     /**
      * Close: going away.
-     *
-     * @const int
      */
-    const CLOSE_GOING_AWAY          = 1001;
+    public const CLOSE_GOING_AWAY          = 1001;
 
     /**
      * Close: protocol error.
-     *
-     * @const int
      */
-    const CLOSE_PROTOCOL_ERROR      = 1002;
+    public const CLOSE_PROTOCOL_ERROR      = 1002;
 
     /**
      * Close: data error.
-     *
-     * @const int
      */
-    const CLOSE_DATA_ERROR          = 1003;
+    public const CLOSE_DATA_ERROR          = 1003;
 
     /**
      * Close: status error.
-     *
-     * @const int
      */
-    const CLOSE_STATUS_ERROR        = 1005;
+    public const CLOSE_STATUS_ERROR        = 1005;
 
     /**
      * Close: abnormal.
-     *
-     * @const int
      */
-    const CLOSE_ABNORMAL            = 1006;
+    public const CLOSE_ABNORMAL            = 1006;
 
     /**
      * Close: message error.
-     *
-     * @const int
      */
-    const CLOSE_MESSAGE_ERROR       = 1007;
+    public const CLOSE_MESSAGE_ERROR       = 1007;
 
     /**
      * Close: policy error.
-     *
-     * @const int
      */
-    const CLOSE_POLICY_ERROR        = 1008;
+    public const CLOSE_POLICY_ERROR        = 1008;
 
     /**
      * Close: message too big.
-     *
-     * @const int
      */
-    const CLOSE_MESSAGE_TOO_BIG     = 1009;
+    public const CLOSE_MESSAGE_TOO_BIG     = 1009;
 
     /**
      * Close: extension missing.
-     *
-     * @const int
      */
-    const CLOSE_EXTENSION_MISSING   = 1010;
+    public const CLOSE_EXTENSION_MISSING   = 1010;
 
     /**
      * Close: server error.
-     *
-     * @const int
      */
-    const CLOSE_SERVER_ERROR        = 1011;
+    public const CLOSE_SERVER_ERROR        = 1011;
 
     /**
      * Close: TLS.
-     *
-     * @const int
      */
-    const CLOSE_TLS                 = 1015;
+    public const CLOSE_TLS                 = 1015;
 
 
 
@@ -186,9 +147,6 @@ abstract class Connection
      * Create a websocket connection.
      * 6 events can be listened: open, message, binary-message, ping, close and
      * error.
-     *
-     * @param   \Hoa\Socket\Connection  $connection    Connection.
-     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(HoaSocket\Connection $connection)
     {
@@ -214,11 +172,8 @@ abstract class Connection
 
     /**
      * Run a node.
-     *
-     * @param   \Hoa\Socket\Node  $node    Node.
-     * @return  void
      */
-    protected function _run(HoaSocket\Node $node)
+    protected function _run(HoaSocket\Node $node): void
     {
         try {
             if (FAILED === $node->getHandshake()) {
@@ -261,6 +216,7 @@ abstract class Connection
                 case self::OPCODE_BINARY_FRAME:
                     $fromBinary = true;
 
+                    // no break
                 case self::OPCODE_TEXT_FRAME:
                     if (0x1 === $frame['fin']) {
                         if (0 < $node->getNumberOfFragments()) {
@@ -320,6 +276,7 @@ abstract class Connection
 
                     $fromText = true;
 
+                    // no break
                 case self::OPCODE_CONTINUATION_FRAME:
                     if (false === $fromText) {
                         if (0 === $node->getNumberOfFragments()) {
@@ -393,8 +350,8 @@ abstract class Connection
                 case self::OPCODE_PING:
                     $message = &$frame['message'];
 
-                    if (0x0  === $frame['fin'] ||
-                        0x7d  <  $frame['length']) {
+                    if (0x0 === $frame['fin'] ||
+                        0x7d < $frame['length']) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
@@ -429,8 +386,8 @@ abstract class Connection
                 case self::OPCODE_CONNECTION_CLOSE:
                     $length = &$frame['length'];
 
-                    if (0x1  === $length ||
-                        0x7d  <  $length) {
+                    if (0x1 === $length ||
+                        0x7d < $length) {
                         $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                         break;
@@ -444,10 +401,10 @@ abstract class Connection
                         $_code   = unpack('nc', substr($message, 0, 2));
                         $code    = &$_code['c'];
 
-                        if (1000  >  $code ||
+                        if (1000 > $code ||
                             (1004 <= $code && $code <= 1006) ||
                             (1012 <= $code && $code <= 1016) ||
-                            5000  <= $code) {
+                            5000 <= $code) {
                             $this->close(self::CLOSE_PROTOCOL_ERROR);
 
                             break;
@@ -512,20 +469,13 @@ abstract class Connection
 
     /**
      * Try the handshake by trying different protocol implementation.
-     *
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    abstract protected function doHandshake();
+    abstract protected function doHandshake(): void;
 
     /**
      * Send a message.
-     *
-     * @param   string            $message    Message.
-     * @param   \Hoa\Socket\Node  $node       Node.
-     * @return  \Closure
      */
-    protected function _send($message, HoaSocket\Node $node)
+    protected function _send(string $message, HoaSocket\Node $node)
     {
         $mustMask = $this instanceof Client;
 
@@ -543,19 +493,12 @@ abstract class Connection
 
     /**
      * Send a message to a specific node/connection.
-     *
-     * @param   string            $message    Message.
-     * @param   \Hoa\Socket\Node  $node       Node (if null, current node).
-     * @param   int               $opcode     Opcode.
-     * @param   bool              $end        Whether it is the last frame of
-     *                                        the message.
-     * @return  void
      */
     public function send(
-        $message,
+        string $message,
         HoaSocket\Node $node = null,
-        $opcode              = self::OPCODE_TEXT_FRAME,
-        $end                 = true
+        int $opcode          = self::OPCODE_TEXT_FRAME,
+        bool $end            = true
     ) {
         $send = parent::send($message, $node);
 
@@ -569,13 +512,8 @@ abstract class Connection
     /**
      * Close a specific node/connection.
      * It is just a “inline” method, a shortcut.
-     *
-     * @param   int     $code      Code (please, see
-     *                             self::CLOSE_* constants).
-     * @param   string  $reason    Reason.
-     * @return  void
      */
-    public function close($code = self::CLOSE_NORMAL, $reason = null)
+    public function close(int $code = self::CLOSE_NORMAL, string $reason = null): void
     {
         $connection = $this->getConnection();
         $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
@@ -595,7 +533,5 @@ abstract class Connection
         } finally {
             $connection->disconnect();
         }
-
-        return;
     }
 }

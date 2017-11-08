@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -45,12 +47,11 @@ use Hoa\Websocket\Socket as SUT;
  *
  * Test suite for the socket class.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Socket extends Test\Unit\Suite
 {
-    public function case_is_a_socket()
+    public function case_is_a_socket(): void
     {
         $this
             ->when($result = new SUT('tcp://hoa-project:net:8889'))
@@ -59,7 +60,7 @@ class Socket extends Test\Unit\Suite
                     ->isInstanceOf('Hoa\Socket\Socket');
     }
 
-    public function case_constructor()
+    public function case_constructor(): void
     {
         $this
             ->given(
@@ -83,7 +84,7 @@ class Socket extends Test\Unit\Suite
                     ->isEqualTo($endPoint);
     }
 
-    public function case_get_endpoint()
+    public function case_get_endpoint(): void
     {
         $this
             ->given(
@@ -98,12 +99,12 @@ class Socket extends Test\Unit\Suite
                     ->isEqualTo($endPoint);
     }
 
-    public function case_is_ws_transport_registered()
+    public function case_is_ws_transport_registered(): void
     {
         $this->_case_is_transport_registered('ws');
     }
 
-    public function case_is_wss_transport_registered()
+    public function case_is_wss_transport_registered(): void
     {
         $this->_case_is_transport_registered('wss');
     }
@@ -118,16 +119,16 @@ class Socket extends Test\Unit\Suite
                         ->isTrue();
     }
 
-    public function case_transport_factory_invalid_URI()
+    public function case_transport_factory_invalid_URI(): void
     {
         $this
-            ->exception(function () {
+            ->exception(function (): void {
                 SUT::transportFactory('foo');
             })
                 ->isInstanceOf('Hoa\Websocket\Exception');
     }
 
-    public function case_transport_unsecured_domain_with_port_with_endpoint()
+    public function case_transport_unsecured_domain_with_port_with_endpoint(): void
     {
         $this->_case_transport_factory(
             'ws://hoa-project.net:8889/foobar',
@@ -141,7 +142,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_unsecured_domain_with_port_without_endpoint()
+    public function case_transport_unsecured_domain_with_port_without_endpoint(): void
     {
         $this->_case_transport_factory(
             'ws://hoa-project.net:8889',
@@ -155,7 +156,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_unsecured_domain_without_port_without_endpoint()
+    public function case_transport_unsecured_domain_without_port_without_endpoint(): void
     {
         $this->_case_transport_factory(
             'ws://hoa-project.net',
@@ -169,7 +170,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_secured_domain_with_port_with_endpoint()
+    public function case_transport_secured_domain_with_port_with_endpoint(): void
     {
         $this->_case_transport_factory(
             'wss://hoa-project.net:8889/foobar',
@@ -183,7 +184,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_secured_domain_with_port_without_endpoint()
+    public function case_transport_secured_domain_with_port_without_endpoint(): void
     {
         $this->_case_transport_factory(
             'wss://hoa-project.net:8889',
@@ -197,7 +198,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_secured_domain_without_port_without_endpoint()
+    public function case_transport_secured_domain_without_port_without_endpoint(): void
     {
         $this->_case_transport_factory(
             'wss://hoa-project.net',
@@ -211,7 +212,7 @@ class Socket extends Test\Unit\Suite
         );
     }
 
-    public function case_transport_query_strings_in_the_endpoint()
+    public function case_transport_query_strings_in_the_endpoint(): void
     {
         $this->_case_transport_factory(
             'wss://hoa-project.net:8889/hello/world?foo=bar&baz=qux',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -43,16 +45,11 @@ use Hoa\Socket as HoaSocket;
  * Class \Hoa\Websocket\Server.
  *
  * A cross-protocol Websocket server.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Server extends Connection
 {
     /**
      * Request (mainly parser).
-     *
-     * @var \Hoa\Http\Request
      */
     protected $_request = null;
 
@@ -60,10 +57,6 @@ class Server extends Connection
 
     /**
      * Create a Websocket server.
-     *
-     * @param   \Hoa\Socket\Server  $server    Server.
-     * @param   \Hoa\Http\Request   $request   Request parser.
-     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
         HoaSocket\Server $server,
@@ -82,15 +75,12 @@ class Server extends Connection
 
     /**
      * Try the handshake by trying different protocol implementation.
-     *
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    protected function doHandshake()
+    protected function doHandshake(): void
     {
         $connection = $this->getConnection();
 
-        if (true  === $connection->getSocket()->isSecured() &&
+        if (true === $connection->getSocket()->isSecured() &&
             false === $connection->isEncrypted()) {
             $connection->enableEncryption(true, $connection::ENCRYPTION_TLS);
         }
@@ -119,17 +109,12 @@ class Server extends Connection
                 throw new Exception\BadProtocol('All protocol failed.', 1);
             }
         }
-
-        return;
     }
 
     /**
      * Set request (mainly parser).
-     *
-     * @param   \Hoa\Http\Request  $request    Request.
-     * @return  \Hoa\Http\Request
      */
-    public function setRequest(Http\Request $request)
+    public function setRequest(Http\Request $request): ?Http\Request
     {
         $old            = $this->_request;
         $this->_request = $request;
@@ -139,10 +124,8 @@ class Server extends Connection
 
     /**
      * Get request.
-     *
-     * @return  \Hoa\Http\Request
      */
-    public function getRequest()
+    public function getRequest(): Http\Request
     {
         return $this->_request;
     }

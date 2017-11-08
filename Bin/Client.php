@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -44,16 +46,11 @@ use Hoa\Websocket;
  * Class \Hoa\Websocket\Bin\Client.
  *
  * Basic WebSocket client.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Client extends Console\Dispatcher\Kit
 {
     /**
      * Options description.
-     *
-     * @var array
      */
     protected $options = [
         ['server', Console\GetOption::REQUIRED_ARGUMENT, 's'],
@@ -65,10 +62,8 @@ class Client extends Console\Dispatcher\Kit
 
     /**
      * The entry method.
-     *
-     * @return  int
      */
-    public function main()
+    public function main(): int
     {
         $server = '127.0.0.1:8889';
 
@@ -110,15 +105,13 @@ class Client extends Console\Dispatcher\Kit
 
         $client->close();
 
-        return;
+        return 0;
     }
 
     /**
      * The command usage.
-     *
-     * @return  int
      */
-    public function usage()
+    public function usage(): void
     {
         echo
             'Usage   : websocket:client <options>', "\n",
@@ -127,8 +120,6 @@ class Client extends Console\Dispatcher\Kit
                 's'    => 'Server URI (default: 127.0.0.1:8889).',
                 'help' => 'This help.'
             ]), "\n";
-
-        return;
     }
 }
 

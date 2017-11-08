@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -47,12 +49,11 @@ use Mock\Hoa\Websocket\Connection as SUT;
  *
  * Test suite for the WebSocket connection class.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Connection extends Test\Unit\Suite
 {
-    public function case_opcodes()
+    public function case_opcodes(): void
     {
         $this
             ->then
@@ -70,7 +71,7 @@ class Connection extends Test\Unit\Suite
                     ->isEqualTo(0xa);
     }
 
-    public function case_close_codes()
+    public function case_close_codes(): void
     {
         $this
             ->then
@@ -100,7 +101,7 @@ class Connection extends Test\Unit\Suite
                     ->isEqualTo(1015);
     }
 
-    public function case_constructor()
+    public function case_constructor(): void
     {
         $this
             ->given($socket = new Socket\Client('tcp://*:1234'))
@@ -129,7 +130,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_do_handshake()
+    public function case_run_do_handshake(): void
     {
         $self = $this;
 
@@ -142,7 +143,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     'open',
-                    function (Event\Bucket $bucket) use (&$calledA, $self) {
+                    function (Event\Bucket $bucket) use (&$calledA, $self): void {
                         $calledA = true;
 
                         $self
@@ -154,7 +155,7 @@ class Connection extends Test\Unit\Suite
                 ),
 
                 $this->calling($node)->getHandshake      = FAILED,
-                $this->calling($connection)->doHandshake = function () use (&$calledB) {
+                $this->calling($connection)->doHandshake = function () use (&$calledB): void {
                     $calledB = true;
 
                     return;
@@ -170,7 +171,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_cannot_read_the_frame()
+    public function case_run_cannot_read_the_frame(): void
     {
         $self = $this;
 
@@ -197,7 +198,7 @@ class Connection extends Test\Unit\Suite
                     ),
                 $this->calling($socket)->getCurrentNode = $node,
                 $this->calling($node)->getHandshake     = SUCCEED,
-                $this->calling($connection)->close      = function ($_code, $_reason) use (&$called, $self) {
+                $this->calling($connection)->close      = function ($_code, $_reason) use (&$called, $self): void {
                     $called = true;
 
                     $self
@@ -217,7 +218,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_client_messages_must_be_masked()
+    public function case_run_client_messages_must_be_masked(): void
     {
         $self = $this;
 
@@ -241,7 +242,7 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$called, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$called, $self): void {
                     $called = true;
 
                     $self
@@ -261,7 +262,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_ping_opcode()
+    public function case_run_ping_opcode(): void
     {
         $self = $this;
 
@@ -285,7 +286,7 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA, $self) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA, $self): void {
                     $calledA = true;
 
                     $self
@@ -301,7 +302,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     'ping',
-                    function (Event\Bucket $bucket) use (&$calledB, $self) {
+                    function (Event\Bucket $bucket) use (&$calledB, $self): void {
                         $calledB = true;
 
                         $self
@@ -352,7 +353,7 @@ class Connection extends Test\Unit\Suite
         ]);
     }
 
-    protected function _case_run_ping_opcode_with_invalid_frame(array $frame)
+    protected function _case_run_ping_opcode_with_invalid_frame(array $frame): void
     {
         $self = $this;
 
@@ -367,12 +368,12 @@ class Connection extends Test\Unit\Suite
 
                 $this->calling($node)->getHandshake   = SUCCEED,
                 $this->calling($protocol)->readFrame  = $frame,
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self): void {
                     $calledB = true;
 
                     $self
@@ -386,7 +387,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     'ping',
-                    function (Event\Bucket $bucket) use (&$calledC) {
+                    function (Event\Bucket $bucket) use (&$calledC): void {
                         $calledC = true;
 
                         return;
@@ -405,7 +406,7 @@ class Connection extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_run_pong_opcode()
+    public function case_run_pong_opcode(): void
     {
         $this
             ->given(
@@ -427,7 +428,7 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$called) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$called): void {
                     $called = true;
 
                     return;
@@ -441,7 +442,7 @@ class Connection extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_run_pong_opcode_not_fin()
+    public function case_run_pong_opcode_not_fin(): void
     {
         $self = $this;
 
@@ -465,12 +466,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self): void {
                     $calledB = true;
 
                     $self
@@ -502,7 +503,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_x_frame_opcode_with_fragments(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_x_frame_opcode_with_fragments($opcode)
+    protected function _case_run_x_frame_opcode_with_fragments($opcode): void
     {
         $self = $this;
 
@@ -527,12 +528,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self): void {
                     $calledB = true;
 
                     $self
@@ -554,7 +555,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_text_frame_opcode_with_invalid_message_encoding()
+    public function case_run_text_frame_opcode_with_invalid_message_encoding(): void
     {
         $self = $this;
 
@@ -578,12 +579,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => iconv('UTF-8', 'UTF-16', '😄')
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB, $self): void {
                     $calledB = true;
 
                     $self
@@ -615,7 +616,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_x_frame_opcode(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_x_frame_opcode($opcode)
+    protected function _case_run_x_frame_opcode($opcode): void
     {
         $self = $this;
 
@@ -639,12 +640,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB): void {
                     $calledB = true;
 
                     return;
@@ -652,7 +653,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     SUT::OPCODE_TEXT_FRAME === $opcode ? 'message' : 'binary-message',
-                    function (Event\Bucket $bucket) use (&$calledC, $self) {
+                    function (Event\Bucket $bucket) use (&$calledC, $self): void {
                         $calledC = true;
 
                         $self
@@ -687,7 +688,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_x_frame_opcode_with_an_exception_from_the_listener(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_x_frame_opcode_with_an_exception_from_the_listener($opcode)
+    protected function _case_run_x_frame_opcode_with_an_exception_from_the_listener($opcode): void
     {
         $self = $this;
 
@@ -711,12 +712,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB): void {
                     $calledB = true;
 
                     return;
@@ -724,7 +725,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     SUT::OPCODE_TEXT_FRAME === $opcode ? 'message' : 'binary-message',
-                    function (Event\Bucket $bucket) use (&$calledC, $self) {
+                    function (Event\Bucket $bucket) use (&$calledC, $self): void {
                         $calledC = true;
 
                         $self
@@ -738,7 +739,7 @@ class Connection extends Test\Unit\Suite
                 ),
                 $connection->on(
                     'error',
-                    function (Event\Bucket $bucket) use (&$calledD, $self) {
+                    function (Event\Bucket $bucket) use (&$calledD, $self): void {
                         $calledD = true;
 
                         $self
@@ -778,7 +779,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_incomplete_x_frame_opcode(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_incomplete_x_frame_opcode($opcode)
+    protected function _case_run_incomplete_x_frame_opcode($opcode): void
     {
         $this
             ->given(
@@ -800,12 +801,12 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA) {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_mask) use (&$calledA): void {
                     $calledA = true;
 
                     return;
                 },
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$calledB): void {
                     $calledB = true;
 
                     return;
@@ -813,7 +814,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     'message',
-                    function (Event\Bucket $bucket) use (&$calledC) {
+                    function (Event\Bucket $bucket) use (&$calledC): void {
                         $calledC = true;
 
                         return;
@@ -840,7 +841,7 @@ class Connection extends Test\Unit\Suite
                     ->isEqualTo(SUT::OPCODE_BINARY_FRAME === $opcode);
     }
 
-    public function case_run_continuation_frame_opcode_with_fragments()
+    public function case_run_continuation_frame_opcode_with_fragments(): void
     {
         $self = $this;
 
@@ -865,7 +866,7 @@ class Connection extends Test\Unit\Suite
                     'length'  => 6,
                     'message' => 'foobar'
                 ],
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$called) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$called): void {
                     $called = true;
 
                     $self
@@ -895,7 +896,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_x_frame_and_continuation_frame_opcodes(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_x_frame_and_continuation_frame_opcodes($opcode)
+    protected function _case_run_x_frame_and_continuation_frame_opcodes($opcode): void
     {
         $self = $this;
 
@@ -943,7 +944,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     SUT::OPCODE_TEXT_FRAME === $opcode ? 'message' : 'binary-message',
-                    function (Event\Bucket $bucket) use (&$called, $self) {
+                    function (Event\Bucket $bucket) use (&$called, $self): void {
                         $called = true;
 
                         $self
@@ -1000,7 +1001,7 @@ class Connection extends Test\Unit\Suite
         return $this->_case_run_x_frame_and_continuation_frame_opcodes_with_an_exception_from_the_listener(SUT::OPCODE_BINARY_FRAME);
     }
 
-    protected function _case_run_x_frame_and_continuation_frame_opcodes_with_an_exception_from_the_listener($opcode)
+    protected function _case_run_x_frame_and_continuation_frame_opcodes_with_an_exception_from_the_listener($opcode): void
     {
         $self = $this;
 
@@ -1048,7 +1049,7 @@ class Connection extends Test\Unit\Suite
 
                 $connection->on(
                     SUT::OPCODE_TEXT_FRAME === $opcode ? 'message' : 'binary-message',
-                    function (Event\Bucket $bucket) use (&$calledA, $self) {
+                    function (Event\Bucket $bucket) use (&$calledA, $self): void {
                         $calledA = true;
 
                         $self
@@ -1062,7 +1063,7 @@ class Connection extends Test\Unit\Suite
                 ),
                 $connection->on(
                     'error',
-                    function (Event\Bucket $bucket) use (&$calledB, $self) {
+                    function (Event\Bucket $bucket) use (&$calledB, $self): void {
                         $calledB = true;
 
                         $self
@@ -1118,7 +1119,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_run_text_frame_and_continuation_frame_opcodes_with_invalid_message_encoding()
+    public function case_run_text_frame_and_continuation_frame_opcodes_with_invalid_message_encoding(): void
     {
         $self = $this;
 
@@ -1154,7 +1155,7 @@ class Connection extends Test\Unit\Suite
                 ],
                 $this->calling($socket)->getCurrentNode = $node,
 
-                $this->calling($connection)->close = function ($_code, $_reason) use (&$called, $self) {
+                $this->calling($connection)->close = function ($_code, $_reason) use (&$called, $self): void {
                     $called = true;
 
                     $self
@@ -1189,7 +1190,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case__send()
+    public function case__send(): void
     {
         $self = $this;
 
@@ -1238,7 +1239,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case__send_with_no_handshake()
+    public function case__send_with_no_handshake(): void
     {
         $this
             ->given(
@@ -1274,7 +1275,7 @@ class Connection extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_close_with_no_protocol()
+    public function case_close_with_no_protocol(): void
     {
         $this
             ->given(
@@ -1294,7 +1295,7 @@ class Connection extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_close()
+    public function case_close(): void
     {
         $self = $this;
 
@@ -1310,7 +1311,7 @@ class Connection extends Test\Unit\Suite
                 $code   = SUT::CLOSE_DATA_ERROR,
                 $reason = 'foo',
 
-                $this->calling($protocol)->close = function ($_code, $_reason) use (&$called, $self, $code, $reason) {
+                $this->calling($protocol)->close = function ($_code, $_reason) use (&$called, $self, $code, $reason): void {
                     $called = true;
 
                     $self

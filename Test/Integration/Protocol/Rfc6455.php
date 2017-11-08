@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -46,19 +48,18 @@ use Hoa\Websocket;
  *
  * Test suite of the RFC6455 protocol.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Rfc6455 extends Test\Integration\Suite
 {
-    public function case_server()
+    public function case_server(): void
     {
         $numberOfTestsToCompute = $this->getNumberOfTestsToCompute();
 
         $server = new Websocket\Server(new Socket\Server('ws://127.0.0.1:1234'));
         $server->on(
             'ping',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
                 $bucket->getSource()->close();
 
                 if ('skip' === substr($bucket->getData()['message'], 0, 4)) {
@@ -72,7 +73,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $server->on(
             'message',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
                 $source  = $bucket->getSource();
                 $message = $bucket->getData()['message'];
                 $source->send($message);
@@ -90,7 +91,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $server->on(
             'binary-message',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
                 $source  = $bucket->getSource();
                 $message = $bucket->getData()['message'];
                 $source->send(
@@ -112,7 +113,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $server->on(
             'error',
-            function (Event\Bucket $bucket) {
+            function (Event\Bucket $bucket): void {
                 throw $bucket->getData()['exception'];
             }
         );
@@ -284,7 +285,7 @@ class Rfc6455 extends Test\Integration\Suite
             ->send('close');
     }
 
-    public function case_send_fragmented_message()
+    public function case_send_fragmented_message(): void
     {
         $this
             ->given(
@@ -321,7 +322,7 @@ class Rfc6455 extends Test\Integration\Suite
             );
     }
 
-    public function case_send_fragmented_text_frame_with_an_empty_payload()
+    public function case_send_fragmented_text_frame_with_an_empty_payload(): void
     {
         $this
             ->given(
@@ -373,7 +374,7 @@ class Rfc6455 extends Test\Integration\Suite
             );
     }
 
-    public function case_send_fragmented_text_frame_with_a_valid_UTF_8_payload()
+    public function case_send_fragmented_text_frame_with_a_valid_UTF_8_payload(): void
     {
         $this
             ->given(
@@ -413,7 +414,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
     }
 
-    protected function _case_send_fragmented_text_frame_of_1_bytes_with_a_valid_UTF_8_payload($payload)
+    protected function _case_send_fragmented_text_frame_of_1_bytes_with_a_valid_UTF_8_payload($payload): void
     {
         $this
             ->given(
@@ -425,7 +426,7 @@ class Rfc6455 extends Test\Integration\Suite
                     $onCloseCalled
                 )
             )
-            ->when(function () use ($client, $payload) {
+            ->when(function () use ($client, $payload): void {
                 $bytes     = str_split($payload);
                 $firstByte = array_shift($bytes);
                 $lastByte  = array_pop($bytes);
@@ -449,7 +450,7 @@ class Rfc6455 extends Test\Integration\Suite
                     ->isTrue();
     }
 
-    public function case_send_a_message_and_close()
+    public function case_send_a_message_and_close(): void
     {
         $this
             ->given(
@@ -524,7 +525,7 @@ class Rfc6455 extends Test\Integration\Suite
                 : (Websocket\Connection::OPCODE_PING === $opcode
                     ? 'ping'
                     : 'message'),
-            function (Event\Bucket $bucket) use (&$calledA, $self, $expectedMessage) {
+            function (Event\Bucket $bucket) use (&$calledA, $self, $expectedMessage): void {
                 $calledA = true;
 
                 $self
@@ -536,7 +537,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $client->on(
             'close',
-            function (Event\Bucket $bucket) use (&$calledB, $self, $expectedCloseCode) {
+            function (Event\Bucket $bucket) use (&$calledB, $self, $expectedCloseCode): void {
                 $calledB = true;
 
                 $self
@@ -548,7 +549,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $client->on(
             'error',
-            function (Event\Bucket $bucket) use ($self) {
+            function (Event\Bucket $bucket) use ($self): void {
                 $self
                     ->boolean(true)
                         ->isFalse();
@@ -586,7 +587,6 @@ class Rfc6455 extends Test\Integration\Suite
  *
  * An exception that is thrown to stop the server and exits gently.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class StopServerException extends \RuntimeException

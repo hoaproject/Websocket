@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -48,12 +50,11 @@ use Mock\Hoa\Socket;
  *
  * Test suite for the WebSocket client class.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class Client extends Test\Unit\Suite
 {
-    public function case_is_a_connection()
+    public function case_is_a_connection(): void
     {
         $this
             ->given($this->mockGenerator->orphanize('__construct'))
@@ -63,7 +64,7 @@ class Client extends Test\Unit\Suite
                     ->isInstanceOf(Websocket\Connection::class);
     }
 
-    public function case_constructor()
+    public function case_constructor(): void
     {
         $this
             ->given(
@@ -81,7 +82,7 @@ class Client extends Test\Unit\Suite
                     ->isIdenticalTo($response);
     }
 
-    public function case_constructor_with_an_undefined_endpoint()
+    public function case_constructor_with_an_undefined_endpoint(): void
     {
         $this
             ->given(
@@ -99,7 +100,7 @@ class Client extends Test\Unit\Suite
                     ->isIdenticalTo($response);
     }
 
-    public function case_constructor_with_a_socket_defined_endpoint()
+    public function case_constructor_with_a_socket_defined_endpoint(): void
     {
         $this
             ->given(
@@ -120,7 +121,7 @@ class Client extends Test\Unit\Suite
                     ->isIdenticalTo($response);
     }
 
-    public function case_constructor_with_an_undefined_response()
+    public function case_constructor_with_an_undefined_response(): void
     {
         $this
             ->given(
@@ -137,7 +138,7 @@ class Client extends Test\Unit\Suite
                     ->isInstanceOf(Http\Response::class);
     }
 
-    public function case_connect()
+    public function case_connect(): void
     {
         $this
             ->given(
@@ -145,7 +146,7 @@ class Client extends Test\Unit\Suite
                 $this->mockGenerator->makeVisible('doHandshake')->generate(SUT::class),
                 $client = new \Mock\Hoa\Websocket\Client($socket),
 
-                $this->calling($client)->doHandshake = function () use (&$called) {
+                $this->calling($client)->doHandshake = function () use (&$called): void {
                     $called = true;
 
                     return;
@@ -159,7 +160,7 @@ class Client extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_receive_a_complete_message_and_is_not_disconnected()
+    public function case_receive_a_complete_message_and_is_not_disconnected(): void
     {
         $self = $this;
 
@@ -175,7 +176,7 @@ class Client extends Test\Unit\Suite
                 $this->calling($socket)->getCurrentNode  = $node,
                 $this->calling($socket)->isDisconnected  = false,
 
-                $this->calling($client)->_run = function (Websocket\Node $_node) use (&$called, $self, $node) {
+                $this->calling($client)->_run = function (Websocket\Node $_node) use (&$called, $self, $node): void {
                     $called = true;
 
                     $self
@@ -193,7 +194,7 @@ class Client extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_receive_an_incomplete_message_and_is_disconnected()
+    public function case_receive_an_incomplete_message_and_is_disconnected(): void
     {
         $self = $this;
 
@@ -209,7 +210,7 @@ class Client extends Test\Unit\Suite
                 $this->calling($socket)->getCurrentNode  = $node,
                 $this->calling($socket)->isDisconnected  = true,
 
-                $this->calling($client)->_run = function (Websocket\Node $_node) use (&$called, $self, $node) {
+                $this->calling($client)->_run = function (Websocket\Node $_node) use (&$called, $self, $node): void {
                     $called = true;
 
                     $self
@@ -227,7 +228,7 @@ class Client extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_do_handshake()
+    public function case_do_handshake(): void
     {
         $self = $this;
 
@@ -298,7 +299,7 @@ class Client extends Test\Unit\Suite
                 $this->calling($client)->getNewChallenge = $challenge,
                 $client->on(
                     'open',
-                    function (Event\Bucket $bucket) use (&$calledE, $self) {
+                    function (Event\Bucket $bucket) use (&$calledE, $self): void {
                         $calledE = true;
 
                         $self
@@ -339,7 +340,7 @@ class Client extends Test\Unit\Suite
                     ]);
     }
 
-    public function case_do_handshake_with_a_secured_connection()
+    public function case_do_handshake_with_a_secured_connection(): void
     {
         $self = $this;
 
@@ -423,7 +424,7 @@ class Client extends Test\Unit\Suite
                 $this->calling($client)->getNewChallenge = $challenge,
                 $client->on(
                     'open',
-                    function (Event\Bucket $bucket) use (&$calledF, $self) {
+                    function (Event\Bucket $bucket) use (&$calledF, $self): void {
                         $calledF = true;
 
                         $self
@@ -466,7 +467,7 @@ class Client extends Test\Unit\Suite
                     ]);
     }
 
-    public function case_do_handshake_with_no_host()
+    public function case_do_handshake_with_no_host(): void
     {
         $self = $this;
 
@@ -487,7 +488,7 @@ class Client extends Test\Unit\Suite
                 $this->calling($socket)->enableEncryption = null,
                 $this->calling($socket)->setStreamBlocking = null
             )
-            ->exception(function () use ($client) {
+            ->exception(function () use ($client): void {
                 $this->invoke($client)->doHandshake();
             })
                 ->isInstanceOf(Websocket\Exception::class);
@@ -528,7 +529,7 @@ class Client extends Test\Unit\Suite
         );
     }
 
-    protected function _case_do_handshake_invalid_response($response)
+    protected function _case_do_handshake_invalid_response($response): void
     {
         $self = $this;
 
@@ -592,20 +593,20 @@ class Client extends Test\Unit\Suite
                 },
                 $this->calling($client)->getNewChallenge = $challenge
             )
-            ->exception(function () use ($client) {
+            ->exception(function () use ($client): void {
                 $this->invoke($client)->doHandshake();
             })
                 ->isInstanceOf(Websocket\Exception\BadProtocol::class);
     }
 
-    public function case_get_new_challenge()
+    public function case_get_new_challenge(): void
     {
         $this
             ->given(
                 $this->mockGenerator->orphanize('__construct'),
                 $client = new \Mock\Hoa\Websocket\Client()
             )
-            ->when(function () use ($client) {
+            ->when(function () use ($client): void {
                 for ($i = 0; $i < 1000; ++$i) {
                     $this
                         ->string($client->getNewChallenge())
@@ -624,7 +625,7 @@ class Client extends Test\Unit\Suite
         return $this->_case_close(null);
     }
 
-    protected function _case_close($protocolCalledValue)
+    protected function _case_close($protocolCalledValue): void
     {
         $self = $this;
 
@@ -643,7 +644,7 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($node)->getProtocolImplementation = $protocolCalledValue ? $protocol : null,
 
-                $this->calling($protocol)->close = function ($_code, $_reason, $_mask) use (&$calledA, $self, $code, $reason, $mask) {
+                $this->calling($protocol)->close = function ($_code, $_reason, $_mask) use (&$calledA, $self, $code, $reason, $mask): void {
                     $calledA = true;
 
                     $self
@@ -658,7 +659,7 @@ class Client extends Test\Unit\Suite
                 },
 
                 $this->calling($socket)->getCurrentNode = $node,
-                $this->calling($socket)->mute           = function () use (&$calledB) {
+                $this->calling($socket)->mute           = function () use (&$calledB): void {
                     $calledB = true;
 
                     return;
@@ -700,7 +701,7 @@ class Client extends Test\Unit\Suite
                     ->isTrue();
     }
 
-    public function case_set_end_point()
+    public function case_set_end_point(): void
     {
         $this
             ->given(
@@ -714,7 +715,7 @@ class Client extends Test\Unit\Suite
                     ->isEqualTo($endPoint);
     }
 
-    public function case_get_end_point()
+    public function case_get_end_point(): void
     {
         $this
             ->given(
@@ -729,7 +730,7 @@ class Client extends Test\Unit\Suite
                     ->isEqualTo($endPoint);
     }
 
-    public function case_set_response()
+    public function case_set_response(): void
     {
         $this
             ->given(
@@ -744,7 +745,7 @@ class Client extends Test\Unit\Suite
                     ->isIdenticalTo($response);
     }
 
-    public function case_get_response()
+    public function case_get_response(): void
     {
         $this
             ->given(
@@ -760,7 +761,7 @@ class Client extends Test\Unit\Suite
                     ->isIdenticalTo($response);
     }
 
-    public function case_set_host()
+    public function case_set_host(): void
     {
         $this
             ->given(
@@ -773,7 +774,7 @@ class Client extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_get_host()
+    public function case_get_host(): void
     {
         $this
             ->given(
@@ -788,7 +789,7 @@ class Client extends Test\Unit\Suite
                     ->isEqualTo($host);
     }
 
-    public function case_get_an_undefined_host()
+    public function case_get_an_undefined_host(): void
     {
         unset($_SERVER);
 
@@ -803,7 +804,7 @@ class Client extends Test\Unit\Suite
                     ->isNull();
     }
 
-    public function case_get_a_global_defined_host()
+    public function case_get_a_global_defined_host(): void
     {
         $this
             ->given(

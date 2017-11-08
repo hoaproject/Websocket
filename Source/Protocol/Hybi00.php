@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -43,20 +45,13 @@ use Hoa\Websocket;
  * Class \Hoa\Websocket\Protocol\Hybi00.
  *
  * Protocol implementation: draft-ietf-hybi-thewebsocketprotocol-00.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Hybi00 extends Generic
 {
     /**
      * Do the handshake.
-     *
-     * @param   \Hoa\Http\Request  $request    Request.
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake(Http\Request $request)
+    public function doHandshake(Http\Request $request): void
     {
         $key1      = $request['sec-websocket-key1'];
         $key2      = $request['sec-websocket-key2'];
@@ -93,16 +88,12 @@ class Hybi00 extends Generic
             $response . "\r\n"
         );
         $connection->getCurrentNode()->setHandshake(SUCCEED);
-
-        return;
     }
 
     /**
      * Read a frame.
-     *
-     * @return  array
      */
-    public function readFrame()
+    public function readFrame(): array
     {
         $buffer  = $this->getConnection()->read(2048);
         $length  = strlen($buffer) - 2;
@@ -134,19 +125,13 @@ class Hybi00 extends Generic
 
     /**
      * Write a frame.
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode (useless here).
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  int
      */
     public function writeFrame(
-        $message,
-        $opcode = -1,
-        $end    = true,
-        $mask   = false
-    ) {
+        string $message,
+        int $opcode = -1,
+        bool $end   = true,
+        bool $mask  = false
+    ): int {
         return $this->getConnection()->writeAll(
             chr(0) . $message . chr(255)
         );
@@ -154,35 +139,23 @@ class Hybi00 extends Generic
 
     /**
      * Send a message to a node (if not specified, current node).
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  void
      */
-    public function send($message, $opcode = -1, $end = true, $mask = false)
-    {
+    public function send(
+        string $message,
+        int $opcode = -1,
+        bool $end   = true,
+        bool $mask  = false
+    ): void {
         $this->writeFrame($message);
-
-        return;
     }
 
     /**
      * Close a specific node/connection.
-     *
-     * @param   int     $code      Code (please, see
-     *                             \Hoa\Websocket\Connection::CLOSE_*
-     *                             constants).
-     * @param   string  $reason    Reason.
-     * @param   bool    $mask      Whether the message will be masked or not.
-     * @return  void
      */
     public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
-        $reason = null,
-        $mask   = false
-    ) {
-        return;
+        int $code      = Websocket\Connection::CLOSE_NORMAL,
+        string $reason = null,
+        bool $mask     = false
+    ): void {
     }
 }

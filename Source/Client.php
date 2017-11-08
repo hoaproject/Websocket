@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -45,30 +47,21 @@ use Hoa\Socket as HoaSocket;
  * Class \Hoa\Websocket\Client.
  *
  * A cross-protocol Websocket client.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Client extends Connection
 {
     /**
      * Endpoint.
-     *
-     * @var string
      */
     protected $_endPoint = null;
 
     /**
      * Host name.
-     *
-     * @var string
      */
     protected $_host     = null;
 
     /**
      * Response (mainly parser).
-     *
-     * @var \Hoa\Http\Response
      */
     protected $_response = null;
 
@@ -76,15 +69,10 @@ class Client extends Connection
 
     /**
      * Create a Websocket client.
-     *
-     * @param   \Hoa\Socket\Client  $client      Client.
-     * @param   string              $endPoint    End-point.
-     * @param   \Hoa\Http\Response  $request     Response parser.
-     * @throws  \Hoa\Socket\Exception
      */
     public function __construct(
         HoaSocket\Client $client,
-        $endPoint               = null,
+        string $endPoint        = null,
         Http\Response $response = null
     ) {
         parent::__construct($client);
@@ -111,32 +99,27 @@ class Client extends Connection
 
     /**
      * Connect, i.e. open the connection and do handshake.
-     *
-     * @return  void
      */
-    public function connect()
+    public function connect(): HoaSocket\Connection
     {
-        return $this->doHandshake();
+        $this->doHandshake();
+
+        return $this;
     }
 
     /**
      * Override the parent run() method to open the connection.
-     *
-     * @return  void
      */
-    public function run()
+    public function run(): void
     {
         $this->connect();
-
-        return parent::run();
+        parent::run();
     }
 
     /**
      * Receive data. Fire listeners.
-     *
-     * @return  void
      */
-    public function receive()
+    public function receive(): void
     {
         $connection = $this->getConnection();
         $node       = $connection->getCurrentNode();
@@ -145,18 +128,14 @@ class Client extends Connection
             $this->_run($node);
         } while (
             false === $connection->isDisconnected() &&
-            true  !== $node->isMessageComplete()
+            true !== $node->isMessageComplete()
         );
     }
 
     /**
      * Try the handshake by trying different protocol implementation.
-     *
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    protected function doHandshake()
+    protected function doHandshake(): void
     {
         $connection = $this->getConnection();
         $connection->connect();
@@ -197,8 +176,8 @@ class Client extends Connection
 
         if ($response::STATUS_SWITCHING_PROTOCOLS !== $response['status'] ||
             'websocket' !== strtolower($response['upgrade']) ||
-            'upgrade'   !== strtolower($response['connection']) ||
-            $expected   !== $response['sec-websocket-accept']) {
+            'upgrade' !== strtolower($response['connection']) ||
+            $expected !== $response['sec-websocket-accept']) {
             throw new Exception\BadProtocol(
                 'Handshake has failed, the server did not return a valid ' .
                 'response.' . "\n\n" .
@@ -220,16 +199,12 @@ class Client extends Connection
             'open',
             new Event\Bucket()
         );
-
-        return;
     }
 
     /**
      * Generate a challenge.
-     *
-     * @return  string
      */
-    public function getNewChallenge()
+    public function getNewChallenge(): string
     {
         static $_tail = ['A', 'Q', 'g', 'w'];
 
@@ -240,13 +215,8 @@ class Client extends Connection
 
     /**
      * Close a specific node/connection.
-     *
-     * @param   int     $code      Code (please, see
-     *                             self::CLOSE_* constants).
-     * @param   string  $reason    Reason.
-     * @return  void
      */
-    public function close($code = self::CLOSE_NORMAL, $reason = null)
+    public function close(int $code = self::CLOSE_NORMAL, string $reason = null): void
     {
         $connection = $this->getConnection();
         $protocol   = $connection->getCurrentNode()->getProtocolImplementation();
@@ -259,16 +229,13 @@ class Client extends Connection
         $connection->setStreamTimeout(0, 2 * 15000); // 2 * MLS (on FreeBSD)
         $connection->read(1);
 
-        return $connection->disconnect();
+        $connection->disconnect();
     }
 
     /**
      * Set end-point.
-     *
-     * @param   string  $endPoint    End-point.
-     * @return  string
      */
-    protected function setEndPoint($endPoint)
+    protected function setEndPoint(string $endPoint): ?string
     {
         $old             = $this->_endPoint;
         $this->_endPoint = $endPoint;
@@ -278,21 +245,16 @@ class Client extends Connection
 
     /**
      * Get end-point.
-     *
-     * @return  string
      */
-    public function getEndPoint()
+    public function getEndPoint(): string
     {
         return $this->_endPoint;
     }
 
     /**
      * Set response (mainly parser).
-     *
-     * @param   \Hoa\Http\Response  $response    Response.
-     * @return  \Hoa\Http\Response
      */
-    public function setResponse(Http\Response $response)
+    public function setResponse(Http\Response $response): ?Http\Response
     {
         $old             = $this->_response;
         $this->_response = $response;
@@ -302,21 +264,16 @@ class Client extends Connection
 
     /**
      * Get response.
-     *
-     * @return  \Hoa\Http\Response
      */
-    public function getResponse()
+    public function getResponse(): Http\Response
     {
         return $this->_response;
     }
 
     /**
      * Set host.
-     *
-     * @param   string  $host    Host.
-     * @return  string
      */
-    public function setHost($host)
+    public function setHost(string $host): ?string
     {
         $old         = $this->_host;
         $this->_host = $host;
@@ -329,13 +286,11 @@ class Client extends Connection
      *
      * @return  string
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return
             null !== $this->_host
                 ? $this->_host
-                : (isset($_SERVER['HTTP_HOST'])
-                    ? $_SERVER['HTTP_HOST']
-                    : null);
+                : ($_SERVER['HTTP_HOST'] ?? null);
     }
 }

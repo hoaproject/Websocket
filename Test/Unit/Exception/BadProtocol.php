@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -45,12 +47,11 @@ use Hoa\Websocket\Exception\BadProtocol as SUT;
  *
  * Test suite of the bad protocol exception.
  *
- * @copyright  Copyright © 2007-2017 Hoa community
  * @license    New BSD License
  */
 class BadProtocol extends Test\Unit\Suite
 {
-    public function case_hoa_websocket_exception()
+    public function case_hoa_websocket_exception(): void
     {
         $this
             ->when($result = new SUT('foo', 0))

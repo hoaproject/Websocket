@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Hoa
  *
@@ -43,29 +45,20 @@ use Hoa\Websocket;
  * Class \Hoa\Websocket\Protocol\Rfc6455.
  *
  * Protocol implementation: RFC6455.
- *
- * @copyright  Copyright © 2007-2017 Hoa community
- * @license    New BSD License
  */
 class Rfc6455 extends Generic
 {
     /**
      * GUID.
-     *
-     * @const string
      */
-    const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    public const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
 
 
     /**
      * Do the handshake.
-     *
-     * @param   \Hoa\Http\Request  $request    Request.
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\BadProtocol
      */
-    public function doHandshake(Http\Request $request)
+    public function doHandshake(Http\Request $request): void
     {
         if (!isset($request['sec-websocket-key'])) {
             throw new Websocket\Exception\BadProtocol(
@@ -103,17 +96,12 @@ class Rfc6455 extends Generic
             'Sec-WebSocket-Version: 13' . "\r\n\r\n"
         );
         $connection->getCurrentNode()->setHandshake(SUCCEED);
-
-        return;
     }
 
     /**
      * Read a frame.
-     *
-     * @return  array
-     * @throws  \Hoa\Websocket\Exception\CloseError
      */
-    public function readFrame()
+    public function readFrame(): array
     {
         $connection = $this->getConnection();
         $out        = [];
@@ -130,11 +118,11 @@ class Rfc6455 extends Generic
         $out['rsv1']   = ($handle >> 6) & 0x1;
         $out['rsv2']   = ($handle >> 5) & 0x1;
         $out['rsv3']   = ($handle >> 4) & 0x1;
-        $out['opcode'] =  $handle       & 0xf;
+        $out['opcode'] =  $handle & 0xf;
 
         $handle        = ord($connection->read(1));
         $out['mask']   = ($handle >> 7) & 0x1;
-        $out['length'] =  $handle       & 0x7f;
+        $out['length'] =  $handle & 0x7f;
         $length        = &$out['length'];
 
         if (0x0 !== $out['rsv1'] || 0x0 !== $out['rsv2'] || 0x0 !== $out['rsv3']) {
@@ -223,19 +211,13 @@ class Rfc6455 extends Generic
 
     /**
      * Write a frame.
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  int
      */
     public function writeFrame(
-        $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-        $end    = true,
-        $mask   = false
-    ) {
+        string $message,
+        int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        bool $end   = true,
+        bool $mask  = false
+    ): int {
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
         $rsv2   = 0x0;
@@ -243,7 +225,7 @@ class Rfc6455 extends Generic
         $mask   = true === $mask ? 0x1 : 0x0;
         $length = strlen($message);
         $out    = chr(
-            ($fin  << 7)
+            ($fin << 7)
           | ($rsv1 << 6)
           | ($rsv2 << 5)
           | ($rsv3 << 4)
@@ -277,10 +259,8 @@ class Rfc6455 extends Generic
 
     /**
      * Get a random masking key.
-     *
-     * @return array
      */
-    public function getMaskingKey()
+    public function getMaskingKey(): array
     {
         if (true === function_exists('openssl_random_pseudo_bytes')) {
             $maskingKey = array_map(
@@ -302,23 +282,15 @@ class Rfc6455 extends Generic
 
     /**
      * Send a message.
-     *
-     * @param   string  $message    Message.
-     * @param   int     $opcode     Opcode.
-     * @param   bool    $end        Whether it is the last frame of
-     *                              the message.
-     * @param   bool    $mask       Whether the message will be masked or not.
-     * @return  void
-     * @throws  \Hoa\Websocket\Exception\InvalidMessage
      */
     public function send(
-        $message,
-        $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
-        $end    = true,
-        $mask   = false
-    ) {
+        string $message,
+        int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
+        bool $end   = true,
+        bool $mask  = false
+    ): void {
         if (Websocket\Connection::OPCODE_TEXT_FRAME === $opcode &&
-            true  === $end &&
+            true === $end &&
             false === (bool) preg_match('//u', $message)) {
             throw new Websocket\Exception\InvalidMessage(
                 'Message “%s” is not in UTF-8, cannot send it.',
@@ -330,8 +302,6 @@ class Rfc6455 extends Generic
         }
 
         $this->writeFrame($message, $opcode, $end, $mask);
-
-        return;
     }
 
     /**
@@ -345,17 +315,15 @@ class Rfc6455 extends Generic
      * @return  void
      */
     public function close(
-        $code   = Websocket\Connection::CLOSE_NORMAL,
-        $reason = null,
-        $mask   = false
-    ) {
+        int $code      = Websocket\Connection::CLOSE_NORMAL,
+        string $reason = null,
+        bool $mask     = false
+    ): void {
         $this->writeFrame(
             pack('n', $code) . $reason,
             Websocket\Connection::OPCODE_CONNECTION_CLOSE,
             true,
             $mask
         );
-
-        return;
     }
 }
