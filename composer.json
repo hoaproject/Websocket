@@ -24,7 +24,7 @@
         "source": "https://central.hoa-project.net/Resource/Library/Websocket"
     },
     "require": {
-        "php"            : ">=5.5.0",
+        "php"            : ">=7.1",
         "hoa/consistency": "~1.0",
         "hoa/event"      : "~1.0",
         "hoa/exception"  : "~1.0",
@@ -40,7 +40,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Hoa\\Websocket\\": "."
+            "Hoa\\Websocket\\"    : "Source",
+            "Hoa\\Websocket\\Bin" : "Bin",
+            "Hoa\\Websocket\\Test": "Test"
         },
         "files": ["Socket.php"]
     },
