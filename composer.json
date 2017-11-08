@@ -40,11 +40,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Hoa\\Websocket\\"    : "Source",
-            "Hoa\\Websocket\\Bin" : "Bin",
-            "Hoa\\Websocket\\Test": "Test"
+            "Hoa\\Websocket\\"      : "Source",
+            "Hoa\\Websocket\\Bin\\" : "Bin",
+            "Hoa\\Websocket\\Test\\": "Test"
         },
-        "files": ["Socket.php"]
+        "files": ["Source/Socket.php"]
     },
     "extra": {
         "branch-alias": {
