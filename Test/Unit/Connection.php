@@ -1233,8 +1233,6 @@ class Connection extends Test\Unit\Suite
 
             ->when($result = $closure($opcode, $end))
             ->then
-                ->integer($result)
-                    ->isEqualTo(42)
                 ->boolean($called)
                     ->isTrue();
     }

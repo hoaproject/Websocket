@@ -53,8 +53,8 @@ class Hybi00 extends Generic
      */
     public function doHandshake(Http\Request $request): void
     {
-        $key1      = $request['sec-websocket-key1'];
-        $key2      = $request['sec-websocket-key2'];
+        $key1      = $request['sec-websocket-key1'] ?? '';
+        $key2      = $request['sec-websocket-key2'] ?? '';
         $key3      = $request->getBody();
         $location  = $request['host'] . $request->getUrl();
         $keynumb1  = (float) preg_replace('#[^0-9]#', '', $key1);
@@ -131,7 +131,7 @@ class Hybi00 extends Generic
         int $opcode = -1,
         bool $end   = true,
         bool $mask  = false
-    ): int {
+    ) {
         return $this->getConnection()->writeAll(
             chr(0) . $message . chr(255)
         );

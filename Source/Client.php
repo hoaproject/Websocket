@@ -100,7 +100,7 @@ class Client extends Connection
     /**
      * Connect, i.e. open the connection and do handshake.
      */
-    public function connect(): HoaSocket\Connection
+    public function connect(): self
     {
         $this->doHandshake();
 

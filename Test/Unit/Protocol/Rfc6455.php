@@ -134,14 +134,14 @@ class Rfc6455 extends Test\Unit\Suite
                 $challenge                    = base64_encode(sha1($request['sec-websocket-key'] . SUT::GUID, true)),
 
                 $this->calling($socket)->getCurrentNode = $node,
-                $this->calling($node)->setHandshake     = function ($handshake) use (&$calledA, $self): void {
+                $this->calling($node)->setHandshake     = function ($handshake) use (&$calledA, $self) {
                     $calledA = true;
 
                     $self
                         ->boolean($handshake)
                             ->isTrue();
 
-                    return;
+                    return true;
                 },
                 $this->calling($socket)->writeAll = function ($_data) use (&$calledB, $self, $challenge): void {
                     $calledB = true;
@@ -155,8 +155,6 @@ class Rfc6455 extends Test\Unit\Suite
                                 'Sec-WebSocket-Accept: ' . $challenge . CRLF .
                                 'Sec-WebSocket-Version: 13' . CRLF . CRLF
                             );
-
-                    return;
                 }
             )
             ->when($result = $protocol->doHandshake($request))
@@ -176,7 +174,7 @@ class Rfc6455 extends Test\Unit\Suite
                 $socket   = new Socket\Server('tcp://*:1234'),
                 $protocol = new SUT($socket),
 
-                $this->calling($socket)->read = null
+                $this->calling($socket)->read = ''
             )
             ->when($result = $protocol->readFrame())
             ->then
@@ -1080,7 +1078,7 @@ class Rfc6455 extends Test\Unit\Suite
                 $socket   = new Socket\Server('tcp://*:1234'),
                 $protocol = new SUT($socket),
 
-                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_end, $_mask) use (&$called, $self, $code, $reason, $mask): void {
+                $this->calling($protocol)->writeFrame = function ($_message, $_opcode, $_end, $_mask) use (&$called, $self, $code, $reason, $mask) {
                     $called = true;
 
                     $self
@@ -1093,7 +1091,7 @@ class Rfc6455 extends Test\Unit\Suite
                         ->boolean($_mask)
                             ->isEqualTo($mask);
 
-                    return;
+                    return strlen($_message);
                 }
             )
             ->when($result = $protocol->close($code, $reason, $mask))

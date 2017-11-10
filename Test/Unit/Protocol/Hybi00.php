@@ -103,14 +103,14 @@ class Hybi00 extends Test\Unit\Suite
                 ),
 
                 $this->calling($socket)->getCurrentNode = $node,
-                $this->calling($node)->setHandshake     = function ($handshake) use (&$calledA, $self): void {
+                $this->calling($node)->setHandshake     = function ($handshake) use (&$calledA, $self) {
                     $calledA = true;
 
                     $self
                         ->boolean($handshake)
                             ->isTrue();
 
-                    return;
+                    return true;
                 },
                 $this->calling($socket)->writeAll = function ($data) use (&$calledB, $self, $challenge): void {
                     $calledB = true;
@@ -125,8 +125,6 @@ class Hybi00 extends Test\Unit\Suite
                                 'Sec-WebSocket-Location: ws://example.org/foobar' . CRLF . CRLF .
                                 $challenge . CRLF
                             );
-
-                    return;
                 }
             )
             ->when($result = $protocol->doHandshake($request))
@@ -146,7 +144,7 @@ class Hybi00 extends Test\Unit\Suite
                 $socket   = new Socket\Server('tcp://*:1234'),
                 $protocol = new SUT($socket),
 
-                $this->calling($socket)->read = null
+                $this->calling($socket)->read = ''
             )
             ->when($result = $protocol->readFrame())
             ->then

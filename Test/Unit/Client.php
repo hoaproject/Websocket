@@ -148,14 +148,12 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($client)->doHandshake = function () use (&$called): void {
                     $called = true;
-
-                    return;
                 }
             )
             ->when($result = $client->connect())
             ->then
-                ->variable($result)
-                    ->isNull()
+                ->object($result)
+                    ->isIdenticalTo($client)
                 ->boolean($called)
                     ->isTrue();
     }
@@ -182,8 +180,6 @@ class Client extends Test\Unit\Suite
                     $self
                         ->object($_node)
                             ->isIdenticalTo($node);
-
-                    return;
                 }
             )
             ->when($result = $client->receive())
@@ -216,8 +212,6 @@ class Client extends Test\Unit\Suite
                     $self
                         ->object($_node)
                             ->isIdenticalTo($node);
-
-                    return;
                 }
             )
             ->when($result = $client->receive())
@@ -248,10 +242,10 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($sock)->isSecured   = false,
                 $this->calling($socket)->getSocket = $sock,
-                $this->calling($socket)->connect   = function () use (&$calledA) {
+                $this->calling($socket)->connect   = function () use (&$calledA, $socket) {
                     $calledA = true;
 
-                    return true;
+                    return $socket;
                 },
                 $this->calling($socket)->setStreamBlocking = function ($_block) use (&$calledB, $self) {
                     $calledB = true;
@@ -360,10 +354,10 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($sock)->isSecured   = true,
                 $this->calling($socket)->getSocket = $sock,
-                $this->calling($socket)->connect   = function () use (&$calledA) {
+                $this->calling($socket)->connect   = function () use (&$calledA, $socket) {
                     $calledA = true;
 
-                    return true;
+                    return $socket;
                 },
                 $this->calling($socket)->enableEncryption = function ($_enable, $_type, $_sessionStream) use (&$calledB, $self, $socket) {
                     $calledB = true;
@@ -484,9 +478,9 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($sock)->isSecured   = false,
                 $this->calling($socket)->getSocket = $sock,
-                $this->calling($socket)->connect   = null,
+                $this->calling($socket)->connect   = $socket,
                 $this->calling($socket)->enableEncryption = null,
-                $this->calling($socket)->setStreamBlocking = null
+                $this->calling($socket)->setStreamBlocking = true
             )
             ->exception(function () use ($client): void {
                 $this->invoke($client)->doHandshake();
@@ -548,7 +542,7 @@ class Client extends Test\Unit\Suite
 
                 $this->calling($sock)->isSecured   = true,
                 $this->calling($socket)->getSocket = $sock,
-                $this->calling($socket)->connect   = true,
+                $this->calling($socket)->connect   = $socket,
                 $this->calling($socket)->enableEncryption = function ($_enable, $_type, $_sessionStream) use ($self, $socket) {
                     $self
                         ->boolean($_enable)
@@ -659,10 +653,10 @@ class Client extends Test\Unit\Suite
                 },
 
                 $this->calling($socket)->getCurrentNode = $node,
-                $this->calling($socket)->mute           = function () use (&$calledB): void {
+                $this->calling($socket)->mute           = function () use (&$calledB) {
                     $calledB = true;
 
-                    return;
+                    return true;
                 },
                 $this->calling($socket)->setStreamTimeout = function ($_second, $_millisecond) use (&$calledC, $self) {
                     $calledC = true;

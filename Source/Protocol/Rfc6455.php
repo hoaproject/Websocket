@@ -217,7 +217,7 @@ class Rfc6455 extends Generic
         int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
         bool $end   = true,
         bool $mask  = false
-    ): int {
+    ) {
         $fin    = true === $end ? 0x1 : 0x0;
         $rsv1   = 0x0;
         $rsv2   = 0x0;

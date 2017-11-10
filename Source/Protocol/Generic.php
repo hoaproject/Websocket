@@ -84,7 +84,7 @@ abstract class Generic
         int $opcode = Websocket\Connection::OPCODE_TEXT_FRAME,
         bool $end   = true,
         bool $mask  = false
-    ): int;
+    );
 
     /**
      * Send a message to a node (if not specified, current node).
