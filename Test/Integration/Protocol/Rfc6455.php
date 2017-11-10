@@ -47,8 +47,6 @@ use Hoa\Websocket;
  * Class \Hoa\Websocket\Test\Integration\Protocol\Rfc6455.
  *
  * Test suite of the RFC6455 protocol.
- *
- * @license    New BSD License
  */
 class Rfc6455 extends Test\Integration\Suite
 {
@@ -59,7 +57,7 @@ class Rfc6455 extends Test\Integration\Suite
         $server = new Websocket\Server(new Socket\Server('ws://127.0.0.1:1234'));
         $server->on(
             'ping',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
                 $bucket->getSource()->close();
 
                 if ('skip' === substr($bucket->getData()['message'], 0, 4)) {
@@ -73,7 +71,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $server->on(
             'message',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
                 $source  = $bucket->getSource();
                 $message = $bucket->getData()['message'];
                 $source->send($message);
@@ -91,7 +89,7 @@ class Rfc6455 extends Test\Integration\Suite
         );
         $server->on(
             'binary-message',
-            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute): void {
+            function (Event\Bucket $bucket) use (&$numberOfTestsToCompute) {
                 $source  = $bucket->getSource();
                 $message = $bucket->getData()['message'];
                 $source->send(
@@ -586,8 +584,6 @@ class Rfc6455 extends Test\Integration\Suite
  * Class \Hoa\Websocket\Test\Integration\Protocol\StopServerException.
  *
  * An exception that is thrown to stop the server and exits gently.
- *
- * @license    New BSD License
  */
 class StopServerException extends \RuntimeException
 {
