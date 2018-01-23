@@ -25,15 +25,15 @@
     },
     "require": {
         "php"            : ">=7.1",
-        "hoa/consistency": "~1.0",
-        "hoa/event"      : "~1.0",
-        "hoa/exception"  : "~1.0",
-        "hoa/socket"     : "~1.0",
-        "hoa/http"       : "~1.0"
+        "hoa/consistency": "dev-master",
+        "hoa/event"      : "dev-master",
+        "hoa/exception"  : "dev-master",
+        "hoa/socket"     : "dev-master",
+        "hoa/http"       : "dev-master"
     },
     "require-dev": {
         "ext-iconv": "*",
-        "hoa/test" : "~2.0"
+        "hoa/test" : "dev-master"
     },
     "suggest": {
         "ext-openssl": "To get a better security when exchanging messages."
