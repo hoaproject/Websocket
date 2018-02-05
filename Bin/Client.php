@@ -76,7 +76,9 @@ class Client extends Console\Dispatcher\Kit
 
                 case 'h':
                 case '?':
-                    return $this->usage();
+                    $this->usage();
+
+                    return 0;
 
                 case '__ambiguous':
                     $this->resolveOptionAmbiguity($v);
